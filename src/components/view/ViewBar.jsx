@@ -184,18 +184,18 @@ export function SavedViewList({ views = [], activeViewId, onSelectView, collapse
                 'transition-colors duration-instant',
                 collapsed && 'justify-center px-0',
                 active
-                  ? 'bg-accent-subtle font-semibold text-accent-text'
-                  : 'font-normal text-fg-secondary hover:bg-bg-hover hover:text-fg-primary',
+                  ? 'bg-sidebar-active-bg font-semibold text-sidebar-active-fg'
+                  : 'font-normal text-sidebar-muted hover:bg-sidebar-hover hover:text-sidebar-fg',
               )}
             >
-              <span className="flex h-4 w-4 shrink-0 items-center justify-center text-fg-tertiary">
+              <span className="flex h-4 w-4 shrink-0 items-center justify-center opacity-70">
                 {isQueryActive(view.query) ? <FilterIcon /> : <TableIcon />}
               </span>
               {!collapsed && (
                 <>
                   <span className="min-w-0 flex-1 truncate text-left">{view.name}</span>
                   {view.count != null && (
-                    <span className="shrink-0 tabular text-micro text-fg-tertiary">{view.count}</span>
+                    <span className="shrink-0 tabular text-micro text-sidebar-subtle">{view.count}</span>
                   )}
                 </>
               )}

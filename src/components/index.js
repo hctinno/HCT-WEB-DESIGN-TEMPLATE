@@ -10,7 +10,10 @@
 
 /* 셸 */
 export { AppShell, PageContainer, PageHeader } from './shell/AppShell'
-export { Sidebar, SidebarGroup, SidebarItem, WorkspaceSwitcher } from './shell/Sidebar'
+export {
+  Sidebar, SidebarGroup, SidebarItem, WorkspaceSwitcher,
+  WorkspaceRail, SidebarUser, Presence,
+} from './shell/Sidebar'
 export { Topbar, Breadcrumb, TopbarIconButton } from './shell/Topbar'
 export { RightPanel, PropertyList, PropertyRow, PanelSection } from './shell/RightPanel'
 

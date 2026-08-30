@@ -26,7 +26,7 @@ const twMerge = extendTailwindMerge({
       ],
       /* 셸 고정 너비 (tailwind.config.js > extend.width) */
       w: [
-        { w: ['sidebar', 'sidebar-collapsed', 'panel', 'panel-wide'] },
+        { w: ['sidebar', 'sidebar-collapsed', 'panel', 'panel-wide', 'rail'] },
       ],
       /* 고밀도 타입 스케일 (tailwind.config.js > theme.fontSize) */
       'font-size': [

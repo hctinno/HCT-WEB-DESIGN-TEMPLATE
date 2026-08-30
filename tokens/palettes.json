@@ -72,6 +72,100 @@
       }
     }
   },
+  "plum": {
+    "label": "플럼",
+    "tagline": "어두운 자두색 사이드바 · 밝은 콘텐츠",
+    "rationale": "탐색 영역과 작업 영역을 밝기로 갈라놓는 구성입니다. 사이드바가 어두워 '지금 어디에 있는가'가 항상 배경으로 깔리고, 콘텐츠는 밝아 데이터가 가장 진하게 남습니다. 라이트 테마에서도 사이드바는 어둡게 유지됩니다.",
+    "light": {
+      "neutral": {
+        "0": "#FFFFFF",
+        "25": "#FCFBFC",
+        "50": "#F8F6F9",
+        "100": "#F2EFF4",
+        "200": "#E8E3EC",
+        "300": "#D8D1DE",
+        "400": "#B3A9BC",
+        "500": "#8A7F94",
+        "600": "#6E6379",
+        "700": "#514757",
+        "800": "#39313E",
+        "900": "#211B25",
+        "950": "#130F16"
+      },
+      "accent": {
+        "50": "#FBEFF7",
+        "100": "#F5DCEC",
+        "200": "#EBBBD9",
+        "300": "#DA8FC0",
+        "400": "#C25CA2",
+        "500": "#A63985",
+        "600": "#8B2A6E",
+        "700": "#702158",
+        "800": "#5A1B47",
+        "900": "#48163A"
+      },
+      "sidebar": {
+        "bg": "#33143A",
+        "fg": "#F4EDF6",
+        "muted": "#C3AFCB",
+        "subtle": "#A794B0",
+        "hover": "#441D4D",
+        "activeBg": "#8B2A6E",
+        "activeFg": "#FFFFFF",
+        "border": "#48244F",
+        "badgeBg": "#D02439",
+        "badgeFg": "#FFFFFF",
+        "rail": "#250F2B"
+      }
+    },
+    "dark": {
+      "bg": {
+        "canvas": "#0E0A10",
+        "surface": "#181320",
+        "raised": "#221B2B",
+        "sunken": "#120D16",
+        "hover": "#221B2B",
+        "active": "#2C2436",
+        "sidebar": "#170F1C",
+        "overlay": "rgb(0 0 0 / 0.66)"
+      },
+      "text": {
+        "primary": "#EDE7F0",
+        "secondary": "#AEA3B6",
+        "tertiary": "#867B8E",
+        "disabled": "#575060",
+        "inverse": "#0E0A10",
+        "link": "#DA8FC0"
+      },
+      "border": {
+        "subtle": "#251E2D",
+        "default": "#332A3C",
+        "strong": "#4E4459",
+        "focus": "#C25CA2"
+      },
+      "accent": {
+        "solid": "#C25CA2",
+        "solidHover": "#DA8FC0",
+        "subtle": "#2A1226",
+        "subtleHover": "#371730",
+        "text": "#DA8FC0",
+        "border": "#5A1B47"
+      },
+      "sidebar": {
+        "bg": "#170F1C",
+        "fg": "#EDE7F0",
+        "muted": "#AEA3B6",
+        "subtle": "#867B8E",
+        "hover": "#241A2B",
+        "activeBg": "#8B2A6E",
+        "activeFg": "#FFFFFF",
+        "border": "#2A2032",
+        "badgeBg": "#D02439",
+        "badgeFg": "#FFFFFF",
+        "rail": "#100A14"
+      }
+    }
+  },
   "blue": {
     "label": "딥블루",
     "tagline": "깊은 코발트 · 차가운 중성색",

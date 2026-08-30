@@ -51,6 +51,24 @@ const SEMANTIC_DARK = [
   ['accent', 'text', '--color-accent-text'], ['accent', 'border', '--color-accent-border'],
 ]
 
+/* 사이드바는 본문과 밝기가 다를 수 있어 별도 토큰군을 갖습니다 */
+const SIDEBAR_KEYS = [
+  ['bg', '--color-sidebar-bg'], ['fg', '--color-sidebar-fg'],
+  ['muted', '--color-sidebar-fg-muted'], ['subtle', '--color-sidebar-fg-subtle'],
+  ['hover', '--color-sidebar-hover'], ['activeBg', '--color-sidebar-active-bg'],
+  ['activeFg', '--color-sidebar-active-fg'], ['border', '--color-sidebar-border'],
+  ['badgeBg', '--color-sidebar-badge-bg'], ['badgeFg', '--color-sidebar-badge-fg'],
+  ['rail', '--color-sidebar-rail-bg'],
+]
+
+function sidebarBlock(sidebar, indent = '  ') {
+  if (!sidebar) return ''
+  return '\n' + SIDEBAR_KEYS
+    .map(([key, cssVar]) => (sidebar[key] ? `${indent}${cssVar}: ${sidebar[key]};` : null))
+    .filter(Boolean)
+    .join('\n')
+}
+
 function lightBlock(p, indent = '  ') {
   const lines = []
   for (const [k, v] of Object.entries(p.light.neutral)) lines.push(`${indent}--hct-neutral-${k}: ${v};`)
@@ -60,7 +78,7 @@ function lightBlock(p, indent = '  ') {
     lines.push('')
     for (const [k, v] of Object.entries(p.light.semantic)) lines.push(`${indent}${k}: ${v};`)
   }
-  return lines.join('\n')
+  return lines.join('\n') + sidebarBlock(p.light.sidebar, indent)
 }
 
 function darkBlock(p, indent = '  ') {
@@ -70,7 +88,7 @@ function darkBlock(p, indent = '  ') {
       return value ? `${indent}${cssVar}: ${value};` : null
     })
     .filter(Boolean)
-    .join('\n')
+    .join('\n') + sidebarBlock(p.dark.sidebar, indent)
 }
 
 let css = `/* ============================================================================
@@ -124,6 +142,27 @@ ${darkBlock(p)}
     ['다크 버튼글자/강조', D.text.inverse, D.accent.solid, 4.5],
     ['다크 강조글자/표면', D.accent.text, D.bg.surface, 4.5],
   ]
+
+  /* 사이드바를 따로 정의한 팔레트는 사이드바 안에서도 대비를 확인합니다.
+     어두운 사이드바에 어두운 글자를 얹는 실수를 잡습니다. */
+  if (L.sidebar?.bg) {
+    checks.push(
+      ['라이트 사이드바 글자', L.sidebar.fg, L.sidebar.bg, 7],
+      ['라이트 사이드바 보조', L.sidebar.muted, L.sidebar.bg, 4.5],
+      ['라이트 사이드바 흐림', L.sidebar.subtle, L.sidebar.bg, 4.5],
+      ['라이트 선택항목 글자', L.sidebar.activeFg, L.sidebar.activeBg, 4.5],
+      ['라이트 멘션 배지', L.sidebar.badgeFg, L.sidebar.badgeBg, 4.5],
+    )
+  }
+  if (D.sidebar?.bg) {
+    checks.push(
+      ['다크 사이드바 글자', D.sidebar.fg, D.sidebar.bg, 7],
+      ['다크 사이드바 보조', D.sidebar.muted, D.sidebar.bg, 4.5],
+      ['다크 사이드바 흐림', D.sidebar.subtle, D.sidebar.bg, 4.5],
+      ['다크 선택항목 글자', D.sidebar.activeFg, D.sidebar.activeBg, 4.5],
+      ['다크 멘션 배지', D.sidebar.badgeFg, D.sidebar.badgeBg, 4.5],
+    )
+  }
   for (const [name, fg, bg, min] of checks) {
     const ratio = contrast(fg, bg)
     report.push({ palette: p.label, name, ratio, min, pass: ratio >= min })

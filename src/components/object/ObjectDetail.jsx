@@ -43,6 +43,7 @@ export function ObjectDetail({
   onPrev,
   onNext,
   position,
+  lastSeenAt,
   headerExtra,
   children,
   className,
@@ -158,7 +159,7 @@ export function ObjectDetail({
           <h3 className="mb-2 text-xs font-semibold uppercase tracking-[0.06em] text-fg-tertiary">
             활동
           </h3>
-          <ActivityFeed items={activity} fields={fields} />
+          <ActivityFeed items={activity} fields={fields} lastSeenAt={lastSeenAt} />
         </section>
       </div>
 
@@ -291,49 +292,91 @@ export function StatusTransition({ field, value, onChange, allowed }) {
  *   { id, type: 'change',  actor, at, field, from, to }
  *   { id, type: 'created', actor, at }
  */
-export function ActivityFeed({ items = [], fields = [] }) {
+export function ActivityFeed({ items = [], fields = [], lastSeenAt, className }) {
   const fieldByKey = Object.fromEntries(fields.map((f) => [f.key, f]))
 
   if (items.length === 0) {
     return <p className="py-2 text-xs text-fg-tertiary">아직 활동이 없습니다.</p>
   }
 
-  return (
-    <ol className="space-y-2.5">
-      {items.map((item) => (
-        <li key={item.id} className="flex gap-2">
-          <span className="mt-0.5 shrink-0"><Avatar name={item.actor} size="md" /></span>
+  /* 안읽음 경계 — 처음 보는 항목이 어디서 시작하는지 */
+  const firstUnread = lastSeenAt
+    ? items.findIndex((i) => new Date(i.at).getTime() > new Date(lastSeenAt).getTime())
+    : -1
 
-          <div className="min-w-0 flex-1">
-            {item.type === 'comment' ? (
-              <>
-                <div className="flex items-baseline gap-1.5">
-                  <span className="text-base font-medium text-fg-primary">{item.actor}</span>
-                  <time className="text-micro text-fg-tertiary">{formatRelative(item.at)}</time>
-                </div>
-                <div className="mt-1 rounded-md border border-line-subtle bg-bg-sunken px-2.5 py-2 text-base leading-5 text-fg-secondary">
-                  {item.body}
-                </div>
-              </>
-            ) : item.type === 'created' ? (
-              <p className="text-sm leading-5 text-fg-tertiary">
-                <span className="font-medium text-fg-secondary">{item.actor}</span>
-                {' 님이 생성 '}
-                <time className="text-micro">{formatRelative(item.at)}</time>
-              </p>
-            ) : (
-              <p className="flex flex-wrap items-center gap-1 text-sm leading-5 text-fg-tertiary">
-                <span className="font-medium text-fg-secondary">{item.actor}</span>
-                <span>{fieldByKey[item.field]?.label ?? item.field}</span>
-                <ChangeValue field={fieldByKey[item.field]} value={item.from} muted />
-                <span aria-hidden="true">→</span>
-                <ChangeValue field={fieldByKey[item.field]} value={item.to} />
-                <time className="text-micro">{formatRelative(item.at)}</time>
-              </p>
+  return (
+    <ol className={cn('space-y-0.5', className)}>
+      {items.map((item, index) => {
+        /**
+         * 연속 항목 묶기 — 같은 사람이 짧은 간격으로 남긴 것은
+         * 아바타와 이름을 반복하지 않습니다. 이력이 길어질수록
+         * 반복되는 이름이 실제 내용을 밀어냅니다.
+         */
+        const prev = items[index - 1]
+        const grouped = prev
+          && prev.actor === item.actor
+          && prev.type === item.type
+          && new Date(item.at).getTime() - new Date(prev.at).getTime() < 5 * 60 * 1000
+
+        return (
+          <li key={item.id}>
+            {index === firstUnread && (
+              <div className="my-2 flex items-center gap-2" role="separator" aria-label="여기부터 새 활동">
+                <span className="h-px flex-1 bg-danger-border" />
+                <span className="rounded-full bg-danger-bg px-1.5 py-0.5 text-micro font-semibold text-danger-text">
+                  여기부터 새 활동
+                </span>
+                <span className="h-px flex-1 bg-danger-border" />
+              </div>
             )}
-          </div>
-        </li>
-      ))}
+
+            <div className={cn('group flex gap-2', grouped ? 'py-0.5' : 'pt-2.5 first:pt-0')}>
+              <span className="w-5 shrink-0">
+                {!grouped && <Avatar name={item.actor} size="md" />}
+                {grouped && (
+                  <time className="hidden pt-0.5 text-micro tabular text-fg-disabled group-hover:block">
+                    {new Date(item.at).toLocaleTimeString('ko-KR', { hour: '2-digit', minute: '2-digit' })}
+                  </time>
+                )}
+              </span>
+
+              <div className="min-w-0 flex-1">
+                {item.type === 'comment' ? (
+                  <>
+                    {!grouped && (
+                      <div className="flex items-baseline gap-1.5">
+                        <span className="text-base font-medium text-fg-primary">{item.actor}</span>
+                        <time className="text-micro text-fg-tertiary">{formatRelative(item.at)}</time>
+                      </div>
+                    )}
+                    <div className={cn(
+                      'rounded-md border border-line-subtle bg-bg-sunken px-2.5 py-2 text-base leading-5 text-fg-secondary',
+                      !grouped && 'mt-1',
+                    )}>
+                      {item.body}
+                    </div>
+                  </>
+                ) : item.type === 'created' ? (
+                  <p className="text-sm leading-5 text-fg-tertiary">
+                    <span className="font-medium text-fg-secondary">{item.actor}</span>
+                    {' 님이 생성 '}
+                    <time className="text-micro">{formatRelative(item.at)}</time>
+                  </p>
+                ) : (
+                  <p className="flex flex-wrap items-center gap-1 text-sm leading-5 text-fg-tertiary">
+                    {!grouped && <span className="font-medium text-fg-secondary">{item.actor}</span>}
+                    <span>{fieldByKey[item.field]?.label ?? item.field}</span>
+                    <ChangeValue field={fieldByKey[item.field]} value={item.from} muted />
+                    <span aria-hidden="true">→</span>
+                    <ChangeValue field={fieldByKey[item.field]} value={item.to} />
+                    {!grouped && <time className="text-micro">{formatRelative(item.at)}</time>}
+                  </p>
+                )}
+              </div>
+            </div>
+          </li>
+        )
+      })}
     </ol>
   )
 }

@@ -2,6 +2,7 @@ import { useMemo, useState } from 'react'
 import {
   AppShell, PageContainer, PageHeader,
   Sidebar, SidebarGroup, SidebarItem, WorkspaceSwitcher, SavedViewList,
+  WorkspaceRail, SidebarUser,
   Topbar, Breadcrumb,
   DataGrid, GridCard, GridToolbar, GridPagination,
   BoardView, ViewTabs, ViewSwitcher, GroupByPicker,
@@ -50,6 +51,9 @@ export function ListPage({ initialQuery }) {
   const [confirmDelete, setConfirmDelete] = useState(false)
   const [page, setPage] = useState(1)
   const [helpOpen, setHelpOpen] = useState(false)
+  /* 이 시점 이후의 활동을 '새 활동'으로 표시합니다.
+     실제 앱에서는 사용자별 마지막 확인 시각을 서버가 보관합니다. */
+  const [lastSeenAt] = useState(() => new Date(Date.now() - 1000).toISOString())
   const [columns, setColumns] = useState(
     ['id', 'title', 'status', 'priority', 'owner', 'errors', 'updatedAt'],
   )
@@ -124,18 +128,36 @@ export function ListPage({ initialQuery }) {
     <>
       <AppShell
         sidebar={
-          <Sidebar header={<WorkspaceSwitcher name="HCT 운영" subtitle="프로덕션" />}>
+          <Sidebar
+            /* 워크스페이스 레일 — 환경을 오가는 상위 축. 사이드바 밖에 둡니다. */
+            rail={
+              <WorkspaceRail
+                activeId="prod"
+                items={[
+                  { id: 'prod', label: 'HCT 프로덕션', initial: 'P' },
+                  { id: 'stg', label: 'HCT 스테이징', initial: 'S', badge: 2 },
+                  { id: 'dev', label: 'HCT 개발', initial: 'D' },
+                ]}
+              />
+            }
+            header={<WorkspaceSwitcher name="HCT 운영" subtitle="프로덕션" />}
+            footer={<SidebarUser name="김민수" status="online" detail="운영팀" />}
+          >
             <SidebarGroup label="분석">
               <SidebarItem icon={<NavIcons.Dashboard />} label="대시보드" />
             </SidebarGroup>
 
+            {/* 안읽음은 굵기로, 나를 부른 것은 빨간 배지로.
+                둘을 구분하지 않으면 모든 숫자가 똑같이 급해 보입니다. */}
             <SidebarGroup label="운영">
               <SidebarItem icon={<NavIcons.List />} label="요청" active badge={records.length} />
-              <SidebarItem icon={<NavIcons.Alert />} label="알림" badge={3} />
+              <SidebarItem icon={<NavIcons.Alert />} label="알림" unread mentions={3} />
+              <SidebarItem icon={<NavIcons.Inbox />} label="보관함" badge={12} />
             </SidebarGroup>
 
-            {/* 저장된 뷰가 곧 내비게이션 — 개발자가 아니라 사용자가 만든 항목들 */}
-            <SidebarGroup label="내 뷰">
+            {/* 저장된 뷰가 곧 내비게이션 — 개발자가 아니라 사용자가 만든 항목들.
+                항목이 늘어나는 그룹이라 접을 수 있게 합니다. */}
+            <SidebarGroup label="내 뷰" collapsible count={viewsWithCounts.length}>
               <SavedViewList
                 views={viewsWithCounts}
                 activeViewId={activeViewId}
@@ -164,6 +186,7 @@ export function ListPage({ initialQuery }) {
                 detailFields={['priority', 'owner', 'system', 'errors', 'tags', 'updatedAt']}
                 onEdit={(key, value) => editRecord(detailRecord, key, value)}
                 activity={activityOf(detailRecord.id)}
+                lastSeenAt={lastSeenAt}
                 onAddComment={(body) => addComment(detailRecord.id, body)}
                 onToggleWatch={() => {}}
                 watchers={['김민수', '이서연']}

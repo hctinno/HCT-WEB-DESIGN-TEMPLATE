@@ -217,6 +217,52 @@ const accent = getComputedStyle(document.documentElement)
 
 ---
 
+## 3-1. 사이드바 안에서는 sidebar-* 토큰만 쓰세요
+
+사이드바는 본문과 **밝기가 다를 수 있습니다.** 팔레트에 따라 라이트 테마에서도
+사이드바만 어두울 수 있습니다(플럼 팔레트가 그렇습니다).
+
+```jsx
+<span className="text-fg-primary">…</span>     {/* 나쁨 — 어두운 사이드바에서 사라집니다 */}
+<span className="text-sidebar-fg">…</span>     {/* 좋음 */}
+```
+
+| 토큰 | 용도 |
+|---|---|
+| `bg-sidebar-bg` / `bg-sidebar-rail` | 사이드바 · 워크스페이스 레일 배경 |
+| `text-sidebar-fg` / `-muted` / `-subtle` | 본문 · 보조 · 흐림 |
+| `bg-sidebar-hover` | 호버 |
+| `bg-sidebar-active-bg` / `text-sidebar-active-fg` | 선택된 항목 |
+| `border-sidebar-border` | 구분선 |
+| `bg-sidebar-badge-bg` / `text-sidebar-badge-fg` | 멘션 배지 |
+
+### 안읽음은 세 가지를 구분합니다
+
+```jsx
+<SidebarItem label="알림" unread mentions={3} />   {/* 굵게 + 빨간 배지 */}
+<SidebarItem label="보관함" badge={12} />          {/* 중립 카운트 */}
+```
+
+| | 의미 | 표현 |
+|---|---|---|
+| `unread` | 새 내용이 있음 | 글자가 굵고 진해짐 (배지 없이도 눈에 띔) |
+| `mentions` | **나를** 직접 부름 | 빨간 배지에 숫자 |
+| `badge` | 참고 수치 | 흐린 숫자 |
+
+셋을 구분하지 않고 전부 배지로 만들면 모든 숫자가 똑같이 급해 보여서
+결국 아무것도 급하지 않게 됩니다.
+
+### 항목이 늘어나는 그룹은 접히게
+
+```jsx
+<SidebarGroup label="내 뷰" collapsible count={views.length}>
+```
+
+저장된 뷰나 채널처럼 사용자가 계속 추가하는 목록은 반드시 `collapsible` 을
+켜세요. 사이드바가 수십 개를 견디는 유일한 방법입니다.
+
+---
+
 ## 4. 레이아웃 — 모든 화면은 앱 셸 안에
 
 ```jsx
@@ -652,7 +698,8 @@ npm run tokens:build
 
 | id | 이름 | 성격 |
 |---|---|---|
-| `graphite` | 그래파이트 | 무채색 강조 · 따뜻한 중성색 (**기본값**) |
+| `plum` | 플럼 | 어두운 사이드바 · 밝은 콘텐츠 (**기본값**) |
+| `graphite` | 그래파이트 | 무채색 강조 · 따뜻한 중성색 |
 | `blue` | 딥블루 | 깊은 코발트 · 차가운 중성색 |
 | `indigo` | 인디고 | 채도 낮춘 남보라 · 중립 회색 |
 | `azure` | 애저 | 기본 파랑 (초기 버전, 비교용) |

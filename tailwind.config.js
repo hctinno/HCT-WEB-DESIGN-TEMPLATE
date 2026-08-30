@@ -84,6 +84,21 @@ export default {
         text: 'var(--color-review-text)', solid: 'var(--color-review-solid)',
       },
 
+      /* 사이드바 전용 — 본문과 밝기가 다를 수 있습니다 */
+      sidebar: {
+        bg: 'var(--color-sidebar-bg)',
+        fg: 'var(--color-sidebar-fg)',
+        muted: 'var(--color-sidebar-fg-muted)',
+        subtle: 'var(--color-sidebar-fg-subtle)',
+        hover: 'var(--color-sidebar-hover)',
+        'active-bg': 'var(--color-sidebar-active-bg)',
+        'active-fg': 'var(--color-sidebar-active-fg)',
+        border: 'var(--color-sidebar-border)',
+        'badge-bg': 'var(--color-sidebar-badge-bg)',
+        'badge-fg': 'var(--color-sidebar-badge-fg)',
+        rail: 'var(--color-sidebar-rail-bg)',
+      },
+
       /* 차트 계열 색 — 고정 순서로만 배정합니다 */
       chart: {
         1: 'var(--chart-1)', 2: 'var(--chart-2)', 3: 'var(--chart-3)',
@@ -146,6 +161,7 @@ export default {
       width: {
         sidebar: 'var(--layout-sidebar-width)',
         'sidebar-collapsed': 'var(--layout-sidebar-collapsed-width)',
+        rail: 'var(--layout-rail-width)',
         panel: 'var(--layout-right-panel-width)',
         'panel-wide': 'var(--layout-right-panel-wide-width)',
       },

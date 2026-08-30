@@ -112,6 +112,7 @@
   /* --- 레이아웃 규격 (모드 무관) ----------------------------------------- */
   --layout-sidebar-width: 240px;
   --layout-sidebar-collapsed-width: 56px;
+  --layout-rail-width: 56px;
   --layout-topbar-height: 48px;
   --layout-right-panel-width: 360px;
   --layout-right-panel-wide-width: 480px;
@@ -137,6 +138,23 @@
   --easing-enter: cubic-bezier(0, 0, 0.2, 1);
   --easing-exit: cubic-bezier(0.4, 0, 1, 1);
 
+
+
+  /* --- 사이드바 전용 색 --------------------------------------------------
+     사이드바는 본문과 밝기가 다를 수 있어야 합니다(슬랙식 어두운 사이드바).
+     전역 fg 토큰을 그대로 쓰면 배경만 어둡게 했을 때 글자가 사라집니다.
+     팔레트가 이 값들을 통째로 덮어써서 밝기를 고릅니다. */
+  --color-sidebar-bg: var(--hct-neutral-50);
+  --color-sidebar-fg: var(--hct-neutral-900);
+  --color-sidebar-fg-muted: var(--hct-neutral-700);
+  --color-sidebar-fg-subtle: var(--hct-neutral-600);
+  --color-sidebar-hover: var(--hct-neutral-100);
+  --color-sidebar-active-bg: var(--color-accent-subtle);
+  --color-sidebar-active-fg: var(--color-accent-text);
+  --color-sidebar-border: var(--hct-neutral-200);
+  --color-sidebar-badge-bg: var(--color-danger-solid);
+  --color-sidebar-badge-fg: #FFFFFF;
+  --color-sidebar-rail-bg: var(--hct-neutral-100);
 
   /* --- 차트 계열 색 (팔레트와 무관하게 고정) ---------------------------
      상태 색을 시리즈 색으로 재사용하지 않기 위해 별도로 둡니다. 차트에서
@@ -230,6 +248,20 @@
     --shadow-lg: 0 8px 24px -4px rgb(0 0 0 / 0.6);
     --shadow-overlay: 0 16px 48px -8px rgb(0 0 0 / 0.7);
 
+
+  /* 사이드바 — 다크 */
+  --color-sidebar-bg: var(--color-bg-sunken);
+  --color-sidebar-fg: var(--color-text-primary);
+  --color-sidebar-fg-muted: var(--color-text-secondary);
+  --color-sidebar-fg-subtle: var(--color-text-tertiary);
+  --color-sidebar-hover: var(--color-bg-hover);
+  --color-sidebar-active-bg: var(--color-accent-subtle);
+  --color-sidebar-active-fg: var(--color-accent-text);
+  --color-sidebar-border: var(--color-border-subtle);
+  --color-sidebar-badge-bg: var(--color-danger-solid);
+  --color-sidebar-badge-fg: #FFFFFF;
+  --color-sidebar-rail-bg: var(--color-bg-canvas);
+
   /* 차트 계열 색 — 다크는 밝기만 올린 게 아니라 별도로 고른 단계입니다
      (다크 표면 기준으로 대비·색각 검증을 다시 통과한 값) */
   --chart-1: #5B8CF5;
@@ -311,6 +343,20 @@
   --shadow-md: 0 2px 8px -1px rgb(0 0 0 / 0.5);
   --shadow-lg: 0 8px 24px -4px rgb(0 0 0 / 0.6);
   --shadow-overlay: 0 16px 48px -8px rgb(0 0 0 / 0.7);
+
+
+  /* 사이드바 — 다크 */
+  --color-sidebar-bg: var(--color-bg-sunken);
+  --color-sidebar-fg: var(--color-text-primary);
+  --color-sidebar-fg-muted: var(--color-text-secondary);
+  --color-sidebar-fg-subtle: var(--color-text-tertiary);
+  --color-sidebar-hover: var(--color-bg-hover);
+  --color-sidebar-active-bg: var(--color-accent-subtle);
+  --color-sidebar-active-fg: var(--color-accent-text);
+  --color-sidebar-border: var(--color-border-subtle);
+  --color-sidebar-badge-bg: var(--color-danger-solid);
+  --color-sidebar-badge-fg: #FFFFFF;
+  --color-sidebar-rail-bg: var(--color-bg-canvas);
 
   /* 차트 계열 색 — 다크는 밝기만 올린 게 아니라 별도로 고른 단계입니다
      (다크 표면 기준으로 대비·색각 검증을 다시 통과한 값) */

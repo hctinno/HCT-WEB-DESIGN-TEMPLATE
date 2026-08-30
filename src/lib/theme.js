@@ -76,13 +76,14 @@ const PALETTE_KEY = 'hct-palette'
 /** 선택 가능한 팔레트. tokens/palettes.json 과 같은 순서를 유지하세요. */
 export const PALETTES = [
   { id: 'graphite', label: '그래파이트', tagline: '무채색 강조 · 따뜻한 중성색' },
+  { id: 'plum',     label: '플럼',       tagline: '어두운 사이드바 · 밝은 콘텐츠' },
   { id: 'blue',     label: '딥블루',     tagline: '깊은 코발트 · 차가운 중성색' },
   { id: 'indigo',   label: '인디고',     tagline: '채도 낮춘 남보라 · 중립 회색' },
   { id: 'azure',    label: '애저',       tagline: '기본 파랑 (기존)' },
 ]
 
 /** 제품 기본 팔레트. 조직이 정하면 이 값을 바꾸세요. */
-export const DEFAULT_PALETTE = 'graphite'
+export const DEFAULT_PALETTE = 'plum'
 
 export function getStoredPalette() {
   try {

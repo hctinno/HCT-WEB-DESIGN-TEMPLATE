@@ -1,4 +1,5 @@
 import { cn } from '../../lib/cn'
+import { SkeletonStatCard } from '../state/Skeleton'
 
 /**
  * StatCard — 대시보드 상단의 KPI 타일.
@@ -9,6 +10,8 @@ import { cn } from '../../lib/cn'
  *   - 증감의 좋고 나쁨은 지표마다 다릅니다(오류율은 감소가 좋음).
  *     invertDelta 로 색상 의미를 뒤집으세요.
  *   - 수치는 tabular 정렬이 적용되어 자릿수가 흔들리지 않습니다.
+ *   - 값이 아직 안 왔으면 카드를 감추지 말고 loading 을 켜세요. 카드가
+ *     나타났다 사라지면 그 아래 것들이 통째로 밀립니다.
  */
 export function StatCard({
   label,
@@ -20,9 +23,12 @@ export function StatCard({
   icon,
   footer,
   size = 'md',
+  loading = false,
   onClick,
   className,
 }) {
+  if (loading) return <SkeletonStatCard className={className} />
+
   const isPositive = typeof delta === 'number' && delta > 0
   const isNegative = typeof delta === 'number' && delta < 0
   const isGood = invertDelta ? isNegative : isPositive
@@ -81,15 +87,29 @@ export function StatCard({
   )
 }
 
-/** KPI 카드 격자. 반응형 열 수를 통일합니다. */
-export function StatGrid({ children, columns = 4, className }) {
+/**
+ * StatGrid — 작은 카드가 늘어서는 격자.
+ *
+ * 지표 타일, 사용량 카드, 건수 요약, 연동 카드처럼 **카드 하나가 한두
+ * 줄짜리**인 것들이 여기에 들어갑니다. 차트·위젯처럼 큰 것은 WidgetGrid 를
+ * 쓰세요 — 접히는 지점이 다릅니다.
+ *
+ * 이 컴포넌트가 있는 이유는 간격 때문입니다. 화면마다 격자를 직접 만들면
+ * `gap-2`, `gap-2.5`, `gap-3` 이 섞이고, 그 차이는 한 화면 안에서는 안
+ * 보이지만 화면을 넘나들면 "같은 제품이 아닌 것 같은" 느낌으로 남습니다.
+ * 실제로 이 저장소가 그랬습니다 — 7곳이 제각각이었습니다.
+ *
+ * @param {2|3|4} [props.columns] - 가장 넓을 때의 열 수
+ * @param {string} [props.as]     - 목록 의미가 있으면 'ul' (항목은 <li>)
+ */
+export function StatGrid({ children, columns = 4, as: Tag = 'div', className }) {
   const cols = {
     2: 'grid-cols-1 sm:grid-cols-2',
     3: 'grid-cols-1 sm:grid-cols-2 lg:grid-cols-3',
     4: 'grid-cols-1 sm:grid-cols-2 lg:grid-cols-4',
   }[columns] ?? 'grid-cols-1 sm:grid-cols-2 lg:grid-cols-4'
 
-  return <div className={cn('grid gap-3', cols, className)}>{children}</div>
+  return <Tag className={cn('grid gap-3', cols, className)}>{children}</Tag>
 }
 
 /**
@@ -147,17 +167,6 @@ export function ChartFrame({
         </div>
       )}
     </section>
-  )
-}
-
-/** 차트 범례 항목. 색 점 + 라벨 + (선택) 값. */
-export function LegendItem({ color, label, value }) {
-  return (
-    <span className="inline-flex items-center gap-1.5 text-xs text-fg-secondary">
-      <span className="h-2 w-2 shrink-0 rounded-sm" style={{ backgroundColor: color }} />
-      {label}
-      {value != null && <span className="font-medium tabular text-fg-primary">{value}</span>}
-    </span>
   )
 }
 

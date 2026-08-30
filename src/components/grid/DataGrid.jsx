@@ -255,17 +255,18 @@ export function DataGrid({
           둘러싸여 어느 행에 있는지가 오히려 흐려집니다. onFocus 에서
           focusedIndex 를 0 으로 올리므로 표시가 없는 순간은 없습니다.
           design-lint-disable-next-line no-focus-outline-removal */}
+      {/* 스크롤과 그리드 의미를 분리합니다.
+          예전에는 이 div 가 role="grid" 를 달고 안에 <table> 을 넣었는데,
+          role="grid" 는 row/rowgroup 만 자식으로 허용하므로 위반입니다
+          (axe: aria-required-children, critical). 스크롤은 div 가, 그리드
+          의미와 키보드 조작은 table 이 맡습니다. */}
       <div
-        {...keyboard.containerProps}
-        ref={(el) => {
-          keyboard.containerProps.ref.current = el
-          if (canVirtualize) virt.scrollRef.current = el
-        }}
+        ref={(el) => { if (canVirtualize) virt.scrollRef.current = el }}
         style={canVirtualize ? { maxHeight, overflowY: 'auto' } : undefined}
-        /* design-lint-disable-next-line no-focus-outline-removal */
-        className="overflow-x-auto scroll-thin focus:outline-none"
+        className="overflow-x-auto scroll-thin"
       >
-        <table className="w-full border-collapse text-left">
+        {/* design-lint-disable-next-line no-focus-outline-removal */}
+        <table {...keyboard.containerProps} className="w-full border-collapse text-left focus:outline-none">
           <thead className="sticky top-0 z-sticky bg-bg-sunken">
             <tr>
               {selectable && (

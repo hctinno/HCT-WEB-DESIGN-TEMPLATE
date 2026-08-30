@@ -56,20 +56,6 @@ export function PropertyRow({ label, children }) {
   )
 }
 
-/** 패널 내 섹션 구분 */
-export function PanelSection({ title, children, className }) {
-  return (
-    <section className={cn('mb-5 last:mb-0', className)}>
-      {title && (
-        <h3 className="mb-2 text-xs font-semibold uppercase tracking-[0.06em] text-fg-tertiary">
-          {title}
-        </h3>
-      )}
-      {children}
-    </section>
-  )
-}
-
 function CloseIcon() {
   return (
     <svg width="14" height="14" viewBox="0 0 14 14" fill="none" aria-hidden="true">

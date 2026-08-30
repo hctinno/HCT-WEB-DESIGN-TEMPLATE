@@ -199,8 +199,13 @@ export function SidebarItem({
                 {mentions > 99 ? '99+' : mentions}
               </span>
             )}
+            {/* 활성 항목은 배경이 강조색이라 sidebar-subtle 로는 2.66:1 밖에
+                안 나옵니다(axe: color-contrast). 그 위에서는 활성 글자색을 씁니다. */}
             {mentions == null && badge != null && (
-              <span className="shrink-0 text-micro tabular text-sidebar-subtle">
+              <span className={cn(
+                'shrink-0 text-micro tabular',
+                active ? 'text-sidebar-active-fg' : 'text-sidebar-subtle',
+              )}>
                 {badge}
               </span>
             )}

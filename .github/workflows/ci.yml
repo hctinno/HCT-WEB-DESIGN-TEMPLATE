@@ -27,6 +27,12 @@ jobs:
       - name: 디자인 규칙
         run: npm run lint:design
 
+      # 아무도 안 쓰는 공개 컴포넌트는 다음 에이전트의 선택지만 늘립니다.
+      # 화면 원형이 한 번도 안 쓴 것은 "필요 없는데 만든 것" 이거나
+      # "쓰라고 만들었는데 아무도 모르는 것" 입니다 — 둘 다 확인이 필요합니다.
+      - name: 미사용 공개 컴포넌트
+        run: npm run audit:exports
+
       # 팔레트 CSS 와 v4 테마는 생성물입니다. 원본만 고치고 재생성을 잊으면
       # 화면과 토큰이 어긋나므로, 생성 결과가 커밋된 것과 같은지 확인합니다.
       # v4 테마는 이 저장소의 미리보기가 쓰지 않아(미리보기는 v3), 여기서
@@ -42,6 +48,25 @@ jobs:
 
       - name: 미리보기 빌드
         run: npm run build
+
+  # 접근성은 "협상 불가" 라고 문서에 적어두었으니 기계가 재야 합니다.
+  # 대비 미달·이름 없는 컨트롤·중복 id 는 화면을 봐도 멀쩡해 보입니다.
+  # 개발 서버가 아니라 **운영 빌드**를 검사합니다(개발 서버의 오류 오버레이가
+  # 제품과 무관한 위반을 수백 건 만들어냅니다).
+  a11y:
+    runs-on: ubuntu-latest
+    needs: verify
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+
+      - name: 전 화면 접근성 검사 (WCAG 2.1 A/AA)
+        run: |
+          npm install --no-audit --no-fund
+          npx playwright install --with-deps chromium
+          npm run audit:a11y
 
   # 다른 프로젝트에서 설치했을 때 실제로 동작하는지까지 확인합니다.
   # Tailwind v3 와 v4 양쪽으로 진짜 프로젝트를 만들어 설치하고 빌드합니다.

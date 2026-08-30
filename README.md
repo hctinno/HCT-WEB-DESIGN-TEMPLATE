@@ -146,6 +146,9 @@ npm i github:dytc880915-commits/hct-web-design-template#v1.0.0
 달라지는" 일이라, 원인을 찾기가 매우 어렵습니다.
 
 올릴 때는 [CHANGELOG.md](./CHANGELOG.md) 를 보고 태그를 바꿔 다시 설치합니다.
+위 명령의 태그는 **지금 실제로 내려받을 수 있는 판**입니다. 저장소의
+`package.json` 이 더 앞서 있을 수 있는데, 태그를 찍기 전까지 그 판은 아직
+아무도 설치할 수 없습니다.
 
 Tailwind **3.x 와 4.x 를 모두 지원**합니다. 설정 방법이 다르니 쓰는 버전 쪽만
 보세요. 토큰은 한 곳(`tailwind-preset.js`)에서 나오고 v4 용 `@theme` 은 거기서
@@ -251,6 +254,8 @@ export function EquipmentPage() {
 ```bash
 npm run tokens:build      # 팔레트 CSS + v4 @theme 재생성 (원본을 고쳤다면)
 npm run lint:design       # 디자인 규칙
+npm run audit:exports     # 아무도 안 쓰는 공개 컴포넌트
+npm run audit:a11y        # 전 화면 접근성 (WCAG 2.1 A/AA)
 npm run verify:consumer   # v3·v4 로 진짜 설치해서 빌드
 
 # package.json 의 version 을 올리고 CHANGELOG.md 에 항목을 추가한 뒤

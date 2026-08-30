@@ -12,7 +12,14 @@ import { StatusBadge } from './StatusBadge'
  */
 
 /** 값이 있는 진행 막대 */
-export function Progress({ value, max = 100, label, tone = 'accent', size = 'md', className }) {
+/**
+ * @param {string} [props.label] - 눈에 보이는 라벨. 있으면 접근 가능한 이름도 됩니다.
+ * @param {string} [props.name]  - 라벨을 화면에 안 쓸 때의 접근 가능한 이름.
+ *
+ * 둘 다 없으면 스크린리더에는 "진행률 23" 이라고만 읽혀 무엇의 진행인지
+ * 알 수 없습니다(axe: aria-progressbar-name, serious). 하나는 반드시 주세요.
+ */
+export function Progress({ value, max = 100, label, name, tone = 'accent', size = 'md', className }) {
   const pct = Math.max(0, Math.min(100, (value / max) * 100))
   const TONE = {
     accent: 'bg-accent-solid',
@@ -35,7 +42,7 @@ export function Progress({ value, max = 100, label, tone = 'accent', size = 'md'
         aria-valuenow={value}
         aria-valuemin={0}
         aria-valuemax={max}
-        aria-label={label}
+        aria-label={label ?? name}
         className={cn('overflow-hidden rounded-full bg-bg-sunken', size === 'sm' ? 'h-1' : 'h-1.5')}
       >
         <div

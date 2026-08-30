@@ -3,10 +3,10 @@ import {
   PageContainer, PageHeader,
   DataGrid, GridCard, GridToolbar,
   Button, SegmentedControl, Banner,
-  CommandPalette, CommandPaletteTrigger,
+  CommandPalette, CommandPaletteTrigger, StatGrid,
   fieldMap, emptyQuery,
 } from '../components'
-import { MetricTile, BreakdownList, Widget } from '../components/dashboard/MetricTile'
+import { MetricTile, BreakdownList, Widget, WidgetGrid } from '../components/dashboard/MetricTile'
 import { LineChart } from '../components/chart/LineChart'
 import { BarChart, ChartTable } from '../components/chart/BarChart'
 import { assignSeriesColors, STATUS_CHART_COLOR } from '../components/chart/chartTokens'
@@ -210,7 +210,7 @@ export function DashboardPage({ onDrillDown, onNavigate }) {
           )}
 
           {/* 지표 타일 — 각각이 질의입니다 */}
-          <div className="mb-3 grid gap-2.5 sm:grid-cols-2 lg:grid-cols-4">
+          <StatGrid columns={4} className="mb-3">
             {computed.map((m) => (
               <MetricTile
                 key={m.id}
@@ -228,7 +228,7 @@ export function DashboardPage({ onDrillDown, onNavigate }) {
                 onDrillDown={() => onDrillDown?.(m.query)}
               />
             ))}
-          </div>
+          </StatGrid>
 
           {/* 시계열 — 단위가 같은 계열만 한 축에 겹칩니다. 이중 축은 쓰지 않습니다. */}
           <Widget
@@ -239,7 +239,7 @@ export function DashboardPage({ onDrillDown, onNavigate }) {
             <LineChart series={trend.series} labels={trend.labels} height={200} area />
           </Widget>
 
-          <div className="mb-2.5 grid gap-2.5 lg:grid-cols-2">
+          <WidgetGrid columns={2} className="mb-3">
             <Widget
               title="시스템 × 상태"
               description="누적 막대. 상태를 그리므로 계열 색이 아니라 상태 색을 씁니다."
@@ -272,9 +272,9 @@ export function DashboardPage({ onDrillDown, onNavigate }) {
                 height={200}
               />
             </Widget>
-          </div>
+          </WidgetGrid>
 
-          <div className="mb-3 grid gap-2.5 lg:grid-cols-3">
+          <WidgetGrid columns={3} className="mb-3">
             {/* 분해 — 차원을 바꿔가며 원인을 좁힙니다 */}
             <Widget
               className="lg:col-span-2"
@@ -306,7 +306,7 @@ export function DashboardPage({ onDrillDown, onNavigate }) {
                 onDrillDown={(item) => onDrillDown?.(item.query)}
               />
             </Widget>
-          </div>
+          </WidgetGrid>
 
           {/* 조치 필요 — 대시보드의 끝은 항상 행동입니다 */}
           <GridCard>

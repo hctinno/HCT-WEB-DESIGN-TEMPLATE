@@ -60,10 +60,10 @@ export function SkeletonTable({ rows = 6, columns = 4, density = 'default' }) {
   )
 }
 
-/** KPI 카드 로딩 */
-export function SkeletonStatCard() {
+/** KPI 카드 로딩 — StatCard 가 loading 일 때 이것으로 바뀝니다 */
+export function SkeletonStatCard({ className }) {
   return (
-    <div className="rounded-lg border border-line-subtle bg-bg-surface p-4">
+    <div className={cn('rounded-lg border border-line-subtle bg-bg-surface p-4', className)}>
       <Skeleton className="h-2.5 w-20" />
       <Skeleton className="mt-3 h-6 w-24" />
       <Skeleton className="mt-2 h-2.5 w-16" />

@@ -3,7 +3,7 @@ import {
   PageContainer, PageHeader,
   Stepper, Dropzone, Button, Banner, SelectField, RadioCards,
   Progress, EmptyState, useToast,
-  DataGrid, GridCard,
+  DataGrid, GridCard, StatGrid,
 } from '../components'
 import { AppFrame } from './_shell'
 import { toTable } from '../lib/csv'
@@ -312,11 +312,11 @@ function ReviewStep({ table, fields, check, dupPolicy, onDupPolicy, importable, 
 
   return (
     <div className="max-w-[760px]">
-      <div className="mb-4 grid gap-2 sm:grid-cols-3">
+      <StatGrid columns={3} className="mb-4">
         <Count label="가져올 수 있음" value={importable} tone="success" />
         <Count label="오류로 제외" value={summary.failed} tone={summary.failed > 0 ? 'danger' : 'neutral'} />
         <Count label="이미 있는 항목" value={summary.duplicates} tone={summary.duplicates > 0 ? 'warning' : 'neutral'} />
-      </div>
+      </StatGrid>
 
       {summary.duplicates > 0 && (
         <div className="mb-4 rounded-lg border border-line-subtle bg-bg-surface p-3">

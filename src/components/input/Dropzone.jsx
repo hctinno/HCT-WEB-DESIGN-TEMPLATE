@@ -92,10 +92,13 @@ export function Dropzone({
         >
           컴퓨터에서 선택
         </button>
+        {/* sr-only 라도 이름이 필요합니다. 스크린리더에는 "파일 선택 버튼"
+            이라고만 읽혀 무엇을 올리는 자리인지 알 수 없습니다. */}
         <input
           ref={inputRef}
           type="file"
           accept={accept}
+          aria-label={`${accept} 파일 선택`}
           className="sr-only"
           onChange={(e) => take(e.target.files?.[0])}
         />

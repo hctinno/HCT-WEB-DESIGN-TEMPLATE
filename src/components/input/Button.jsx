@@ -85,11 +85,6 @@ export function IconButton({ icon, label, variant = 'ghost', size = 'md', classN
   )
 }
 
-/** 버튼 묶음. 간격을 통일합니다. */
-export function ButtonGroup({ children, className }) {
-  return <div className={cn('flex items-center gap-2', className)}>{children}</div>
-}
-
 function Spinner() {
   return (
     <svg width="14" height="14" viewBox="0 0 14 14" fill="none" aria-hidden="true" className="animate-spin">

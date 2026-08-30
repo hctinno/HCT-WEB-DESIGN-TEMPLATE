@@ -38,23 +38,6 @@ export function assignSeriesColors(keys = []) {
   return map
 }
 
-/**
- * 계열이 너무 많으면 상위 N개만 두고 나머지를 '기타'로 접습니다.
- * @param {{key: string, value: number}[]} items
- * @param {number} [limit]
- */
-export function foldToOther(items = [], limit = MAX_SERIES) {
-  if (items.length <= limit) return items
-  const sorted = [...items].sort((a, b) => b.value - a.value)
-  const head = sorted.slice(0, limit - 1)
-  const rest = sorted.slice(limit - 1)
-  return [...head, {
-    key: '__other__',
-    label: `기타 ${rest.length}개`,
-    value: rest.reduce((sum, r) => sum + r.value, 0),
-  }]
-}
-
 /** 상태 필드를 그릴 때 쓰는 색 — StatusBadge 와 동일해야 합니다 */
 export const STATUS_CHART_COLOR = {
   todo: 'var(--color-neutral-solid)',

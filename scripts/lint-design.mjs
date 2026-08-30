@@ -136,6 +136,21 @@ const RULES = [
     test: (line) => /\b(?:bg|text|border|ring|fill|stroke|outline|decoration)-\[(?!var\(|--)[a-zA-Z]+\]/.test(line),
   },
   {
+    id: 'no-adhoc-card-grid',
+    severity: 'error',
+    message:
+      '카드 격자를 직접 만들지 마세요. 작은 카드는 <StatGrid columns={2|3|4}>, ' +
+      '차트·위젯은 <WidgetGrid columns={2|3}> 을 쓰세요. ' +
+      '직접 만들면 간격이 화면마다 갈라집니다(실제로 gap-2·2.5·3 이 섞여 있었습니다).',
+    /* 화면 원형은 에이전트가 복사하는 본보기입니다. 여기서 격자를 직접
+       만들면 그 방식이 그대로 퍼집니다. 정의부(StatCard·MetricTile)와
+       폼처럼 카드가 아닌 격자(gap-x/gap-y 를 쓰는 정의 목록 등)는 뺍니다. */
+    test: (line, file) => file.startsWith('src/pages/')
+      && /\bgrid\b/.test(line)
+      && /\bgap-\d/.test(line)
+      && /\bgrid-cols-\d/.test(line),
+  },
+  {
     id: 'no-dark-class',
     severity: 'error',
     message: 'dark: 변형을 직접 쓰지 마세요. 시맨틱 토큰이 두 모드를 자동 처리합니다.',

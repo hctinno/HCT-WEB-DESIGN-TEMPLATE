@@ -194,7 +194,9 @@ export function ErrorPagesDemo({ onNavigate }) {
       {which === 'maintenance' && <MaintenancePage />}
 
       <div className="fixed left-1/2 top-16 z-overlay flex -translate-x-1/2 items-center gap-2 rounded-lg border border-line-default bg-bg-raised py-1 pl-2.5 pr-1 shadow-overlay">
-        <span className="text-micro font-semibold uppercase tracking-[0.06em] text-fg-tertiary">
+        {/* fg-tertiary 는 11px 에서 4.44:1 로 기준(4.5)에 살짝 못 미칩니다.
+            작은 글자일수록 한 단계 진한 색이 필요합니다. */}
+        <span className="text-micro font-semibold uppercase tracking-[0.06em] text-fg-secondary">
           미리보기
         </span>
         <SegmentedControl size="sm" value={which} onChange={setWhich} options={CASES} />

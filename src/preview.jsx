@@ -19,7 +19,7 @@ import { JobsPage } from './pages/JobsPage'
 import { IntegrationsPage } from './pages/IntegrationsPage'
 import { OnboardingPage } from './pages/OnboardingPage'
 import { BillingPage } from './pages/BillingPage'
-import { applyTheme, getStoredTheme, applyPalette, getStoredPalette, PALETTES } from './lib/theme'
+import { applyTheme, getStoredTheme, applyPalette, getStoredPalette, initTheme, initPalette, PALETTES } from './lib/theme'
 import { ToastProvider } from './components/feedback/Toast'
 
 /**
@@ -281,6 +281,21 @@ function Chip({ active, onClick, children }) {
     </button>
   )
 }
+
+/*
+ * 테마·팔레트는 **렌더 전에** 적용합니다.
+ *
+ * 아래 Preview 는 useEffect 에서 applyTheme 을 부르는데, effect 는 첫
+ * 페인트 다음에 돕니다. 다크를 선택해 둔 사람에게 흰 화면이 한 번
+ * 번쩍이고 어두워집니다. 저장된 값을 아는 시점이 렌더 전인데 굳이
+ * 렌더 뒤까지 기다릴 이유가 없습니다.
+ *
+ * 소비 프로젝트도 같습니다 — 진입점 맨 위에서 이 둘을 부르세요.
+ * 번들 로딩 자체를 기다리는 것조차 싫다면 <head> 인라인 스크립트에서
+ * data-theme / data-palette 속성을 직접 찍으면 됩니다.
+ */
+initTheme()
+initPalette()
 
 createRoot(document.getElementById('root')).render(
   <ToastProvider>

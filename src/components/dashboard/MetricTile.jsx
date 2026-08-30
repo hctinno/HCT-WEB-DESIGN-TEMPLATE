@@ -1,4 +1,5 @@
 import { cn } from '../../lib/cn'
+import { SkeletonText } from '../state/Skeleton'
 import { StatusBadge } from '../feedback/StatusBadge'
 
 /**
@@ -223,8 +224,14 @@ const BAR_BY_STATUS = {
   failed: 'bg-danger-solid',
 }
 
-/** 위젯 껍데기 — 제목·액션·본문의 간격을 통일합니다 */
-export function Widget({ title, description, actions, children, footer, className }) {
+/**
+ * 위젯 껍데기 — 제목·액션·본문의 간격을 통일합니다.
+ *
+ * loading 을 켜면 제목은 그대로 두고 본문만 스켈레톤이 됩니다. 위젯 전체를
+ * 감추면 격자가 다시 짜여서 옆 위젯까지 자리를 옮깁니다 — 다 불러온 뒤에
+ * 사용자가 보던 곳이 딴 데 가 있습니다.
+ */
+export function Widget({ title, description, actions, children, footer, loading = false, className }) {
   return (
     <section className={cn('flex flex-col rounded-lg border border-line-subtle bg-bg-surface', className)}>
       <div className="flex items-start justify-between gap-2 px-3 pb-2 pt-2.5">
@@ -234,8 +241,30 @@ export function Widget({ title, description, actions, children, footer, classNam
         </div>
         {actions && <div className="flex shrink-0 items-center gap-1">{actions}</div>}
       </div>
-      <div className="min-h-0 flex-1 px-3 pb-3">{children}</div>
+      <div className="min-h-0 flex-1 px-3 pb-3">
+        {loading
+          ? <div role="status" aria-label="불러오는 중"><SkeletonText lines={5} /></div>
+          : children}
+      </div>
       {footer && <div className="border-t border-line-subtle px-3 py-2">{footer}</div>}
     </section>
   )
+}
+
+/**
+ * WidgetGrid — 위젯·차트가 늘어서는 격자.
+ *
+ * StatGrid 와 나뉘어 있는 이유는 **접히는 지점이 다르기 때문**입니다.
+ * 지표 타일은 640px(sm)부터 두 열로 놔도 읽히지만, 축과 범례가 있는 차트를
+ * 640px 에서 반으로 자르면 눈금이 겹쳐서 못 읽습니다. 위젯은 1024px(lg)
+ * 전까지 한 열입니다.
+ *
+ * 넓은 위젯 하나와 좁은 위젯 하나를 나란히 두려면 columns={3} 에
+ * `className="lg:col-span-2"` 를 넓은 쪽에 주세요.
+ *
+ * @param {2|3} [props.columns] - lg 이상에서의 열 수
+ */
+export function WidgetGrid({ children, columns = 2, className }) {
+  const cols = columns === 3 ? 'lg:grid-cols-3' : 'lg:grid-cols-2'
+  return <div className={cn('grid gap-3', cols, className)}>{children}</div>
 }

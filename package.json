@@ -1,6 +1,6 @@
 {
   "name": "hct-web-design-template",
-  "version": "1.0.2",
+  "version": "1.1.0",
   "type": "module",
   "description": "HCT 대시보드·분석도구·관리도구용 디자인 시스템 템플릿",
   "scripts": {
@@ -10,6 +10,8 @@
     "build:standalone": "node scripts/build-standalone.mjs",
     "preview": "vite preview",
     "lint:design": "node scripts/lint-design.mjs src",
+    "audit:a11y": "npm run build && node scripts/audit-a11y.mjs",
+    "audit:exports": "node scripts/audit-exports.mjs",
     "verify:consumer": "npm pack --pack-destination /tmp && node scripts/verify-consumer.mjs /tmp/hct-web-design-template-$npm_package_version.tgz",
     "tokens:build": "node scripts/build-palettes.mjs && node scripts/build-v4-theme.mjs",
     "prepare": "npm run build:lib"
@@ -22,6 +24,8 @@
   "devDependencies": {
     "@vitejs/plugin-react": "^4.3.4",
     "autoprefixer": "^10.4.20",
+    "axe-core": "^4.13.0",
+    "playwright": "^1.62.1",
     "postcss": "^8.4.49",
     "react": "^18.3.1",
     "react-dom": "^18.3.1",

@@ -130,7 +130,7 @@ import {
   AppShell, PageContainer, PageHeader,
   Sidebar, SidebarGroup, SidebarItem,
   Topbar, Breadcrumb,
-  DataTable, TableCard, StatCard, StatGrid,
+  DataTable, TableCard, StatCard, StatGrid, WidgetGrid,
   StatusBadge, Button, EmptyState,
 } from '@/components'
 ```
@@ -446,6 +446,27 @@ const accent = getComputedStyle(document.documentElement)
   스케일 밖 값(`h-7`, `pl-7`, `p-[13px]`)은 CSS 가 생성되지 않아 조용히 무시됩니다.
 - 컨트롤 높이: `h-control-sm`(28) `h-control-md`(32) `h-control-lg`(36)
 - 모서리는 작게: 최대 `rounded-xl`(12px). `rounded-2xl` 이상은 이 시스템에 없습니다.
+
+### 카드 격자를 직접 만들지 마세요
+
+```jsx
+<StatGrid columns={4}>...</StatGrid>       {/* 지표 타일·요약 카드 — sm 부터 2열 */}
+<WidgetGrid columns={2}>...</WidgetGrid>   {/* 차트·위젯 — lg 전까지 1열 */}
+```
+
+둘로 나뉘어 있는 이유는 **접히는 지점이 다르기 때문**입니다. 지표 타일은
+640px 에서 두 열로 놔도 읽히지만, 축과 범례가 있는 차트를 640px 에서 반으로
+자르면 눈금이 겹쳐 못 읽습니다.
+
+`grid gap-3 lg:grid-cols-2` 를 화면에서 직접 쓰면 검사에서 실패합니다
+(`no-adhoc-card-grid`). 왜 막느냐면, 실제로 이 저장소의 화면 7곳이 격자를
+직접 만들면서 간격이 `gap-2` · `gap-2.5` · `gap-3` 으로 갈라져 있었기
+때문입니다. 그 2px 차이는 한 화면 안에서는 안 보이지만 화면을 넘나들면
+"같은 제품이 아닌 것 같은" 느낌으로 남습니다. 눈으로는 못 찾고 세어봐야
+찾힙니다.
+
+넓은 위젯과 좁은 위젯을 나란히 두려면 `columns={3}` 에 넓은 쪽만
+`className="lg:col-span-2"` 를 주세요.
 
 ### 한국어 텍스트
 
@@ -853,6 +874,20 @@ const form = useForm({ initialValues, validate, onSubmit })
 npm run lint:design    # 디자인 규칙 (반드시 통과)
 ```
 
+눈으로 훑어서는 안 잡히는 것들이 있습니다. 대비 미달, 이름 없는 컨트롤,
+중복 id, 중첩된 조작 요소 — 전부 화면을 봐도 멀쩡해 보입니다. 그래서
+재는 도구를 씁니다:
+
+```bash
+npm run audit:a11y     # 전 화면 × 2폭 × 2테마 를 axe-core 로 검사 (WCAG 2.1 A/AA)
+npm run audit:exports  # 아무도 안 쓰는 공개 컴포넌트 찾기
+```
+
+`audit:exports` 가 무언가를 찾아냈다면 둘 중 하나입니다: **필요 없는데
+만든 것**이거나, **쓰라고 만들었는데 아무도 모르는 것**. 앞이면 지우고,
+뒤면 화면 원형 중 하나가 실제로 쓰게 하세요. 공개 목록에 아무도 안 쓰는
+것이 남아 있으면 다음 에이전트의 선택지만 늘어납니다.
+
 이 저장소 자체를 고쳤다면 배포 형태도 함께 확인합니다 — 저장소 안에서는 잘
 돌아가는데 설치한 쪽에서만 깨지는 사고가 실제로 있었습니다:
 
@@ -871,7 +906,8 @@ npm run tokens:build      # 팔레트 CSS + v4 @theme 재생성
 
 - [ ] 다크 모드에서 열어봤는가 (`document.documentElement.dataset.theme = 'dark'`)
 - [ ] 데이터 0건일 때 화면이 비어 보이지 않는가
-- [ ] 로딩 중 레이아웃이 흔들리지 않는가
+- [ ] 로딩 중 레이아웃이 흔들리지 않는가 (카드·위젯은 감추지 말고
+      `loading` 을 켜세요 — 사라졌다 나타나면 아래 것들이 통째로 밀립니다)
 - [ ] **390px 에서 열어봤는가** — 데스크톱만 보면 반드시 놓칩니다.
       제목과 액션이 겹쳐 제목이 잘리거나, 단계 이름이 "1 파... 2 열..." 로
       뭉개지는 식으로 깨집니다(둘 다 실제로 겪었습니다)

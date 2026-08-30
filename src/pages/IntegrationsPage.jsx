@@ -2,7 +2,7 @@ import { useMemo, useState } from 'react'
 import {
   PageContainer, PageHeader,
   Button, Banner, StatusBadge, SegmentedControl, SecretField, TextField,
-  Modal, ConfirmDialog, EmptyState, Switch,
+  Modal, ConfirmDialog, EmptyState, Switch, StatGrid,
   formatRelative, useToast,
 } from '../components'
 import { AppFrame } from './_shell'
@@ -132,7 +132,7 @@ function AppsTab() {
         </Banner>
       )}
 
-      <ul className="grid gap-2 md:grid-cols-2">
+      <StatGrid as="ul" columns={2}>
         {apps.map((app) => (
           <li key={app.id} className={
             'rounded-lg border bg-bg-surface p-3 ' +
@@ -168,7 +168,7 @@ function AppsTab() {
             </div>
           </li>
         ))}
-      </ul>
+      </StatGrid>
 
       {/* 끊었을 때 무엇이 멈추는지 말해야 판단할 수 있습니다 */}
       <ConfirmDialog

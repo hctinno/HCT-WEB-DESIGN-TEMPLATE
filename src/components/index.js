@@ -17,7 +17,7 @@ export {
 export { Logo, LogoMark } from './shell/Logo'
 export { AuthLayout, PasswordStrength } from './auth/AuthLayout'
 export { Topbar, Breadcrumb, TopbarIconButton } from './shell/Topbar'
-export { RightPanel, PropertyList, PropertyRow, PanelSection } from './shell/RightPanel'
+export { RightPanel, PropertyList, PropertyRow } from './shell/RightPanel'
 
 /* 그리드 — 목록의 중심 */
 export { DataGrid, BulkActionBar, Checkbox } from './grid/DataGrid'
@@ -40,11 +40,14 @@ export {
 /* 차트 */
 export { LineChart, ChartLegend } from './chart/LineChart'
 export { BarChart, ChartTable } from './chart/BarChart'
-export { CHART_SERIES, assignSeriesColors, foldToOther, STATUS_CHART_COLOR } from './chart/chartTokens'
+export { CHART_SERIES, assignSeriesColors, STATUS_CHART_COLOR } from './chart/chartTokens'
 
 /* 대시보드 */
-export { StatCard, StatGrid, ChartFrame, LegendItem } from './data/StatCard'
+export { StatCard, StatGrid, ChartFrame } from './data/StatCard'
 export { MatrixTable } from './data/MatrixTable'
+/* 대시보드 원형의 부품들. 이것이 빠져 있어서 소비 프로젝트가 지표 타일을
+   직접 만들었고, 그 순간 임계값 색·델타 화살표·드릴다운 규칙이 갈라졌습니다. */
+export { MetricTile, Sparkline, BreakdownList, Widget, WidgetGrid } from './dashboard/MetricTile'
 
 /* 상태 */
 export { EmptyState, NoResults, ErrorState } from './state/EmptyState'
@@ -52,7 +55,7 @@ export { ErrorPage } from './state/ErrorPage'
 export { Skeleton, SkeletonText, SkeletonTable, SkeletonStatCard } from './state/Skeleton'
 
 /* 입력 */
-export { Button, IconButton, ButtonGroup } from './input/Button'
+export { Button, IconButton } from './input/Button'
 export { TextField, SelectField, SearchInput, SearchIcon } from './input/Input'
 export { Combobox } from './input/Combobox'
 export { FilterBar, FilterButton, SegmentedControl, DensityToggle } from './input/FilterBar'

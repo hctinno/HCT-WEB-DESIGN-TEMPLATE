@@ -167,9 +167,16 @@ export function GroupByPicker({ fields = [], value, onChange, required = false, 
  * 사이드바에 저장된 뷰를 노출합니다. 지라 사이드바의 "내 필터"에 해당합니다.
  * 정적 메뉴가 아니라 사용자가 만든 것이 내비게이션이 되는 지점입니다.
  */
+/**
+ * 저장된 뷰 목록.
+ *
+ * `<li>` 들만 내보냅니다 — `<ul>` 은 감싸는 SidebarGroup 이 이미 만듭니다.
+ * 여기서 또 `<ul>` 을 만들면 ul 안에 ul 이 직접 들어가 목록 구조가 깨집니다
+ * (axe: list, serious). 사이드바 밖에서 쓸 일이 생기면 그때 `<ul>` 로 감싸세요.
+ */
 export function SavedViewList({ views = [], activeViewId, onSelectView, collapsed = false }) {
   return (
-    <ul className="space-y-px">
+    <>
       {views.map((view) => {
         const active = view.id === activeViewId
         return (
@@ -195,7 +202,14 @@ export function SavedViewList({ views = [], activeViewId, onSelectView, collapse
                 <>
                   <span className="min-w-0 flex-1 truncate text-left">{view.name}</span>
                   {view.count != null && (
-                    <span className="shrink-0 tabular text-micro text-sidebar-subtle">{view.count}</span>
+                    /* SidebarItem 의 배지와 같은 문제 — 활성 항목은 배경이
+                       강조색이라 sidebar-subtle 로는 2.66:1 입니다. */
+                    <span className={cn(
+                      'shrink-0 tabular text-micro',
+                      active ? 'text-sidebar-active-fg' : 'text-sidebar-subtle',
+                    )}>
+                      {view.count}
+                    </span>
                   )}
                 </>
               )}
@@ -203,7 +217,7 @@ export function SavedViewList({ views = [], activeViewId, onSelectView, collapse
           </li>
         )
       })}
-    </ul>
+    </>
   )
 }
 

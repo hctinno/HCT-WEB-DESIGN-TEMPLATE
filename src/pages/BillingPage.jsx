@@ -2,7 +2,7 @@ import { useMemo, useState } from 'react'
 import {
   PageContainer, PageHeader,
   Button, Banner, StatusBadge, Progress, SegmentedControl,
-  ChartFrame, BarChart, DataGrid, GridCard,
+  ChartFrame, BarChart, DataGrid, GridCard, StatGrid, WidgetGrid,
   normalizeFields, useToast,
 } from '../components'
 import { AppFrame } from './_shell'
@@ -133,7 +133,7 @@ export function BillingPage({ onNavigate }) {
           </Banner>
         )}
 
-        <div className="mb-4 grid gap-3 lg:grid-cols-3">
+        <StatGrid columns={3} className="mb-4">
           <UsageCard
             label="사용자"
             used={USAGE.seats.used}
@@ -156,9 +156,9 @@ export function BillingPage({ onNavigate }) {
             unit="GB"
             note={`포함량을 ${(USAGE.storage.used - USAGE.storage.limit).toFixed(1)}GB 넘겼습니다 · GB당 ${won(PLAN.overage.storagePerGb)}`}
           />
-        </div>
+        </StatGrid>
 
-        <div className="mb-4 grid gap-3 lg:grid-cols-2">
+        <WidgetGrid columns={2} className="mb-4">
           <ChartFrame
             title="API 호출 추이"
             description="주 단위. 갑자기 늘었다면 연동이나 스크립트를 확인해 보세요."
@@ -187,12 +187,13 @@ export function BillingPage({ onNavigate }) {
               {CYCLE.day}일 / {CYCLE.days}일 지났습니다. 확정 금액은 갱신일에 정해집니다.
             </p>
 
+            {/* dl 의 직계 자식은 dt·dd·div 만 허용됩니다. 합계에 구분선을 주려고
+                div 를 한 겹 더 감쌌더니 dt/dd 가 dl 의 자식이 아니게 되었습니다
+                (axe: definition-list / dlitem, serious). 구분선은 Line 이 직접 그립니다. */}
             <dl className="mt-3 space-y-2">
               <Line label={`${PLAN.name} 기본 요금`} value={won(PLAN.price)} />
               <Line label="초과 사용 (예상)" value={won(overageWon)} tone={overageWon > 0 ? 'warning' : undefined} />
-              <div className="border-t border-line-subtle pt-2">
-                <Line label="합계 (예상)" value={won(PLAN.price + overageWon)} strong />
-              </div>
+              <Line label="합계 (예상)" value={won(PLAN.price + overageWon)} strong divided />
             </dl>
 
             <div className="mt-3 flex flex-wrap gap-2">
@@ -203,7 +204,7 @@ export function BillingPage({ onNavigate }) {
               결제 수단: 신한카드 •••• 4412 · 만료 2028.03
             </p>
           </div>
-        </div>
+        </WidgetGrid>
 
         <h2 className="mb-2 text-base font-semibold text-fg-primary">청구 내역</h2>
         <GridCard>
@@ -251,7 +252,14 @@ function UsageCard({ label, used, limit, unit, note, hard = false, projected }) 
         <span className="tabular text-sm text-fg-tertiary">/ {fmt(limit)}</span>
       </p>
 
-      <Progress className="mt-2" value={Math.min(used, limit)} max={limit} tone={tone} />
+      {/* 라벨은 위에 이미 크게 적혀 있으므로 이름만 따로 넘깁니다 */}
+      <Progress
+        className="mt-2"
+        value={Math.min(used, limit)}
+        max={limit}
+        tone={tone}
+        name={`${label} 사용량`}
+      />
 
       {/* 청구 주기에서 오늘이 어디인지 — 이게 없으면 80% 를 해석할 수 없습니다 */}
       <div className="mt-1.5 flex items-center gap-1.5">
@@ -272,9 +280,12 @@ function UsageCard({ label, used, limit, unit, note, hard = false, projected }) 
   )
 }
 
-function Line({ label, value, strong, tone }) {
+function Line({ label, value, strong, tone, divided }) {
   return (
-    <div className="flex items-baseline justify-between gap-3">
+    <div className={
+      'flex items-baseline justify-between gap-3' +
+      (divided ? ' border-t border-line-subtle pt-2' : '')
+    }>
       <dt className={'text-sm ' + (strong ? 'font-semibold text-fg-primary' : 'text-fg-tertiary')}>
         {label}
       </dt>

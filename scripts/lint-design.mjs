@@ -52,11 +52,11 @@ const RULES = [
     severity: 'error',
     message:
       '간격 스케일에 없는 값입니다. tailwind.config.js 의 spacing 은 4px 배수로 제한되어 있어, ' +
-      '스케일 밖 클래스(h-7, pl-7, w-28 등)는 CSS가 생성되지 않고 조용히 무시됩니다. ' +
+      '스케일 밖 클래스(h-7, pl-7, left-4.5 등)는 CSS가 생성되지 않고 조용히 무시됩니다. ' +
       '허용: 0 px 0.5 1 1.5 2 2.5 3 4 5 6 8 10 12 16 20 24',
     test: (line) => {
       const allowed = new Set(['0','px','0.5','1','1.5','2','2.5','3','4','5','6','8','10','12','16','20','24'])
-      const re = /\b(?:h|w|p|px|py|pt|pb|pl|pr|m|mx|my|mt|mb|ml|mr|gap|gap-x|gap-y|space-x|space-y)-(\d+(?:\.\d+)?)\b/g
+      const re = /\b(?:h|w|p|px|py|pt|pb|pl|pr|m|mx|my|mt|mb|ml|mr|gap|gap-x|gap-y|space-x|space-y|top|left|right|bottom|inset|inset-x|inset-y|translate-x|translate-y|size)-(\d+(?:\.\d+)?)\b/g
       let match
       while ((match = re.exec(line)) !== null) {
         if (!allowed.has(match[1])) return true
@@ -92,7 +92,11 @@ const RULES = [
     id: 'no-raw-table',
     severity: 'warn',
     message: '<table> 을 직접 만들지 말고 DataGrid 컴포넌트를 쓰세요.',
-    test: (line, file) => /<table[\s>]/.test(line) && !file.includes('components/grid/DataGrid'),
+    /* DataGrid 는 표 자체를 만드는 컴포넌트이고, ChartTable 은 차트의 접근성
+       대체본(표 보기)이라 정당합니다. 그 외에는 DataGrid 를 쓰세요. */
+    test: (line, file) => /<table[\s>]/.test(line)
+      && !file.includes('components/grid/DataGrid')
+      && !file.includes('components/chart/BarChart'),
   },
   {
     id: 'icon-button-needs-label',

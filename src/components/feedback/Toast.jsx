@@ -85,7 +85,10 @@ function ToastRegion({ toasts, onDismiss }) {
       role="region"
       aria-label="알림"
       aria-live="polite"
-      className="pointer-events-none fixed bottom-4 left-1/2 z-toast flex -translate-x-1/2 flex-col items-center gap-2"
+      /* 상주형 바(BulkActionBar·SaveBar)가 떠 있으면 그만큼 위로 올라갑니다.
+         겹치면 저장 버튼이 토스트에 가려 눌리지 않습니다. */
+      style={{ bottom: 'calc(16px + var(--bottom-bar-offset, 0px))' }}
+      className="pointer-events-none fixed left-1/2 z-toast flex -translate-x-1/2 flex-col items-center gap-2"
     >
       {toasts.map((t) => (
         <div

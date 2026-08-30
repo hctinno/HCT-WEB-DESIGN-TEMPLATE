@@ -137,6 +137,21 @@
   --easing-enter: cubic-bezier(0, 0, 0.2, 1);
   --easing-exit: cubic-bezier(0.4, 0, 1, 1);
 
+
+  /* --- 차트 계열 색 (팔레트와 무관하게 고정) ---------------------------
+     상태 색을 시리즈 색으로 재사용하지 않기 위해 별도로 둡니다. 차트에서
+     초록이 '성공'이 아니라 '3번 시리즈'를 뜻하면 의미 체계가 무너집니다.
+     고정 순서로만 배정하고 순환시키지 않습니다 — 7번째 계열은 '기타'로 묶습니다.
+     대비·색각 검증을 통과한 값입니다(라이트 표면 #FFFFFF 기준). */
+  --chart-1: #2E5FD0;
+  --chart-2: #D4720E;
+  --chart-3: #00907A;
+  --chart-4: #7A5AD8;
+  --chart-5: #C94FA8;
+  --chart-6: #A07B0E;
+  --chart-grid: var(--color-border-subtle);
+  --chart-axis: var(--color-border-default);
+
   /* --- 서체 -------------------------------------------------------------- */
   --font-sans: "Pretendard Variable", Pretendard, -apple-system, BlinkMacSystemFont,
     system-ui, Roboto, "Helvetica Neue", "Segoe UI", "Apple SD Gothic Neo",
@@ -214,6 +229,16 @@
     --shadow-md: 0 2px 8px -1px rgb(0 0 0 / 0.5);
     --shadow-lg: 0 8px 24px -4px rgb(0 0 0 / 0.6);
     --shadow-overlay: 0 16px 48px -8px rgb(0 0 0 / 0.7);
+
+  /* 차트 계열 색 — 다크는 밝기만 올린 게 아니라 별도로 고른 단계입니다
+     (다크 표면 기준으로 대비·색각 검증을 다시 통과한 값) */
+  --chart-1: #5B8CF5;
+  --chart-2: #CE7418;
+  --chart-3: #0FA184;
+  --chart-4: #9478F5;
+  --chart-5: #D2519F;
+  --chart-6: #9E7B0A;
+
   }
 }
 
@@ -286,4 +311,14 @@
   --shadow-md: 0 2px 8px -1px rgb(0 0 0 / 0.5);
   --shadow-lg: 0 8px 24px -4px rgb(0 0 0 / 0.6);
   --shadow-overlay: 0 16px 48px -8px rgb(0 0 0 / 0.7);
+
+  /* 차트 계열 색 — 다크는 밝기만 올린 게 아니라 별도로 고른 단계입니다
+     (다크 표면 기준으로 대비·색각 검증을 다시 통과한 값) */
+  --chart-1: #5B8CF5;
+  --chart-2: #CE7418;
+  --chart-3: #0FA184;
+  --chart-4: #9478F5;
+  --chart-5: #D2519F;
+  --chart-6: #9E7B0A;
+
 }

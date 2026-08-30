@@ -32,6 +32,11 @@ export {
   ObjectDetail, InlineTitle, StatusTransition, ActivityFeed, CommentComposer,
 } from './object/ObjectDetail'
 
+/* 차트 */
+export { LineChart, ChartLegend } from './chart/LineChart'
+export { BarChart, ChartTable } from './chart/BarChart'
+export { CHART_SERIES, assignSeriesColors, foldToOther, STATUS_CHART_COLOR } from './chart/chartTokens'
+
 /* 대시보드 */
 export { StatCard, StatGrid, ChartFrame, LegendItem } from './data/StatCard'
 
@@ -42,11 +47,19 @@ export { Skeleton, SkeletonText, SkeletonTable, SkeletonStatCard } from './state
 /* 입력 */
 export { Button, IconButton, ButtonGroup } from './input/Button'
 export { TextField, SelectField, SearchInput, SearchIcon } from './input/Input'
+export { Combobox } from './input/Combobox'
 export { FilterBar, FilterButton, SegmentedControl, DensityToggle } from './input/FilterBar'
+
+/* 폼 */
+export {
+  Form, FormSection, FormRow, FormErrorSummary, SaveBar, SettingsNav, Switch, RadioCards,
+} from './form/Form'
+export { useForm } from '../lib/useForm'
 
 /* 피드백 */
 export { StatusBadge, Tag, Banner, WORKFLOW_STATUS } from './feedback/StatusBadge'
 export { ToastProvider, useToast } from './feedback/Toast'
+export { Progress, JobStatus } from './feedback/Progress'
 
 /* 오버레이 */
 export { Modal, ConfirmDialog, Drawer } from './overlay/Modal'
@@ -66,6 +79,8 @@ export {
 } from '../lib/query'
 export { useRecords } from '../lib/useRecords'
 export { useGridKeyboard, GRID_SHORTCUTS } from '../lib/useGridKeyboard'
+export { useVirtualRows } from '../lib/useVirtualRows'
+export { useBottomBar } from '../lib/useBottomBar'
 export { encodeQuery, decodeQuery, useQuerySync } from '../lib/queryUrl'
 
 /* 유틸 */

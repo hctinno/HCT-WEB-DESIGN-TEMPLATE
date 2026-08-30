@@ -8,7 +8,10 @@ import {
   CommandPalette, CommandPaletteTrigger,
   fieldMap, emptyQuery,
 } from '../components'
-import { MetricTile, BreakdownList, Widget, Sparkline } from '../components/dashboard/MetricTile'
+import { MetricTile, BreakdownList, Widget } from '../components/dashboard/MetricTile'
+import { LineChart } from '../components/chart/LineChart'
+import { BarChart, ChartTable } from '../components/chart/BarChart'
+import { assignSeriesColors, STATUS_CHART_COLOR } from '../components/chart/chartTokens'
 import { computeMetric, compareMetric, breakdownMetric, timeSeries } from '../lib/metrics'
 import { REQUEST_FIELDS, REQUEST_RECORDS } from './_data'
 import { NavIcons } from './_icons'
@@ -37,6 +40,7 @@ export function DashboardPage({ onDrillDown }) {
   const [range, setRange] = useState('24h')
   const [paletteOpen, setPaletteOpen] = useState(false)
   const [breakdownDim, setBreakdownDim] = useState('system')
+  const [showTable, setShowTable] = useState(false)
 
   /* 비교 기준 — 실제 앱에서는 이전 기간 데이터를 서버에서 받습니다.
      여기서는 원형을 보여주기 위해 일부를 이전 기간으로 간주합니다. */
@@ -94,6 +98,58 @@ export function DashboardPage({ onDrillDown }) {
   const statusBreakdown = useMemo(
     () => breakdownMetric({ ...emptyQuery(), query: emptyQuery() }, records, fm, 'status'),
     [records, fm],
+  )
+
+  /**
+   * 시스템별 오류 추이 — 시간당 발생 건수.
+   *
+   * 레코드의 누적 오류수를 '마지막 수정 시각' 버킷에 합산하면 안 됩니다.
+   * 그 값은 어느 한 시점에 생긴 게 아니라 누적치라, 마지막 버킷에만 몰려
+   * 차트가 아무것도 말해주지 않게 됩니다. 시계열은 **사건 단위**여야 합니다.
+   * (실제 앱에서는 서버가 시간별 집계를 내려줍니다.)
+   */
+  const trend = useMemo(() => {
+    const buckets = 24
+    const now = Date.now()
+    const systems = fm.system.options
+    /* 시스템별 총 오류를 시간축에 분포시킵니다 — 최근일수록 많은 형태 */
+    const totals = Object.fromEntries(systems.map((o) => [
+      o.value, records.filter((r) => r.system === o.value).reduce((n, r) => n + r.errors, 0),
+    ]))
+    const series = systems.map((o, si) => {
+      const total = totals[o.value]
+      const raw = Array.from({ length: buckets }, (_, i) => {
+        const t = i / (buckets - 1)
+        /* 시스템마다 다른 모양: 완만한 증가 + 주기적 변동 */
+        const base = 0.4 + 0.6 * t
+        const wave = 1 + 0.45 * Math.sin(t * Math.PI * (2 + si) + si * 1.7)
+        return Math.max(0, base * wave)
+      })
+      const sum = raw.reduce((a, b) => a + b, 0) || 1
+      return { key: o.value, label: o.label, points: raw.map((v) => Math.round((v / sum) * total)) }
+    })
+    const labels = Array.from({ length: buckets }, (_, i) => {
+      const d = new Date(now - (buckets - 1 - i) * 3600 * 1000)
+      return `${String(d.getHours()).padStart(2, '0')}시`
+    })
+    return { series, labels }
+  }, [records, fm])
+
+  /* 시스템 × 상태 누적 막대 — 상태를 그리므로 계열 색이 아니라 상태 색을 씁니다 */
+  const stackData = useMemo(() => {
+    const statuses = fm.status.options
+    return fm.system.options.map((sys) => ({
+      label: sys.label,
+      values: Object.fromEntries(statuses.map((st) => [
+        st.value,
+        records.filter((r) => r.system === sys.value && r.status === st.value).length,
+      ])),
+    }))
+  }, [records, fm])
+
+  const statusSeries = fm.status.options.map((o) => ({ key: o.value, label: o.label }))
+  const statusColors = Object.fromEntries(
+    fm.status.options.map((o) => [o.value, STATUS_CHART_COLOR[o.status] ?? 'var(--color-neutral-solid)']),
   )
 
   /* 최근 조치가 필요한 항목 — 대시보드는 항상 다음 행동으로 이어져야 합니다 */
@@ -188,6 +244,50 @@ export function DashboardPage({ onDrillDown }) {
                 onDrillDown={() => onDrillDown?.(m.query)}
               />
             ))}
+          </div>
+
+          {/* 시계열 — 단위가 같은 계열만 한 축에 겹칩니다. 이중 축은 쓰지 않습니다. */}
+          <Widget
+            className="mb-2.5"
+            title="시스템별 오류 추이"
+            description="최근 24시간. 선에 마우스를 올리면 그 시점의 모든 시스템 값을 함께 봅니다."
+          >
+            <LineChart series={trend.series} labels={trend.labels} height={200} area />
+          </Widget>
+
+          <div className="mb-2.5 grid gap-2.5 lg:grid-cols-2">
+            <Widget
+              title="시스템 × 상태"
+              description="누적 막대. 상태를 그리므로 계열 색이 아니라 상태 색을 씁니다."
+              actions={
+                <button
+                  type="button"
+                  onClick={() => setShowTable((v) => !v)}
+                  className="h-control-sm rounded-md border border-line-default bg-bg-surface px-2 text-xs font-medium text-fg-secondary hover:bg-bg-hover"
+                >
+                  {showTable ? '차트 보기' : '표 보기'}
+                </button>
+              }
+            >
+              {showTable ? (
+                <ChartTable series={statusSeries} data={stackData} />
+              ) : (
+                <BarChart series={statusSeries} data={stackData} stacked
+                          colorByKey={statusColors} height={200} />
+              )}
+            </Widget>
+
+            <Widget title="시스템별 요청 수" description="값이 하나뿐이라 범례 대신 막대 위에 직접 표시합니다.">
+              <BarChart
+                series={[{ key: 'n', label: '요청 수' }]}
+                data={fm.system.options.map((o) => ({
+                  label: o.label,
+                  values: { n: records.filter((r) => r.system === o.value).length },
+                }))}
+                showValues
+                height={200}
+              />
+            </Widget>
           </div>
 
           <div className="mb-3 grid gap-2.5 lg:grid-cols-3">

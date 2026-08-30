@@ -427,6 +427,118 @@ useQuerySync(query, setQuery, { fields: fm })
 
 ---
 
+## 6-6. 폼 — 설정·편집 화면
+
+관리도구의 폼은 회원가입 폼과 다릅니다. 대부분 **기존 값을 고치는** 일이라
+"무엇이 바뀌었는가"가 핵심입니다.
+
+```jsx
+const form = useForm({ initialValues, validate, onSubmit })
+
+<Form onSubmit={form.submit}>
+  <FormErrorSummary errors={form.errors} labels={LABELS} onFocusField={focus} />
+  <FormSection id="sec-general" title="일반" description="…">
+    <FormRow label="이름" htmlFor="f-name" error={form.errors.name}>
+      <TextField id="f-name" label="이름" hideLabel {...form.fieldProps('name')} error={undefined} />
+    </FormRow>
+  </FormSection>
+</Form>
+<SaveBar dirty={form.dirty} changedCount={Object.keys(form.changed).length}
+         onSave={form.submit} onReset={form.reset} saving={form.submitting} />
+```
+
+규칙:
+
+- **섹션마다 저장 버튼을 두지 마세요.** 변경이 생기면 `SaveBar` 하나가 뜹니다.
+  몇 건이 바뀌었는지 함께 보여줘야 합니다 — 긴 화면에서 사용자는 기억하지 못합니다.
+- **입력하는 도중에 오류를 띄우지 마세요.** `useForm` 은 blur 이후 또는 제출
+  시도 이후에만 보여줍니다. 다 치지도 않았는데 빨간 글씨가 뜨면 혼나는 느낌입니다.
+- 긴 폼은 제출 실패 시 `FormErrorSummary` 로 상단에 모으고, 클릭하면 해당
+  필드로 이동해야 합니다. 화면 밖 오류는 없는 것과 같습니다.
+- 좌측 목차(`SettingsNav`)는 **실제로 그 섹션으로 데려가야** 합니다.
+  상태만 바꾸고 화면이 그대로면 눌리지 않은 것과 같습니다.
+- 선택지가 10개를 넘으면 `SelectField` 대신 `Combobox` 를 쓰세요.
+
+---
+
+## 6-7. 차트
+
+`ChartFrame` 은 껍데기이고 실제 차트는 `LineChart` / `BarChart` 입니다.
+
+**색은 두 체계로 나뉩니다:**
+
+| 무엇을 그리는가 | 쓰는 색 |
+|---|---|
+| 상태 (완료/진행중/차단됨) | `STATUS_CHART_COLOR` — 뱃지와 같은 색 |
+| 임의 차원 (시스템별·담당자별) | `assignSeriesColors()` — 계열 색 6종 |
+
+절대 규칙:
+
+- **축은 하나뿐입니다.** 단위가 다른 두 지표를 겹치지 마세요. 차트를 나누거나
+  공통 기준으로 지수화하세요. 이중 축은 아무 관계나 있어 보이게 만듭니다.
+- **계열 색을 순환시키지 마세요.** 7번째 계열은 새 색이 아니라 `foldToOther()`
+  로 '기타'에 묶습니다. 색이 8개를 넘으면 범례를 외울 수 없습니다.
+- **색은 항목에 붙습니다. 순위가 아니라.** 필터로 계열이 사라져도 남은 항목의
+  색이 바뀌면 안 됩니다.
+- **상태 색을 '계열 4번'으로 쓰지 마세요.** 차트에서 초록이 '성공'이 아니라
+  임의 계열을 뜻하면 의미 체계가 무너집니다.
+- 계열이 2개 이상이면 범례가 항상 있습니다. 색만으로 정체를 전달하지 않습니다.
+- 값 글자는 계열 색이 아니라 **텍스트 토큰**을 씁니다.
+- 막대는 0에서 시작합니다. 누적 조각 사이에는 2px 간격을 둡니다.
+- 점마다 숫자를 찍지 마세요. 호버 툴팁이 그 일을 합니다.
+- 접근성 대체본으로 `ChartTable`(표 보기)을 함께 두세요.
+
+차트 색은 대비·색각(CVD) 검증을 통과한 값입니다. 새 색을 넣으려면 반드시
+검증하세요 — 눈으로 판단하지 마세요.
+
+---
+
+## 6-8. 대용량 목록
+
+수백 건을 넘으면 `virtualize` 를 켜세요. 보이는 행만 그립니다.
+
+```jsx
+<DataGrid virtualize maxHeight={520} … />
+```
+
+주의:
+
+- **그룹핑과 함께 쓸 수 없습니다.** 행 높이가 균일하지 않아 계산이 틀립니다
+  (그룹핑이 켜지면 자동으로 꺼집니다).
+- **브라우저 검색(⌘F)이 화면 밖 행을 찾지 못합니다.** 그래서 목록 자체의
+  검색(`QueryBar`)이 반드시 있어야 합니다.
+- 서버 페이지네이션과 함께 쓸 때는 `matchingCount` 를 넘기세요.
+  화면에 불러온 것만 선택된 상태를 사용자에게 드러내고,
+  "조건에 맞는 N건 전체 선택"을 제안합니다. 이게 없으면 사용자는 5,000건을
+  선택했다고 믿은 채 500건에만 작업하게 됩니다.
+
+---
+
+## 6-9. 오래 걸리는 작업
+
+```jsx
+<JobStatus title="재처리" state="partial" total={500} completed={500}
+           failures={failures} onRetryFailed={retry} />
+```
+
+- 남은 시간을 모르면 **몇 건 중 몇 건인지**라도 보여주세요.
+  "처리 중…"만 있으면 멈춘 건지 도는 건지 알 수 없습니다.
+- **부분 실패를 숨기지 마세요.** 500건 중 75건이 실패했는데 "완료"라고만
+  하면 거짓말입니다. 무엇이 왜 실패했는지 보이고, 실패한 것만 다시 시도할
+  수 있어야 합니다.
+
+---
+
+## 6-10. 화면 하단 중앙은 셋이 다툽니다
+
+`BulkActionBar`, `SaveBar`, `Toast` 가 모두 하단 중앙에 뜹니다.
+각자 `fixed bottom-4` 로 자리를 잡으면 둘이 동시에 뜨는 순간 겹칩니다.
+
+상주형 바는 `useBottomBar(active, height)` 로 자기 높이를 알리고,
+토스트는 그만큼 위로 올라갑니다. 하단에 새 상주 요소를 만들면 이 훅을 쓰세요.
+
+---
+
 ## 7. 빠뜨리면 안 되는 상태 3종
 
 목록·테이블·차트를 만들 때 아래 세 가지를 **반드시** 처리하세요.

@@ -5,6 +5,8 @@ import { groupRecords } from '../../lib/query'
 import { SkeletonTable } from '../state/Skeleton'
 import { NoResults, ErrorState } from '../state/EmptyState'
 import { useGridKeyboard } from '../../lib/useGridKeyboard'
+import { useVirtualRows } from '../../lib/useVirtualRows'
+import { useBottomBar } from '../../lib/useBottomBar'
 
 /**
  * DataGrid — 관리도구의 중심 컴포넌트.
@@ -28,6 +30,9 @@ import { useGridKeyboard } from '../../lib/useGridKeyboard'
  *     visibleFields 로 어떤 열을 보일지만 고릅니다.
  *   - onEditRecord 를 넘기면 인라인 편집이 켜집니다. 넘기지 않으면 읽기 전용입니다.
  *   - 선택 기능이 필요 없으면 selectable={false} 로 끄세요. 기본은 켜짐입니다.
+ *   - 수백 건을 넘으면 virtualize 를 켜세요. 보이는 행만 그립니다.
+ *     그룹핑과는 함께 쓸 수 없습니다(행 높이가 균일하지 않아 계산이 틀립니다).
+ *     이 컴포넌트가 그룹핑이 켜지면 가상화를 자동으로 끕니다.
  *   - **primaryField 를 반드시 지정하세요.** 인라인 편집과 "상세 열기"는 둘 다
  *     클릭이라 충돌합니다. 노션이 쓰는 해법을 그대로 따릅니다:
  *       주 필드(제목) 클릭 → 레코드를 엽니다
@@ -69,6 +74,11 @@ export function DataGrid({
   searchQuery,
   onClearFilters,
   emptyState,
+  virtualize = false,
+  maxHeight = 560,
+  matchingCount,
+  onSelectAllMatching,
+  allMatchingSelected = false,
   className,
 }) {
   const [internalSelected, setInternalSelected] = useState(() => new Set())
@@ -129,6 +139,15 @@ export function DataGrid({
     setSelected(next)
   }, [selected, allKeys, setSelected])
 
+  /* 그룹핑이 켜지면 행 높이가 균일하지 않으므로 가상화를 끕니다 */
+  const rowPx = { compact: 32, default: 40, relaxed: 48 }[density]
+  const canVirtualize = virtualize && !groupField
+  const virt = useVirtualRows({
+    count: records.length,
+    rowHeight: rowPx,
+    enabled: canVirtualize,
+  })
+
   if (loading) return <SkeletonTable rows={6} columns={columns.length || 4} density={density} />
   if (error) return <ErrorState description={error} onRetry={onRetry} />
   if (flatRecords.length === 0) {
@@ -141,11 +160,7 @@ export function DataGrid({
     relaxed: 'h-row-relaxed',
   }[density]
 
-  let runningIndex = -1
-
-  const renderRow = (record) => {
-    runningIndex += 1
-    const index = runningIndex
+  const renderRow = (record, index) => {
     const key = rowKey(record)
     const isSelected = selected.has(key)
     const isActive = activeKey != null && key === activeKey
@@ -240,7 +255,16 @@ export function DataGrid({
           둘러싸여 어느 행에 있는지가 오히려 흐려집니다. onFocus 에서
           focusedIndex 를 0 으로 올리므로 표시가 없는 순간은 없습니다.
           design-lint-disable-next-line no-focus-outline-removal */}
-      <div {...keyboard.containerProps} className="overflow-x-auto scroll-thin focus:outline-none">
+      <div
+        {...keyboard.containerProps}
+        ref={(el) => {
+          keyboard.containerProps.ref.current = el
+          if (canVirtualize) virt.scrollRef.current = el
+        }}
+        style={canVirtualize ? { maxHeight, overflowY: 'auto' } : undefined}
+        /* design-lint-disable-next-line no-focus-outline-removal */
+        className="overflow-x-auto scroll-thin focus:outline-none"
+      >
         <table className="w-full border-collapse text-left">
           <thead className="sticky top-0 z-sticky bg-bg-sunken">
             <tr>
@@ -284,6 +308,10 @@ export function DataGrid({
           </thead>
 
           <tbody>
+            {canVirtualize && virt.padTop > 0 && (
+              <tr aria-hidden="true"><td colSpan={colSpan} style={{ height: virt.padTop }} /></tr>
+            )}
+
             {groups
               ? groups.map((group) => {
                   const collapsed = collapsedGroups.has(group.key)
@@ -306,10 +334,15 @@ export function DataGrid({
                         </button>
                       </td>
                     </tr>,
-                    ...(collapsed ? [] : group.records.map(renderRow)),
+                    ...(collapsed ? [] : group.records.map((r) => renderRow(r, flatRecords.indexOf(r)))),
                   ]
                 })
-              : flatRecords.map(renderRow)}
+              : (canVirtualize ? flatRecords.slice(virt.start, virt.end) : flatRecords)
+                  .map((r, i) => renderRow(r, canVirtualize ? virt.start + i : i))}
+
+            {canVirtualize && virt.padBottom > 0 && (
+              <tr aria-hidden="true"><td colSpan={colSpan} style={{ height: virt.padBottom }} /></tr>
+            )}
           </tbody>
         </table>
       </div>
@@ -319,6 +352,9 @@ export function DataGrid({
           count={selected.size}
           onClear={() => setSelected(new Set())}
           actions={bulkActions}
+          matchingCount={matchingCount}
+          onSelectAllMatching={onSelectAllMatching}
+          allMatchingSelected={allMatchingSelected}
         />
       )}
     </div>
@@ -334,7 +370,10 @@ export function DataGrid({
  * 선택 개수를 반드시 보여주고, 선택 해제 수단을 항상 제공합니다.
  * "몇 개를 지우는지 모른 채 삭제 버튼을 누르는" 상황을 막습니다.
  */
-export function BulkActionBar({ count, onClear, actions }) {
+export function BulkActionBar({ count, onClear, actions, matchingCount, onSelectAllMatching, allMatchingSelected }) {
+  /* 토스트가 이 바를 가리지 않도록 높이를 알립니다 */
+  useBottomBar(true, 56)
+
   return (
     <div
       role="status"
@@ -346,6 +385,23 @@ export function BulkActionBar({ count, onClear, actions }) {
       <span className="text-base font-medium text-fg-primary tabular">
         {count.toLocaleString('ko-KR')}개 선택됨
       </span>
+
+      {/* 페이지에 보이는 것만 선택된 상태를 드러냅니다.
+          Gmail·지라의 관용구 — 이게 없으면 사용자는 5,000건을 선택했다고
+          믿은 채 50건에만 작업하게 됩니다. */}
+      {matchingCount != null && matchingCount > count && !allMatchingSelected && (
+        <button
+          type="button"
+          onClick={onSelectAllMatching}
+          className="text-base font-semibold text-fg-link underline underline-offset-2 hover:opacity-80"
+        >
+          조건에 맞는 {matchingCount.toLocaleString('ko-KR')}건 전체 선택
+        </button>
+      )}
+      {allMatchingSelected && (
+        <span className="text-xs text-fg-tertiary">조건에 맞는 전체</span>
+      )}
+
       <span className="h-4 w-px bg-line-default" />
       <div className="flex items-center gap-1">{actions}</div>
       <button

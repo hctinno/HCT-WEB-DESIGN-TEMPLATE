@@ -130,9 +130,15 @@ CLAUDE.md                AGENTS.md 로 연결
 
 src/lib/
   fields.js              필드 타입 시스템 — 이 시스템의 원자
-  query.js               질의 모델 (필터·정렬·그룹핑·직렬화)
+  query.js               질의 모델 (필터·정렬·그룹핑)
+  queryUrl.js            질의 ↔ URL 직렬화 (링크로 공유)
   metrics.js             지표 = 질의 + 집계, 드릴다운·분해·임계값
-  useRecords.js          낙관적 편집 + 롤백 + 활동 기록
+  useRecords.js          낙관적 편집 + 롤백 + 실행 취소 + 활동 기록
+  useForm.js             폼 상태·검증·dirty 추적·이탈 방지
+  useGridKeyboard.js     목록 키보드 조작
+  useVirtualRows.js      행 가상화
+  useBottomBar.js        하단 중앙 요소 충돌 방지
+  useMeasuredWidth.js    SVG 차트 반응형 폭
   cn.js / theme.js
 
 tokens/tokens.json       원천 토큰
@@ -141,25 +147,55 @@ tailwind.config.js       토큰 → Tailwind 매핑
 
 src/components/
   shell/     AppShell, Sidebar, Topbar, RightPanel
-  grid/      DataGrid, GridCell, GridChrome
+  grid/      DataGrid(가상화·키보드), GridCell, ColumnSettings, GridChrome
   view/      BoardView, ViewTabs, ViewSwitcher, SavedViewList
   query/     QueryBar, FilterBuilder
   object/    ObjectDetail, StatusTransition, ActivityFeed
+  chart/     LineChart, BarChart, ChartTable, chartTokens
   dashboard/ MetricTile, BreakdownList, Sparkline, Widget
+  form/      Form, FormSection, FormRow, SaveBar, Switch, RadioCards
   state/     EmptyState, NoResults, ErrorState, Skeleton
-  input/     Button, TextField, SegmentedControl
-  feedback/  StatusBadge, Tag, Banner
-  overlay/   Modal, ConfirmDialog, Drawer, CommandPalette
+  input/     Button, TextField, Combobox, SegmentedControl
+  feedback/  StatusBadge, Tag, Banner, Toast, Progress, JobStatus
+  overlay/   Modal, ConfirmDialog, Drawer, CommandPalette, ShortcutHelp
   index.js   ← 여기서만 import
 
 src/pages/
-  DashboardPage.jsx      대시보드 원형 (드릴다운)
+  DashboardPage.jsx      대시보드 원형 (드릴다운·차트)
   ListPage.jsx           목록+뷰+상세 원형
+  SettingsPage.jsx       설정·폼 원형
+  ScalePage.jsx          대용량·비동기 작업 원형
   _data.js               스키마와 예시 레코드
 
 scripts/lint-design.mjs
 docs/
 ```
+
+---
+
+## 화면 원형 4종
+
+| | 무엇을 보여주는가 |
+|---|---|
+| **대시보드** | 지표 = 질의 + 집계. 클릭하면 목록으로 드릴다운. 선·막대 차트, 임계값 |
+| **목록 + 상세** | 표↔보드 전환, 인라인 편집, 저장된 뷰, 키보드 조작, 실행 취소 |
+| **설정** | 폼 검증, 오류 요약, 저장 바, 이탈 방지, Combobox |
+| **대용량** | 5,000건 가상화, 조건 전체 선택, 진행률과 부분 실패 |
+
+### 설정 — 폼
+
+섹션마다 저장 버튼을 두지 않고, 변경이 생기면 하단 저장 바가 뜹니다.
+제출 실패 시 오류 요약에서 해당 필드로 이동합니다.
+
+![설정 폼](docs/screenshots/settings-form.png)
+
+### 대용량 — 가상화와 부분 실패
+
+5,000건 중 화면에 보이는 34행만 DOM 에 그립니다. 화면에 불러온 500건과
+조건에 맞는 5,000건을 구분해, "전체 선택했다고 믿었는데 일부만 처리되는"
+함정을 막습니다. 500건 중 75건이 실패하면 그 75건이 무엇인지 보여줍니다.
+
+![대용량](docs/screenshots/scale-job.png)
 
 ---
 

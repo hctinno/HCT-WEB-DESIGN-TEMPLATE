@@ -3,6 +3,8 @@ import { useEffect, useState } from 'react'
 import './styles/index.css'
 import { DashboardPage } from './pages/DashboardPage'
 import { ListPage } from './pages/ListPage'
+import { SettingsPage } from './pages/SettingsPage'
+import { ScalePage } from './pages/ScalePage'
 import { applyTheme, getStoredTheme, applyPalette, getStoredPalette, PALETTES } from './lib/theme'
 import { ToastProvider } from './components/feedback/Toast'
 
@@ -18,11 +20,13 @@ import { ToastProvider } from './components/feedback/Toast'
  */
 function Preview() {
   const initial = new URLSearchParams(location.search).get('page')
-  const [page, setPage] = useState(initial === 'list' ? 'list' : 'dashboard')
+  const PAGES = ['dashboard', 'list', 'settings', 'scale']
+  const [page, setPage] = useState(PAGES.includes(initial) ? initial : 'dashboard')
   const [handoffQuery, setHandoffQuery] = useState(null)
   const [theme, setTheme] = useState(getStoredTheme)
   const [palette, setPalette] = useState(getStoredPalette)
   const [open, setOpen] = useState(false)
+  const [shown, setShown] = useState(false)
 
   useEffect(() => { applyTheme(theme) }, [theme])
   useEffect(() => { applyPalette(palette) }, [palette])
@@ -32,13 +36,15 @@ function Preview() {
 
   return (
     <>
-      {page === 'list'
-        ? <ListPage key={JSON.stringify(handoffQuery)} initialQuery={handoffQuery} />
+      {page === 'list' ? <ListPage key={JSON.stringify(handoffQuery)} initialQuery={handoffQuery} />
+        : page === 'settings' ? <SettingsPage />
+        : page === 'scale' ? <ScalePage />
         : <DashboardPage onDrillDown={drillDown} />}
 
-      {/* 미리보기 전용 컨트롤 — 실제 앱에는 없습니다 */}
-      <div className="fixed bottom-3 right-3 z-toast flex flex-col items-end gap-1.5">
-        {open && (
+      {/* 미리보기 전용 컨트롤 — 평소엔 작은 버튼 하나로 접혀 있습니다.
+          펼친 채로 두면 하단 중앙의 저장 바·벌크 바나 차트 라벨을 가립니다. */}
+      <div className="fixed bottom-3 right-3 z-palette flex flex-col items-end gap-1.5">
+        {shown && open && (
           <div className="w-[248px] rounded-lg border border-line-default bg-bg-raised p-1.5 shadow-overlay">
             <p className="px-1.5 pb-1 pt-0.5 text-micro font-semibold uppercase tracking-[0.06em] text-fg-tertiary">
               색 팔레트
@@ -69,43 +75,55 @@ function Preview() {
           </div>
         )}
 
-        <div className="flex items-center gap-1 rounded-lg border border-line-default bg-bg-raised p-1 shadow-lg">
-          <Chip active={page === 'dashboard'} onClick={() => { setHandoffQuery(null); setPage('dashboard') }}>대시보드</Chip>
-          <Chip active={page === 'list'} onClick={() => { setHandoffQuery(null); setPage('list') }}>목록</Chip>
-          <span className="mx-0.5 h-4 w-px bg-line-default" />
-          {['light', 'dark', 'system'].map((mode) => (
-            <Chip key={mode} active={theme === mode} onClick={() => setTheme(mode)}>
-              {mode === 'light' ? '라이트' : mode === 'dark' ? '다크' : '시스템'}
-            </Chip>
-          ))}
-          <span className="mx-0.5 h-4 w-px bg-line-default" />
-          <button
-            type="button"
-            onClick={() => setOpen((v) => !v)}
-            aria-expanded={open}
-            className={
-              'flex h-control-sm items-center gap-1.5 rounded-md px-2 text-xs font-medium ' +
-              (open ? 'bg-accent-subtle text-accent-text' : 'text-fg-secondary hover:bg-bg-hover')
-            }
-          >
-            <Swatch id={palette} />
-            {current?.label}
-          </button>
-        </div>
+        {shown && (
+          <div className="flex items-center gap-1 rounded-lg border border-line-default bg-bg-raised p-1 shadow-lg">
+            <Chip active={page === 'dashboard'} onClick={() => { setHandoffQuery(null); setPage('dashboard') }}>대시보드</Chip>
+            <Chip active={page === 'list'} onClick={() => { setHandoffQuery(null); setPage('list') }}>목록</Chip>
+            <Chip active={page === 'settings'} onClick={() => setPage('settings')}>설정</Chip>
+            <Chip active={page === 'scale'} onClick={() => setPage('scale')}>대용량</Chip>
+            <span className="mx-0.5 h-4 w-px bg-line-default" />
+            {['light', 'dark', 'system'].map((mode) => (
+              <Chip key={mode} active={theme === mode} onClick={() => setTheme(mode)}>
+                {mode === 'light' ? '라이트' : mode === 'dark' ? '다크' : '시스템'}
+              </Chip>
+            ))}
+            <span className="mx-0.5 h-4 w-px bg-line-default" />
+            <button
+              type="button"
+              onClick={() => setOpen((v) => !v)}
+              aria-expanded={open}
+              className={
+                'flex h-control-sm items-center gap-1.5 rounded-md px-2 text-xs font-medium ' +
+                (open ? 'bg-accent-subtle text-accent-text' : 'text-fg-secondary hover:bg-bg-hover')
+              }
+            >
+              <Swatch id={palette} />
+              {current?.label}
+            </button>
+          </div>
+        )}
+
+        <button
+          type="button"
+          onClick={() => { setShown((v) => !v); if (shown) setOpen(false) }}
+          aria-label={shown ? '미리보기 컨트롤 숨기기' : '미리보기 컨트롤 보기'}
+          title="미리보기 컨트롤"
+          className="flex h-8 w-8 items-center justify-center rounded-full border border-line-default bg-bg-raised text-fg-secondary shadow-lg hover:text-fg-primary"
+        >
+          {shown ? (
+            <svg width="12" height="12" viewBox="0 0 12 12" fill="none" aria-hidden="true">
+              <path d="M3 3l6 6M9 3l-6 6" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" />
+            </svg>
+          ) : (
+            <svg width="14" height="14" viewBox="0 0 14 14" fill="none" aria-hidden="true">
+              <circle cx="7" cy="7" r="2.25" stroke="currentColor" strokeWidth="1.4" />
+              <path d="M7 1.5v1.5M7 11v1.5M12.5 7H11M3 7H1.5M10.9 3.1l-1 1M4.1 9.9l-1 1M10.9 10.9l-1-1M4.1 4.1l-1-1"
+                    stroke="currentColor" strokeWidth="1.4" strokeLinecap="round" />
+            </svg>
+          )}
+        </button>
       </div>
     </>
-  )
-}
-
-/** 팔레트 미리보기 점 — 강조색을 실제 토큰에서 읽어옵니다 */
-function Swatch({ id }) {
-  return (
-    <span
-      aria-hidden="true"
-      data-palette={id}
-      className="inline-flex h-4 w-4 shrink-0 items-center justify-center rounded-full border border-line-default"
-      style={{ backgroundColor: 'var(--hct-accent-600)' }}
-    />
   )
 }
 

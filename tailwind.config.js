@@ -83,6 +83,13 @@ export default {
         bg: 'var(--color-review-bg)', border: 'var(--color-review-border)',
         text: 'var(--color-review-text)', solid: 'var(--color-review-solid)',
       },
+
+      /* 차트 계열 색 — 고정 순서로만 배정합니다 */
+      chart: {
+        1: 'var(--chart-1)', 2: 'var(--chart-2)', 3: 'var(--chart-3)',
+        4: 'var(--chart-4)', 5: 'var(--chart-5)', 6: 'var(--chart-6)',
+        grid: 'var(--chart-grid)', axis: 'var(--chart-axis)',
+      },
     },
 
     fontFamily: {

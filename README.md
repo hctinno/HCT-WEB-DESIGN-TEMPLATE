@@ -120,6 +120,12 @@ npm run lint:design
 
 새 화면은 `src/pages/ListPage.jsx` 를 복사해서 시작하세요. 백지에서 시작하지 마세요.
 
+링크 하나로 모든 화면을 공유하려면 HTML 파일 하나로 묶습니다:
+
+```bash
+node scripts/build-standalone.mjs        # dist-standalone/hct-console.html
+```
+
 ---
 
 ## 저장소 구조

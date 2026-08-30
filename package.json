@@ -9,7 +9,8 @@
     "build": "vite build",
     "preview": "vite preview",
     "lint:design": "node scripts/lint-design.mjs src",
-    "tokens:build": "node scripts/build-palettes.mjs"
+    "tokens:build": "node scripts/build-palettes.mjs",
+    "build:standalone": "node scripts/build-standalone.mjs"
   },
   "peerDependencies": {
     "react": ">=18",

@@ -1,0 +1,352 @@
+/* ============================================================================
+   HCT 색 팔레트 — 자동 생성 파일 (직접 수정하지 마세요)
+   ----------------------------------------------------------------------------
+   원본: tokens/palettes.json
+   생성: npm run tokens:build
+
+   사용법:  <html data-palette="graphite">
+            기본값(속성 없음)은 tokens.css 에 정의된 팔레트입니다.
+
+   상태 색(성공·주의·위험·정보·검토)은 팔레트가 바뀌어도 그대로입니다.
+   의미를 나르는 색이라 제품 전체에서 고정되어야 합니다.
+   ============================================================================ */
+
+/* ── 그래파이트 — 무채색 강조 · 따뜻한 중성색
+   강조색을 무채색으로 두어 화면의 모든 색이 오직 상태만 가리키게 합니다. 상태가 의미의 전부인 관리도구에 가장 정확한 선택입니다. */
+:root[data-palette="graphite"] {
+  --hct-neutral-0: #FFFFFF;
+  --hct-neutral-25: #FCFBF9;
+  --hct-neutral-50: #F7F6F3;
+  --hct-neutral-100: #F0EEEA;
+  --hct-neutral-200: #E6E3DC;
+  --hct-neutral-300: #D7D3C9;
+  --hct-neutral-400: #B2ADA1;
+  --hct-neutral-500: #8A8479;
+  --hct-neutral-600: #6E685E;
+  --hct-neutral-700: #514C44;
+  --hct-neutral-800: #39352F;
+  --hct-neutral-900: #21201C;
+  --hct-neutral-950: #131210;
+
+  --hct-accent-50: #EFEADD;
+  --hct-accent-100: #E3DCCA;
+  --hct-accent-200: #CFC7B2;
+  --hct-accent-300: #A69D88;
+  --hct-accent-400: #6F695C;
+  --hct-accent-500: #4A453C;
+  --hct-accent-600: #33302A;
+  --hct-accent-700: #26231E;
+  --hct-accent-800: #1A1815;
+  --hct-accent-900: #12100E;
+}
+
+@media (prefers-color-scheme: dark) {
+  :root[data-palette="graphite"]:not([data-theme="light"]) {
+    --color-bg-canvas: #0D0C0B;
+    --color-bg-surface: #171614;
+    --color-bg-raised: #211F1C;
+    --color-bg-sunken: #110F0E;
+    --color-bg-hover: #211F1C;
+    --color-bg-active: #2B2825;
+    --color-bg-sidebar: #110F0E;
+    --color-bg-overlay: rgb(0 0 0 / 0.64);
+    --color-text-primary: #EDEBE6;
+    --color-text-secondary: #ADA79C;
+    --color-text-tertiary: #857F74;
+    --color-text-disabled: #57524A;
+    --color-text-inverse: #171614;
+    --color-text-link: #D8D1C0;
+    --color-border-subtle: #262320;
+    --color-border-default: #33302A;
+    --color-border-strong: #4E4940;
+    --color-border-focus: #B2ADA1;
+    --color-accent-solid: #E7E2D6;
+    --color-accent-solid-hover: #F5F1E8;
+    --color-accent-subtle: #2A2621;
+    --color-accent-subtle-hover: #35302A;
+    --color-accent-text: #D8D1C0;
+    --color-accent-border: #4E4940;
+  }
+}
+
+:root[data-palette="graphite"][data-theme="dark"] {
+  --color-bg-canvas: #0D0C0B;
+  --color-bg-surface: #171614;
+  --color-bg-raised: #211F1C;
+  --color-bg-sunken: #110F0E;
+  --color-bg-hover: #211F1C;
+  --color-bg-active: #2B2825;
+  --color-bg-sidebar: #110F0E;
+  --color-bg-overlay: rgb(0 0 0 / 0.64);
+  --color-text-primary: #EDEBE6;
+  --color-text-secondary: #ADA79C;
+  --color-text-tertiary: #857F74;
+  --color-text-disabled: #57524A;
+  --color-text-inverse: #171614;
+  --color-text-link: #D8D1C0;
+  --color-border-subtle: #262320;
+  --color-border-default: #33302A;
+  --color-border-strong: #4E4940;
+  --color-border-focus: #B2ADA1;
+  --color-accent-solid: #E7E2D6;
+  --color-accent-solid-hover: #F5F1E8;
+  --color-accent-subtle: #2A2621;
+  --color-accent-subtle-hover: #35302A;
+  --color-accent-text: #D8D1C0;
+  --color-accent-border: #4E4940;
+}
+
+/* ── 딥틸 — 깊은 청록 · 차가운 중성색
+   상태 색(초록·파랑)과 충분히 떨어진 청록을 강조색으로 씁니다. 차분하면서도 화면에 하나의 분명한 색이 남습니다. */
+:root[data-palette="teal"] {
+  --hct-neutral-0: #FFFFFF;
+  --hct-neutral-25: #FBFCFC;
+  --hct-neutral-50: #F6F8F8;
+  --hct-neutral-100: #EEF1F1;
+  --hct-neutral-200: #E3E7E7;
+  --hct-neutral-300: #D1D7D7;
+  --hct-neutral-400: #ABB4B4;
+  --hct-neutral-500: #818C8C;
+  --hct-neutral-600: #657070;
+  --hct-neutral-700: #485252;
+  --hct-neutral-800: #323A3A;
+  --hct-neutral-900: #1A2020;
+  --hct-neutral-950: #0E1212;
+
+  --hct-accent-50: #EBFAF6;
+  --hct-accent-100: #CFF1E9;
+  --hct-accent-200: #A0E2D5;
+  --hct-accent-300: #65CBB9;
+  --hct-accent-400: #31AE99;
+  --hct-accent-500: #12907C;
+  --hct-accent-600: #0C7768;
+  --hct-accent-700: #0A5F53;
+  --hct-accent-800: #094B42;
+  --hct-accent-900: #083C35;
+}
+
+@media (prefers-color-scheme: dark) {
+  :root[data-palette="teal"]:not([data-theme="light"]) {
+    --color-bg-canvas: #0A0D0D;
+    --color-bg-surface: #131818;
+    --color-bg-raised: #1B2121;
+    --color-bg-sunken: #0E1212;
+    --color-bg-hover: #1B2121;
+    --color-bg-active: #242B2B;
+    --color-bg-sidebar: #0E1212;
+    --color-bg-overlay: rgb(0 0 0 / 0.64);
+    --color-text-primary: #E5E9E9;
+    --color-text-secondary: #A5AFAF;
+    --color-text-tertiary: #7D8787;
+    --color-text-disabled: #525B5B;
+    --color-text-inverse: #0A0D0D;
+    --color-text-link: #65CBB9;
+    --color-border-subtle: #212828;
+    --color-border-default: #2D3535;
+    --color-border-strong: #465050;
+    --color-border-focus: #31AE99;
+    --color-accent-solid: #12907C;
+    --color-accent-solid-hover: #31AE99;
+    --color-accent-subtle: #0B2621;
+    --color-accent-subtle-hover: #0E322C;
+    --color-accent-text: #65CBB9;
+    --color-accent-border: #094B42;
+  }
+}
+
+:root[data-palette="teal"][data-theme="dark"] {
+  --color-bg-canvas: #0A0D0D;
+  --color-bg-surface: #131818;
+  --color-bg-raised: #1B2121;
+  --color-bg-sunken: #0E1212;
+  --color-bg-hover: #1B2121;
+  --color-bg-active: #242B2B;
+  --color-bg-sidebar: #0E1212;
+  --color-bg-overlay: rgb(0 0 0 / 0.64);
+  --color-text-primary: #E5E9E9;
+  --color-text-secondary: #A5AFAF;
+  --color-text-tertiary: #7D8787;
+  --color-text-disabled: #525B5B;
+  --color-text-inverse: #0A0D0D;
+  --color-text-link: #65CBB9;
+  --color-border-subtle: #212828;
+  --color-border-default: #2D3535;
+  --color-border-strong: #465050;
+  --color-border-focus: #31AE99;
+  --color-accent-solid: #12907C;
+  --color-accent-solid-hover: #31AE99;
+  --color-accent-subtle: #0B2621;
+  --color-accent-subtle-hover: #0E322C;
+  --color-accent-text: #65CBB9;
+  --color-accent-border: #094B42;
+}
+
+/* ── 인디고 — 채도를 낮춘 남보라 · 중립 회색
+   기본 파랑보다 어둡고 보라 쪽으로 기울여, 정보(파랑)·검토(보라) 상태와 구분되면서도 익숙한 신뢰감을 유지합니다. */
+:root[data-palette="indigo"] {
+  --hct-neutral-0: #FFFFFF;
+  --hct-neutral-25: #FCFCFD;
+  --hct-neutral-50: #F8F8FA;
+  --hct-neutral-100: #F1F1F4;
+  --hct-neutral-200: #E7E7EC;
+  --hct-neutral-300: #D7D7DF;
+  --hct-neutral-400: #B2B2BD;
+  --hct-neutral-500: #888894;
+  --hct-neutral-600: #6C6C79;
+  --hct-neutral-700: #4D4D5A;
+  --hct-neutral-800: #353541;
+  --hct-neutral-900: #1D1D26;
+  --hct-neutral-950: #101017;
+
+  --hct-accent-50: #F0F0FB;
+  --hct-accent-100: #E1E1F6;
+  --hct-accent-200: #C6C7EE;
+  --hct-accent-300: #9C9EE0;
+  --hct-accent-400: #7476CE;
+  --hct-accent-500: #5456B9;
+  --hct-accent-600: #42449E;
+  --hct-accent-700: #373882;
+  --hct-accent-800: #2C2D67;
+  --hct-accent-900: #232450;
+}
+
+@media (prefers-color-scheme: dark) {
+  :root[data-palette="indigo"]:not([data-theme="light"]) {
+    --color-bg-canvas: #0C0C10;
+    --color-bg-surface: #15151B;
+    --color-bg-raised: #1E1E26;
+    --color-bg-sunken: #101015;
+    --color-bg-hover: #1E1E26;
+    --color-bg-active: #27272F;
+    --color-bg-sidebar: #101015;
+    --color-bg-overlay: rgb(0 0 0 / 0.64);
+    --color-text-primary: #E8E8ED;
+    --color-text-secondary: #A8A8B4;
+    --color-text-tertiary: #80808E;
+    --color-text-disabled: #54545F;
+    --color-text-inverse: #0C0C10;
+    --color-text-link: #9C9EE0;
+    --color-border-subtle: #232329;
+    --color-border-default: #2F2F38;
+    --color-border-strong: #4A4A55;
+    --color-border-focus: #7476CE;
+    --color-accent-solid: #8385D6;
+    --color-accent-solid-hover: #9C9EE0;
+    --color-accent-subtle: #1A1B33;
+    --color-accent-subtle-hover: #22233F;
+    --color-accent-text: #9C9EE0;
+    --color-accent-border: #2C2D67;
+  }
+}
+
+:root[data-palette="indigo"][data-theme="dark"] {
+  --color-bg-canvas: #0C0C10;
+  --color-bg-surface: #15151B;
+  --color-bg-raised: #1E1E26;
+  --color-bg-sunken: #101015;
+  --color-bg-hover: #1E1E26;
+  --color-bg-active: #27272F;
+  --color-bg-sidebar: #101015;
+  --color-bg-overlay: rgb(0 0 0 / 0.64);
+  --color-text-primary: #E8E8ED;
+  --color-text-secondary: #A8A8B4;
+  --color-text-tertiary: #80808E;
+  --color-text-disabled: #54545F;
+  --color-text-inverse: #0C0C10;
+  --color-text-link: #9C9EE0;
+  --color-border-subtle: #232329;
+  --color-border-default: #2F2F38;
+  --color-border-strong: #4A4A55;
+  --color-border-focus: #7476CE;
+  --color-accent-solid: #8385D6;
+  --color-accent-solid-hover: #9C9EE0;
+  --color-accent-subtle: #1A1B33;
+  --color-accent-subtle-hover: #22233F;
+  --color-accent-text: #9C9EE0;
+  --color-accent-border: #2C2D67;
+}
+
+/* ── 애저 (기존) — 기본 파랑 · 비교용
+   처음 만들었던 팔레트입니다. 비교를 위해 남겨 둡니다. */
+:root[data-palette="azure"] {
+  --hct-neutral-0: #FFFFFF;
+  --hct-neutral-25: #FBFBFC;
+  --hct-neutral-50: #F7F8F9;
+  --hct-neutral-100: #F1F2F4;
+  --hct-neutral-200: #EBECF0;
+  --hct-neutral-300: #DCDFE4;
+  --hct-neutral-400: #B3B9C4;
+  --hct-neutral-500: #8590A2;
+  --hct-neutral-600: #6B778C;
+  --hct-neutral-700: #44546F;
+  --hct-neutral-800: #2C3E5D;
+  --hct-neutral-900: #172B4D;
+  --hct-neutral-950: #0D1526;
+
+  --hct-accent-50: #EEF4FF;
+  --hct-accent-100: #DBE6FF;
+  --hct-accent-200: #BFD2FF;
+  --hct-accent-300: #93B4FF;
+  --hct-accent-400: #6090FF;
+  --hct-accent-500: #3B76F6;
+  --hct-accent-600: #2563EB;
+  --hct-accent-700: #1D4FD8;
+  --hct-accent-800: #1E40AF;
+  --hct-accent-900: #1E3A8A;
+}
+
+@media (prefers-color-scheme: dark) {
+  :root[data-palette="azure"]:not([data-theme="light"]) {
+    --color-bg-canvas: #0D0F12;
+    --color-bg-surface: #16191E;
+    --color-bg-raised: #1E2228;
+    --color-bg-sunken: #101317;
+    --color-bg-hover: #1E2228;
+    --color-bg-active: #23272E;
+    --color-bg-sidebar: #101317;
+    --color-bg-overlay: rgb(0 0 0 / 0.62);
+    --color-text-primary: #E6E8EB;
+    --color-text-secondary: #A9B0BA;
+    --color-text-tertiary: #8A919D;
+    --color-text-disabled: #565D69;
+    --color-text-inverse: #0D0F12;
+    --color-text-link: #6090FF;
+    --color-border-subtle: #23272E;
+    --color-border-default: #2E333B;
+    --color-border-strong: #464C56;
+    --color-border-focus: #6090FF;
+    --color-accent-solid: #3B76F6;
+    --color-accent-solid-hover: #6090FF;
+    --color-accent-subtle: #152238;
+    --color-accent-subtle-hover: #1B2C48;
+    --color-accent-text: #93B4FF;
+    --color-accent-border: #1E40AF;
+  }
+}
+
+:root[data-palette="azure"][data-theme="dark"] {
+  --color-bg-canvas: #0D0F12;
+  --color-bg-surface: #16191E;
+  --color-bg-raised: #1E2228;
+  --color-bg-sunken: #101317;
+  --color-bg-hover: #1E2228;
+  --color-bg-active: #23272E;
+  --color-bg-sidebar: #101317;
+  --color-bg-overlay: rgb(0 0 0 / 0.62);
+  --color-text-primary: #E6E8EB;
+  --color-text-secondary: #A9B0BA;
+  --color-text-tertiary: #8A919D;
+  --color-text-disabled: #565D69;
+  --color-text-inverse: #0D0F12;
+  --color-text-link: #6090FF;
+  --color-border-subtle: #23272E;
+  --color-border-default: #2E333B;
+  --color-border-strong: #464C56;
+  --color-border-focus: #6090FF;
+  --color-accent-solid: #3B76F6;
+  --color-accent-solid-hover: #6090FF;
+  --color-accent-subtle: #152238;
+  --color-accent-subtle-hover: #1B2C48;
+  --color-accent-text: #93B4FF;
+  --color-accent-border: #1E40AF;
+}

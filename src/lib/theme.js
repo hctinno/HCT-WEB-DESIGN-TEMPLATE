@@ -61,3 +61,54 @@ export function isDarkActive() {
   if (attr === 'light') return false
   return window.matchMedia('(prefers-color-scheme: dark)').matches
 }
+
+/* ─────────────────────────────────────────────────────────────
+   색 팔레트 — 테마(라이트/다크)와는 별개의 축입니다.
+
+   테마   : 밝기. 뷰어의 환경이나 선택을 따릅니다.
+   팔레트 : 제품의 색 정체성. 조직이 한 번 정하고 바뀌지 않습니다.
+
+   두 축을 분리해 두면 팔레트를 바꿔도 라이트·다크가 모두 따라옵니다.
+   ───────────────────────────────────────────────────────────── */
+
+const PALETTE_KEY = 'hct-palette'
+
+/** 선택 가능한 팔레트. tokens/palettes.json 과 같은 순서를 유지하세요. */
+export const PALETTES = [
+  { id: 'graphite', label: '그래파이트', tagline: '무채색 강조 · 따뜻한 중성색' },
+  { id: 'teal',     label: '딥틸',       tagline: '깊은 청록 · 차가운 중성색' },
+  { id: 'indigo',   label: '인디고',     tagline: '채도 낮춘 남보라 · 중립 회색' },
+  { id: 'azure',    label: '애저',       tagline: '기본 파랑 (기존)' },
+]
+
+/** 제품 기본 팔레트. 조직이 정하면 이 값을 바꾸세요. */
+export const DEFAULT_PALETTE = 'graphite'
+
+export function getStoredPalette() {
+  try {
+    const value = localStorage.getItem(PALETTE_KEY)
+    if (PALETTES.some((p) => p.id === value)) return value
+  } catch {
+    /* 저장소 접근 불가 */
+  }
+  const stamped = typeof document !== 'undefined'
+    ? document.documentElement.getAttribute('data-palette')
+    : null
+  if (PALETTES.some((p) => p.id === stamped)) return stamped
+  return DEFAULT_PALETTE
+}
+
+/** @param {string} id */
+export function applyPalette(id) {
+  document.documentElement.setAttribute('data-palette', id)
+  try {
+    localStorage.setItem(PALETTE_KEY, id)
+  } catch {
+    /* 저장 실패는 무시 — 화면은 이미 반영됨 */
+  }
+}
+
+/** 앱 부팅 시 1회. initTheme 과 함께 호출하세요. */
+export function initPalette() {
+  applyPalette(getStoredPalette())
+}

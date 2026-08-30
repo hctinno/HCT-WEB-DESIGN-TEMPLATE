@@ -5,11 +5,18 @@
     <meta name="viewport" content="width=device-width, initial-scale=1" />
     <title>HCT 디자인 시스템 미리보기</title>
     <script>
-      /* 첫 페인트 전에 테마를 적용해 깜빡임을 막습니다 */
+      /* 첫 페인트 전에 테마와 팔레트를 적용해 깜빡임을 막습니다.
+         이 스크립트가 없으면 기본 색으로 한 프레임 그려진 뒤 바뀝니다. */
       try {
         var t = localStorage.getItem('hct-theme')
         if (t === 'dark' || t === 'light') document.documentElement.setAttribute('data-theme', t)
       } catch (e) {}
+      try {
+        var p = localStorage.getItem('hct-palette')
+        document.documentElement.setAttribute('data-palette', p || 'graphite')
+      } catch (e) {
+        document.documentElement.setAttribute('data-palette', 'graphite')
+      }
     </script>
   </head>
   <body>

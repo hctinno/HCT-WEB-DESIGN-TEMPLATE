@@ -1,4 +1,192 @@
 {
+  "navy": {
+    "label": "네이비",
+    "tagline": "짙은 남색 사이드바 · 흰 콘텐츠",
+    "rationale": "탐색은 짙은 남색, 작업 영역은 흰색으로 갈라놓습니다. 슬랙식 밝기 대비를 유지하되 색은 파랑 계열로 통일했습니다. 중성색에 자주·황토 기운이 없어 배경이 순수한 흰색으로 읽힙니다.",
+    "light": {
+      "neutral": {
+        "0": "#FFFFFF",
+        "25": "#FCFDFE",
+        "50": "#F7F9FC",
+        "100": "#EFF3F8",
+        "200": "#E3E9F1",
+        "300": "#D0D9E5",
+        "400": "#A7B3C4",
+        "500": "#7C8899",
+        "600": "#616D7E",
+        "700": "#445062",
+        "800": "#2E3847",
+        "900": "#18202C",
+        "950": "#0C1219"
+      },
+      "accent": {
+        "50": "#EFF5FF",
+        "100": "#DCE8FE",
+        "200": "#BFD5FD",
+        "300": "#93B8FB",
+        "400": "#5F93F6",
+        "500": "#3573EC",
+        "600": "#1B5AD6",
+        "700": "#1747AE",
+        "800": "#173B8B",
+        "900": "#16336E"
+      },
+      "sidebar": {
+        "bg": "#12253F",
+        "fg": "#EAF0F8",
+        "muted": "#A9BAD0",
+        "subtle": "#8397B1",
+        "hover": "#1B3455",
+        "activeBg": "#1B5AD6",
+        "activeFg": "#FFFFFF",
+        "border": "#1E3A5C",
+        "badgeBg": "#D02439",
+        "badgeFg": "#FFFFFF",
+        "rail": "#0C1B2F"
+      }
+    },
+    "dark": {
+      "bg": {
+        "canvas": "#0B0F16",
+        "surface": "#131922",
+        "raised": "#1B222D",
+        "sunken": "#0E131A",
+        "hover": "#1B222D",
+        "active": "#232B37",
+        "sidebar": "#0D1520",
+        "overlay": "rgb(0 0 0 / 0.64)"
+      },
+      "text": {
+        "primary": "#E6EBF2",
+        "secondary": "#A5B0BF",
+        "tertiary": "#7D8896",
+        "disabled": "#525C69",
+        "inverse": "#0B0F16",
+        "link": "#93B8FB"
+      },
+      "border": {
+        "subtle": "#1F2733",
+        "default": "#2B3542",
+        "strong": "#45505F",
+        "focus": "#5F93F6"
+      },
+      "accent": {
+        "solid": "#5F93F6",
+        "solidHover": "#93B8FB",
+        "subtle": "#10233F",
+        "subtleHover": "#152D50",
+        "text": "#93B8FB",
+        "border": "#173B8B"
+      },
+      "sidebar": {
+        "bg": "#0D1520",
+        "fg": "#E6EBF2",
+        "muted": "#A5B0BF",
+        "subtle": "#7D8896",
+        "hover": "#17202D",
+        "activeBg": "#2E6BD8",
+        "activeFg": "#FFFFFF",
+        "border": "#1C2634",
+        "badgeBg": "#D02439",
+        "badgeFg": "#FFFFFF",
+        "rail": "#080D15"
+      }
+    }
+  },
+  "arctic": {
+    "label": "아크틱",
+    "tagline": "전체 화이트 · 파랑 강조",
+    "rationale": "사이드바까지 밝게 가는 구성입니다. 화면 전체가 흰 종이처럼 읽히고 색은 강조와 상태에만 남습니다. 밝기 대비 대신 테두리로 영역을 나눕니다.",
+    "light": {
+      "neutral": {
+        "0": "#FFFFFF",
+        "25": "#FCFDFE",
+        "50": "#F7F9FC",
+        "100": "#EFF3F8",
+        "200": "#E3E9F1",
+        "300": "#D0D9E5",
+        "400": "#A7B3C4",
+        "500": "#7C8899",
+        "600": "#616D7E",
+        "700": "#445062",
+        "800": "#2E3847",
+        "900": "#18202C",
+        "950": "#0C1219"
+      },
+      "accent": {
+        "50": "#EFF5FF",
+        "100": "#DCE8FE",
+        "200": "#BFD5FD",
+        "300": "#93B8FB",
+        "400": "#5F93F6",
+        "500": "#3573EC",
+        "600": "#1B5AD6",
+        "700": "#1747AE",
+        "800": "#173B8B",
+        "900": "#16336E"
+      },
+      "sidebar": {
+        "bg": "#F7F9FC",
+        "fg": "#18202C",
+        "muted": "#445062",
+        "subtle": "#616D7E",
+        "hover": "#EFF3F8",
+        "activeBg": "#EFF5FF",
+        "activeFg": "#1747AE",
+        "border": "#E3E9F1",
+        "badgeBg": "#D02439",
+        "badgeFg": "#FFFFFF",
+        "rail": "#EFF3F8"
+      }
+    },
+    "dark": {
+      "bg": {
+        "canvas": "#0B0F16",
+        "surface": "#131922",
+        "raised": "#1B222D",
+        "sunken": "#0E131A",
+        "hover": "#1B222D",
+        "active": "#232B37",
+        "sidebar": "#0D1520",
+        "overlay": "rgb(0 0 0 / 0.64)"
+      },
+      "text": {
+        "primary": "#E6EBF2",
+        "secondary": "#A5B0BF",
+        "tertiary": "#7D8896",
+        "disabled": "#525C69",
+        "inverse": "#0B0F16",
+        "link": "#93B8FB"
+      },
+      "border": {
+        "subtle": "#1F2733",
+        "default": "#2B3542",
+        "strong": "#45505F",
+        "focus": "#5F93F6"
+      },
+      "accent": {
+        "solid": "#5F93F6",
+        "solidHover": "#93B8FB",
+        "subtle": "#10233F",
+        "subtleHover": "#152D50",
+        "text": "#93B8FB",
+        "border": "#173B8B"
+      },
+      "sidebar": {
+        "bg": "#0E131A",
+        "fg": "#E6EBF2",
+        "muted": "#A5B0BF",
+        "subtle": "#7D8896",
+        "hover": "#1B222D",
+        "activeBg": "#10233F",
+        "activeFg": "#93B8FB",
+        "border": "#1F2733",
+        "badgeBg": "#D02439",
+        "badgeFg": "#FFFFFF",
+        "rail": "#0B0F16"
+      }
+    }
+  },
   "$meta": {
     "description": "교체 가능한 색 팔레트. tokens.css 의 원시 변수만 덮어쓰므로 시맨틱 레이어는 그대로입니다.",
     "howItWorks": "scripts/build-palettes.mjs 가 이 파일에서 src/styles/palettes.css 를 생성합니다. 직접 CSS 를 고치지 말고 여기를 고친 뒤 npm run tokens:build 를 실행하세요.",
@@ -166,74 +354,6 @@
       }
     }
   },
-  "blue": {
-    "label": "딥블루",
-    "tagline": "깊은 코발트 · 차가운 중성색",
-    "rationale": "'진행중·정보' 상태색이 이미 밝은 파랑을 쓰므로, 강조색은 그보다 어둡고 채도를 눌러 구분되게 했습니다. 같은 색상환이라도 명도 차이가 충분하면 버튼과 상태 뱃지가 서로 다른 것으로 읽힙니다.",
-    "light": {
-      "neutral": {
-        "0": "#FFFFFF",
-        "25": "#FBFBFD",
-        "50": "#F6F7FA",
-        "100": "#EEF0F4",
-        "200": "#E3E6EC",
-        "300": "#D1D6DF",
-        "400": "#AAB1BF",
-        "500": "#808898",
-        "600": "#646D7E",
-        "700": "#475062",
-        "800": "#313846",
-        "900": "#191E28",
-        "950": "#0D1017"
-      },
-      "accent": {
-        "50": "#EEF3FC",
-        "100": "#D9E4F7",
-        "200": "#B4CAEF",
-        "300": "#82A8E3",
-        "400": "#4F82D3",
-        "500": "#2C61BE",
-        "600": "#1D4BA0",
-        "700": "#173C82",
-        "800": "#142F66",
-        "900": "#112751"
-      }
-    },
-    "dark": {
-      "bg": {
-        "canvas": "#0A0C11",
-        "surface": "#12151B",
-        "raised": "#1A1E26",
-        "sunken": "#0E1116",
-        "hover": "#1A1E26",
-        "active": "#232833",
-        "sidebar": "#0E1116",
-        "overlay": "rgb(0 0 0 / 0.64)"
-      },
-      "text": {
-        "primary": "#E6E9EF",
-        "secondary": "#A6AEBD",
-        "tertiary": "#7E8797",
-        "disabled": "#525A69",
-        "inverse": "#0A0C11",
-        "link": "#82A8E3"
-      },
-      "border": {
-        "subtle": "#1F242D",
-        "default": "#2B313C",
-        "strong": "#454C5A",
-        "focus": "#4F82D3"
-      },
-      "accent": {
-        "solid": "#4F82D3",
-        "solidHover": "#82A8E3",
-        "subtle": "#101C33",
-        "subtleHover": "#16253F",
-        "text": "#82A8E3",
-        "border": "#142F66"
-      }
-    }
-  },
   "indigo": {
     "label": "인디고",
     "tagline": "채도를 낮춘 남보라 · 중립 회색",
@@ -299,74 +419,6 @@
         "subtleHover": "#22233F",
         "text": "#9C9EE0",
         "border": "#2C2D67"
-      }
-    }
-  },
-  "azure": {
-    "label": "애저 (기존)",
-    "tagline": "기본 파랑 · 비교용",
-    "rationale": "처음 만들었던 팔레트입니다. 비교를 위해 남겨 둡니다.",
-    "light": {
-      "neutral": {
-        "0": "#FFFFFF",
-        "25": "#FBFBFC",
-        "50": "#F7F8F9",
-        "100": "#F1F2F4",
-        "200": "#EBECF0",
-        "300": "#DCDFE4",
-        "400": "#B3B9C4",
-        "500": "#8590A2",
-        "600": "#6B778C",
-        "700": "#44546F",
-        "800": "#2C3E5D",
-        "900": "#172B4D",
-        "950": "#0D1526"
-      },
-      "accent": {
-        "50": "#EEF4FF",
-        "100": "#DBE6FF",
-        "200": "#BFD2FF",
-        "300": "#93B4FF",
-        "400": "#6090FF",
-        "500": "#3B76F6",
-        "600": "#2563EB",
-        "700": "#1D4FD8",
-        "800": "#1E40AF",
-        "900": "#1E3A8A"
-      }
-    },
-    "dark": {
-      "bg": {
-        "canvas": "#0D0F12",
-        "surface": "#16191E",
-        "raised": "#1E2228",
-        "sunken": "#101317",
-        "hover": "#1E2228",
-        "active": "#23272E",
-        "sidebar": "#101317",
-        "overlay": "rgb(0 0 0 / 0.62)"
-      },
-      "text": {
-        "primary": "#E6E8EB",
-        "secondary": "#A9B0BA",
-        "tertiary": "#8A919D",
-        "disabled": "#565D69",
-        "inverse": "#0D0F12",
-        "link": "#6090FF"
-      },
-      "border": {
-        "subtle": "#23272E",
-        "default": "#2E333B",
-        "strong": "#464C56",
-        "focus": "#6090FF"
-      },
-      "accent": {
-        "solid": "#3B76F6",
-        "solidHover": "#6090FF",
-        "subtle": "#152238",
-        "subtleHover": "#1B2C48",
-        "text": "#93B4FF",
-        "border": "#1E40AF"
       }
     }
   }

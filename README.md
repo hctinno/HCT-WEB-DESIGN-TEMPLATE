@@ -201,18 +201,20 @@ docs/
 
 ## 색 팔레트
 
-| 플럼 (기본) | 그래파이트 |
+| 네이비 (기본) | 아크틱 |
 |---|---|
-| ![플럼](docs/screenshots/palette-plum.png) | ![그래파이트](docs/screenshots/palette-graphite.png) |
+| ![네이비](docs/screenshots/palette-navy.png) | ![아크틱](docs/screenshots/palette-arctic.png) |
 
-플럼은 **탐색 영역과 작업 영역을 밝기로 가릅니다.** 사이드바가 어두워
-"지금 어디에 있는가"가 배경으로 깔리고, 콘텐츠는 밝아 데이터가 가장 진합니다.
-사이드바는 전용 토큰군(`sidebar-*`)을 갖기 때문에 라이트 테마에서도
-어둡게 유지될 수 있습니다.
+**네이비**는 탐색 영역과 작업 영역을 밝기로 가릅니다 — 사이드바가 짙은 남색,
+콘텐츠는 흰색. **아크틱**은 같은 색 계열로 사이드바까지 밝게 갑니다.
+사이드바가 전용 토큰군(`sidebar-*`)을 갖기 때문에 이 선택이 팔레트 단위로
+가능합니다.
 
-| 그래파이트 다크 | 인디고 다크 |
+중성색에 자주·황토 기운이 없어 배경이 순수한 흰색(`#F7F9FC`)으로 읽힙니다.
+
+| 네이비 다크 | 그래파이트 다크 |
 |---|---|
-| ![그래파이트 다크](docs/screenshots/palette-graphite-dark.png) | ![인디고 다크](docs/screenshots/palette-indigo-dark.png) |
+| ![네이비 다크](docs/screenshots/palette-navy-dark.png) | ![그래파이트 다크](docs/screenshots/palette-graphite-dark.png) |
 
 
 
@@ -221,11 +223,11 @@ docs/
 
 | id | 이름 | 성격 |
 |---|---|---|
-| `plum` | 플럼 | 어두운 사이드바 · 밝은 콘텐츠 (**기본값**) |
+| `navy` | 네이비 | 짙은 남색 사이드바 · 흰 콘텐츠 (**기본값**) |
+| `arctic` | 아크틱 | 전체 화이트 · 파랑 강조 |
 | `graphite` | 그래파이트 | 무채색 강조 · 따뜻한 중성색 |
-| `blue` | 딥블루 | 깊은 코발트 · 차가운 중성색 |
+| `plum` | 플럼 | 어두운 자두색 사이드바 |
 | `indigo` | 인디고 | 채도 낮춘 남보라 · 중립 회색 |
-| `azure` | 애저 | 기본 파랑 (초기 버전, 비교용) |
 
 사이드바는 본문과 밝기가 다를 수 있어 `sidebar-*` 전용 토큰군을 갖습니다.
 사이드바 안에서 `text-fg-primary` 같은 전역 토큰을 쓰면 어두운 사이드바에서

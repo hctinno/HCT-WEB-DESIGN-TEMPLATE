@@ -12,10 +12,12 @@
         if (t === 'dark' || t === 'light') document.documentElement.setAttribute('data-theme', t)
       } catch (e) {}
       try {
-        var p = localStorage.getItem('hct-palette')
-        document.documentElement.setAttribute('data-palette', p || 'graphite')
+        /* 팔레트 목록 버전이 다르면 예전 선택을 버립니다 — theme.js 와 같은 규칙 */
+        var pv = localStorage.getItem('hct-palette-v')
+        var p = pv === '3' ? localStorage.getItem('hct-palette') : null
+        document.documentElement.setAttribute('data-palette', p || 'navy')
       } catch (e) {
-        document.documentElement.setAttribute('data-palette', 'plum')
+        document.documentElement.setAttribute('data-palette', 'navy')
       }
     </script>
   </head>

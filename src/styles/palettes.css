@@ -11,6 +11,242 @@
    의미를 나르는 색이라 제품 전체에서 고정되어야 합니다.
    ============================================================================ */
 
+/* ── 네이비 — 짙은 남색 사이드바 · 흰 콘텐츠
+   탐색은 짙은 남색, 작업 영역은 흰색으로 갈라놓습니다. 슬랙식 밝기 대비를 유지하되 색은 파랑 계열로 통일했습니다. 중성색에 자주·황토 기운이 없어 배경이 순수한 흰색으로 읽힙니다. */
+:root[data-palette="navy"] {
+  --hct-neutral-0: #FFFFFF;
+  --hct-neutral-25: #FCFDFE;
+  --hct-neutral-50: #F7F9FC;
+  --hct-neutral-100: #EFF3F8;
+  --hct-neutral-200: #E3E9F1;
+  --hct-neutral-300: #D0D9E5;
+  --hct-neutral-400: #A7B3C4;
+  --hct-neutral-500: #7C8899;
+  --hct-neutral-600: #616D7E;
+  --hct-neutral-700: #445062;
+  --hct-neutral-800: #2E3847;
+  --hct-neutral-900: #18202C;
+  --hct-neutral-950: #0C1219;
+
+  --hct-accent-50: #EFF5FF;
+  --hct-accent-100: #DCE8FE;
+  --hct-accent-200: #BFD5FD;
+  --hct-accent-300: #93B8FB;
+  --hct-accent-400: #5F93F6;
+  --hct-accent-500: #3573EC;
+  --hct-accent-600: #1B5AD6;
+  --hct-accent-700: #1747AE;
+  --hct-accent-800: #173B8B;
+  --hct-accent-900: #16336E;
+  --color-sidebar-bg: #12253F;
+  --color-sidebar-fg: #EAF0F8;
+  --color-sidebar-fg-muted: #A9BAD0;
+  --color-sidebar-fg-subtle: #8397B1;
+  --color-sidebar-hover: #1B3455;
+  --color-sidebar-active-bg: #1B5AD6;
+  --color-sidebar-active-fg: #FFFFFF;
+  --color-sidebar-border: #1E3A5C;
+  --color-sidebar-badge-bg: #D02439;
+  --color-sidebar-badge-fg: #FFFFFF;
+  --color-sidebar-rail-bg: #0C1B2F;
+}
+
+@media (prefers-color-scheme: dark) {
+  :root[data-palette="navy"]:not([data-theme="light"]) {
+    --color-bg-canvas: #0B0F16;
+    --color-bg-surface: #131922;
+    --color-bg-raised: #1B222D;
+    --color-bg-sunken: #0E131A;
+    --color-bg-hover: #1B222D;
+    --color-bg-active: #232B37;
+    --color-bg-sidebar: #0D1520;
+    --color-bg-overlay: rgb(0 0 0 / 0.64);
+    --color-text-primary: #E6EBF2;
+    --color-text-secondary: #A5B0BF;
+    --color-text-tertiary: #7D8896;
+    --color-text-disabled: #525C69;
+    --color-text-inverse: #0B0F16;
+    --color-text-link: #93B8FB;
+    --color-border-subtle: #1F2733;
+    --color-border-default: #2B3542;
+    --color-border-strong: #45505F;
+    --color-border-focus: #5F93F6;
+    --color-accent-solid: #5F93F6;
+    --color-accent-solid-hover: #93B8FB;
+    --color-accent-subtle: #10233F;
+    --color-accent-subtle-hover: #152D50;
+    --color-accent-text: #93B8FB;
+    --color-accent-border: #173B8B;
+    --color-sidebar-bg: #0D1520;
+    --color-sidebar-fg: #E6EBF2;
+    --color-sidebar-fg-muted: #A5B0BF;
+    --color-sidebar-fg-subtle: #7D8896;
+    --color-sidebar-hover: #17202D;
+    --color-sidebar-active-bg: #2E6BD8;
+    --color-sidebar-active-fg: #FFFFFF;
+    --color-sidebar-border: #1C2634;
+    --color-sidebar-badge-bg: #D02439;
+    --color-sidebar-badge-fg: #FFFFFF;
+    --color-sidebar-rail-bg: #080D15;
+  }
+}
+
+:root[data-palette="navy"][data-theme="dark"] {
+  --color-bg-canvas: #0B0F16;
+  --color-bg-surface: #131922;
+  --color-bg-raised: #1B222D;
+  --color-bg-sunken: #0E131A;
+  --color-bg-hover: #1B222D;
+  --color-bg-active: #232B37;
+  --color-bg-sidebar: #0D1520;
+  --color-bg-overlay: rgb(0 0 0 / 0.64);
+  --color-text-primary: #E6EBF2;
+  --color-text-secondary: #A5B0BF;
+  --color-text-tertiary: #7D8896;
+  --color-text-disabled: #525C69;
+  --color-text-inverse: #0B0F16;
+  --color-text-link: #93B8FB;
+  --color-border-subtle: #1F2733;
+  --color-border-default: #2B3542;
+  --color-border-strong: #45505F;
+  --color-border-focus: #5F93F6;
+  --color-accent-solid: #5F93F6;
+  --color-accent-solid-hover: #93B8FB;
+  --color-accent-subtle: #10233F;
+  --color-accent-subtle-hover: #152D50;
+  --color-accent-text: #93B8FB;
+  --color-accent-border: #173B8B;
+  --color-sidebar-bg: #0D1520;
+  --color-sidebar-fg: #E6EBF2;
+  --color-sidebar-fg-muted: #A5B0BF;
+  --color-sidebar-fg-subtle: #7D8896;
+  --color-sidebar-hover: #17202D;
+  --color-sidebar-active-bg: #2E6BD8;
+  --color-sidebar-active-fg: #FFFFFF;
+  --color-sidebar-border: #1C2634;
+  --color-sidebar-badge-bg: #D02439;
+  --color-sidebar-badge-fg: #FFFFFF;
+  --color-sidebar-rail-bg: #080D15;
+}
+
+/* ── 아크틱 — 전체 화이트 · 파랑 강조
+   사이드바까지 밝게 가는 구성입니다. 화면 전체가 흰 종이처럼 읽히고 색은 강조와 상태에만 남습니다. 밝기 대비 대신 테두리로 영역을 나눕니다. */
+:root[data-palette="arctic"] {
+  --hct-neutral-0: #FFFFFF;
+  --hct-neutral-25: #FCFDFE;
+  --hct-neutral-50: #F7F9FC;
+  --hct-neutral-100: #EFF3F8;
+  --hct-neutral-200: #E3E9F1;
+  --hct-neutral-300: #D0D9E5;
+  --hct-neutral-400: #A7B3C4;
+  --hct-neutral-500: #7C8899;
+  --hct-neutral-600: #616D7E;
+  --hct-neutral-700: #445062;
+  --hct-neutral-800: #2E3847;
+  --hct-neutral-900: #18202C;
+  --hct-neutral-950: #0C1219;
+
+  --hct-accent-50: #EFF5FF;
+  --hct-accent-100: #DCE8FE;
+  --hct-accent-200: #BFD5FD;
+  --hct-accent-300: #93B8FB;
+  --hct-accent-400: #5F93F6;
+  --hct-accent-500: #3573EC;
+  --hct-accent-600: #1B5AD6;
+  --hct-accent-700: #1747AE;
+  --hct-accent-800: #173B8B;
+  --hct-accent-900: #16336E;
+  --color-sidebar-bg: #F7F9FC;
+  --color-sidebar-fg: #18202C;
+  --color-sidebar-fg-muted: #445062;
+  --color-sidebar-fg-subtle: #616D7E;
+  --color-sidebar-hover: #EFF3F8;
+  --color-sidebar-active-bg: #EFF5FF;
+  --color-sidebar-active-fg: #1747AE;
+  --color-sidebar-border: #E3E9F1;
+  --color-sidebar-badge-bg: #D02439;
+  --color-sidebar-badge-fg: #FFFFFF;
+  --color-sidebar-rail-bg: #EFF3F8;
+}
+
+@media (prefers-color-scheme: dark) {
+  :root[data-palette="arctic"]:not([data-theme="light"]) {
+    --color-bg-canvas: #0B0F16;
+    --color-bg-surface: #131922;
+    --color-bg-raised: #1B222D;
+    --color-bg-sunken: #0E131A;
+    --color-bg-hover: #1B222D;
+    --color-bg-active: #232B37;
+    --color-bg-sidebar: #0D1520;
+    --color-bg-overlay: rgb(0 0 0 / 0.64);
+    --color-text-primary: #E6EBF2;
+    --color-text-secondary: #A5B0BF;
+    --color-text-tertiary: #7D8896;
+    --color-text-disabled: #525C69;
+    --color-text-inverse: #0B0F16;
+    --color-text-link: #93B8FB;
+    --color-border-subtle: #1F2733;
+    --color-border-default: #2B3542;
+    --color-border-strong: #45505F;
+    --color-border-focus: #5F93F6;
+    --color-accent-solid: #5F93F6;
+    --color-accent-solid-hover: #93B8FB;
+    --color-accent-subtle: #10233F;
+    --color-accent-subtle-hover: #152D50;
+    --color-accent-text: #93B8FB;
+    --color-accent-border: #173B8B;
+    --color-sidebar-bg: #0E131A;
+    --color-sidebar-fg: #E6EBF2;
+    --color-sidebar-fg-muted: #A5B0BF;
+    --color-sidebar-fg-subtle: #7D8896;
+    --color-sidebar-hover: #1B222D;
+    --color-sidebar-active-bg: #10233F;
+    --color-sidebar-active-fg: #93B8FB;
+    --color-sidebar-border: #1F2733;
+    --color-sidebar-badge-bg: #D02439;
+    --color-sidebar-badge-fg: #FFFFFF;
+    --color-sidebar-rail-bg: #0B0F16;
+  }
+}
+
+:root[data-palette="arctic"][data-theme="dark"] {
+  --color-bg-canvas: #0B0F16;
+  --color-bg-surface: #131922;
+  --color-bg-raised: #1B222D;
+  --color-bg-sunken: #0E131A;
+  --color-bg-hover: #1B222D;
+  --color-bg-active: #232B37;
+  --color-bg-sidebar: #0D1520;
+  --color-bg-overlay: rgb(0 0 0 / 0.64);
+  --color-text-primary: #E6EBF2;
+  --color-text-secondary: #A5B0BF;
+  --color-text-tertiary: #7D8896;
+  --color-text-disabled: #525C69;
+  --color-text-inverse: #0B0F16;
+  --color-text-link: #93B8FB;
+  --color-border-subtle: #1F2733;
+  --color-border-default: #2B3542;
+  --color-border-strong: #45505F;
+  --color-border-focus: #5F93F6;
+  --color-accent-solid: #5F93F6;
+  --color-accent-solid-hover: #93B8FB;
+  --color-accent-subtle: #10233F;
+  --color-accent-subtle-hover: #152D50;
+  --color-accent-text: #93B8FB;
+  --color-accent-border: #173B8B;
+  --color-sidebar-bg: #0E131A;
+  --color-sidebar-fg: #E6EBF2;
+  --color-sidebar-fg-muted: #A5B0BF;
+  --color-sidebar-fg-subtle: #7D8896;
+  --color-sidebar-hover: #1B222D;
+  --color-sidebar-active-bg: #10233F;
+  --color-sidebar-active-fg: #93B8FB;
+  --color-sidebar-border: #1F2733;
+  --color-sidebar-badge-bg: #D02439;
+  --color-sidebar-badge-fg: #FFFFFF;
+  --color-sidebar-rail-bg: #0B0F16;
+}
+
 /* ── 그래파이트 — 무채색 강조 · 따뜻한 중성색
    강조색을 무채색으로 두어 화면의 모든 색이 오직 상태만 가리키게 합니다. 상태가 의미의 전부인 관리도구에 가장 정확한 선택입니다. */
 :root[data-palette="graphite"] {
@@ -214,91 +450,6 @@
   --color-sidebar-rail-bg: #100A14;
 }
 
-/* ── 딥블루 — 깊은 코발트 · 차가운 중성색
-   '진행중·정보' 상태색이 이미 밝은 파랑을 쓰므로, 강조색은 그보다 어둡고 채도를 눌러 구분되게 했습니다. 같은 색상환이라도 명도 차이가 충분하면 버튼과 상태 뱃지가 서로 다른 것으로 읽힙니다. */
-:root[data-palette="blue"] {
-  --hct-neutral-0: #FFFFFF;
-  --hct-neutral-25: #FBFBFD;
-  --hct-neutral-50: #F6F7FA;
-  --hct-neutral-100: #EEF0F4;
-  --hct-neutral-200: #E3E6EC;
-  --hct-neutral-300: #D1D6DF;
-  --hct-neutral-400: #AAB1BF;
-  --hct-neutral-500: #808898;
-  --hct-neutral-600: #646D7E;
-  --hct-neutral-700: #475062;
-  --hct-neutral-800: #313846;
-  --hct-neutral-900: #191E28;
-  --hct-neutral-950: #0D1017;
-
-  --hct-accent-50: #EEF3FC;
-  --hct-accent-100: #D9E4F7;
-  --hct-accent-200: #B4CAEF;
-  --hct-accent-300: #82A8E3;
-  --hct-accent-400: #4F82D3;
-  --hct-accent-500: #2C61BE;
-  --hct-accent-600: #1D4BA0;
-  --hct-accent-700: #173C82;
-  --hct-accent-800: #142F66;
-  --hct-accent-900: #112751;
-}
-
-@media (prefers-color-scheme: dark) {
-  :root[data-palette="blue"]:not([data-theme="light"]) {
-    --color-bg-canvas: #0A0C11;
-    --color-bg-surface: #12151B;
-    --color-bg-raised: #1A1E26;
-    --color-bg-sunken: #0E1116;
-    --color-bg-hover: #1A1E26;
-    --color-bg-active: #232833;
-    --color-bg-sidebar: #0E1116;
-    --color-bg-overlay: rgb(0 0 0 / 0.64);
-    --color-text-primary: #E6E9EF;
-    --color-text-secondary: #A6AEBD;
-    --color-text-tertiary: #7E8797;
-    --color-text-disabled: #525A69;
-    --color-text-inverse: #0A0C11;
-    --color-text-link: #82A8E3;
-    --color-border-subtle: #1F242D;
-    --color-border-default: #2B313C;
-    --color-border-strong: #454C5A;
-    --color-border-focus: #4F82D3;
-    --color-accent-solid: #4F82D3;
-    --color-accent-solid-hover: #82A8E3;
-    --color-accent-subtle: #101C33;
-    --color-accent-subtle-hover: #16253F;
-    --color-accent-text: #82A8E3;
-    --color-accent-border: #142F66;
-  }
-}
-
-:root[data-palette="blue"][data-theme="dark"] {
-  --color-bg-canvas: #0A0C11;
-  --color-bg-surface: #12151B;
-  --color-bg-raised: #1A1E26;
-  --color-bg-sunken: #0E1116;
-  --color-bg-hover: #1A1E26;
-  --color-bg-active: #232833;
-  --color-bg-sidebar: #0E1116;
-  --color-bg-overlay: rgb(0 0 0 / 0.64);
-  --color-text-primary: #E6E9EF;
-  --color-text-secondary: #A6AEBD;
-  --color-text-tertiary: #7E8797;
-  --color-text-disabled: #525A69;
-  --color-text-inverse: #0A0C11;
-  --color-text-link: #82A8E3;
-  --color-border-subtle: #1F242D;
-  --color-border-default: #2B313C;
-  --color-border-strong: #454C5A;
-  --color-border-focus: #4F82D3;
-  --color-accent-solid: #4F82D3;
-  --color-accent-solid-hover: #82A8E3;
-  --color-accent-subtle: #101C33;
-  --color-accent-subtle-hover: #16253F;
-  --color-accent-text: #82A8E3;
-  --color-accent-border: #142F66;
-}
-
 /* ── 인디고 — 채도를 낮춘 남보라 · 중립 회색
    기본 파랑보다 어둡고 보라 쪽으로 기울여, 정보(파랑)·검토(보라) 상태와 구분되면서도 익숙한 신뢰감을 유지합니다. */
 :root[data-palette="indigo"] {
@@ -382,89 +533,4 @@
   --color-accent-subtle-hover: #22233F;
   --color-accent-text: #9C9EE0;
   --color-accent-border: #2C2D67;
-}
-
-/* ── 애저 (기존) — 기본 파랑 · 비교용
-   처음 만들었던 팔레트입니다. 비교를 위해 남겨 둡니다. */
-:root[data-palette="azure"] {
-  --hct-neutral-0: #FFFFFF;
-  --hct-neutral-25: #FBFBFC;
-  --hct-neutral-50: #F7F8F9;
-  --hct-neutral-100: #F1F2F4;
-  --hct-neutral-200: #EBECF0;
-  --hct-neutral-300: #DCDFE4;
-  --hct-neutral-400: #B3B9C4;
-  --hct-neutral-500: #8590A2;
-  --hct-neutral-600: #6B778C;
-  --hct-neutral-700: #44546F;
-  --hct-neutral-800: #2C3E5D;
-  --hct-neutral-900: #172B4D;
-  --hct-neutral-950: #0D1526;
-
-  --hct-accent-50: #EEF4FF;
-  --hct-accent-100: #DBE6FF;
-  --hct-accent-200: #BFD2FF;
-  --hct-accent-300: #93B4FF;
-  --hct-accent-400: #6090FF;
-  --hct-accent-500: #3B76F6;
-  --hct-accent-600: #2563EB;
-  --hct-accent-700: #1D4FD8;
-  --hct-accent-800: #1E40AF;
-  --hct-accent-900: #1E3A8A;
-}
-
-@media (prefers-color-scheme: dark) {
-  :root[data-palette="azure"]:not([data-theme="light"]) {
-    --color-bg-canvas: #0D0F12;
-    --color-bg-surface: #16191E;
-    --color-bg-raised: #1E2228;
-    --color-bg-sunken: #101317;
-    --color-bg-hover: #1E2228;
-    --color-bg-active: #23272E;
-    --color-bg-sidebar: #101317;
-    --color-bg-overlay: rgb(0 0 0 / 0.62);
-    --color-text-primary: #E6E8EB;
-    --color-text-secondary: #A9B0BA;
-    --color-text-tertiary: #8A919D;
-    --color-text-disabled: #565D69;
-    --color-text-inverse: #0D0F12;
-    --color-text-link: #6090FF;
-    --color-border-subtle: #23272E;
-    --color-border-default: #2E333B;
-    --color-border-strong: #464C56;
-    --color-border-focus: #6090FF;
-    --color-accent-solid: #3B76F6;
-    --color-accent-solid-hover: #6090FF;
-    --color-accent-subtle: #152238;
-    --color-accent-subtle-hover: #1B2C48;
-    --color-accent-text: #93B4FF;
-    --color-accent-border: #1E40AF;
-  }
-}
-
-:root[data-palette="azure"][data-theme="dark"] {
-  --color-bg-canvas: #0D0F12;
-  --color-bg-surface: #16191E;
-  --color-bg-raised: #1E2228;
-  --color-bg-sunken: #101317;
-  --color-bg-hover: #1E2228;
-  --color-bg-active: #23272E;
-  --color-bg-sidebar: #101317;
-  --color-bg-overlay: rgb(0 0 0 / 0.62);
-  --color-text-primary: #E6E8EB;
-  --color-text-secondary: #A9B0BA;
-  --color-text-tertiary: #8A919D;
-  --color-text-disabled: #565D69;
-  --color-text-inverse: #0D0F12;
-  --color-text-link: #6090FF;
-  --color-border-subtle: #23272E;
-  --color-border-default: #2E333B;
-  --color-border-strong: #464C56;
-  --color-border-focus: #6090FF;
-  --color-accent-solid: #3B76F6;
-  --color-accent-solid-hover: #6090FF;
-  --color-accent-subtle: #152238;
-  --color-accent-subtle-hover: #1B2C48;
-  --color-accent-text: #93B4FF;
-  --color-accent-border: #1E40AF;
 }

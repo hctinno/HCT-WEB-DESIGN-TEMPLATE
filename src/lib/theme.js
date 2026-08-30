@@ -75,20 +75,32 @@ const PALETTE_KEY = 'hct-palette'
 
 /** 선택 가능한 팔레트. tokens/palettes.json 과 같은 순서를 유지하세요. */
 export const PALETTES = [
+  { id: 'navy',     label: '네이비',     tagline: '짙은 남색 사이드바 · 흰 콘텐츠' },
+  { id: 'arctic',   label: '아크틱',     tagline: '전체 화이트 · 파랑 강조' },
   { id: 'graphite', label: '그래파이트', tagline: '무채색 강조 · 따뜻한 중성색' },
-  { id: 'plum',     label: '플럼',       tagline: '어두운 사이드바 · 밝은 콘텐츠' },
-  { id: 'blue',     label: '딥블루',     tagline: '깊은 코발트 · 차가운 중성색' },
+  { id: 'plum',     label: '플럼',       tagline: '어두운 자두색 사이드바' },
   { id: 'indigo',   label: '인디고',     tagline: '채도 낮춘 남보라 · 중립 회색' },
-  { id: 'azure',    label: '애저',       tagline: '기본 파랑 (기존)' },
 ]
 
-/** 제품 기본 팔레트. 조직이 정하면 이 값을 바꾸세요. */
-export const DEFAULT_PALETTE = 'plum'
+/**
+ * 팔레트 목록이 바뀔 때 올립니다.
+ *
+ * 저장된 선택은 존중해야 하지만, 기본값이 바뀐 뒤에도 예전 선택이 남아 있으면
+ * 사용자는 "왜 바뀌었다는데 그대로지?" 하게 됩니다. 실제로 그런 혼선이
+ * 있었습니다 — 배경이 따뜻해 보인 이유가 예전에 고른 팔레트가 저장돼
+ * 있어서였습니다. 버전이 다르면 저장된 선택을 한 번 버립니다.
+ */
+export const PALETTE_VERSION = '3'
+
+export const DEFAULT_PALETTE = 'navy'
 
 export function getStoredPalette() {
   try {
-    const value = localStorage.getItem(PALETTE_KEY)
-    if (PALETTES.some((p) => p.id === value)) return value
+    const storedVersion = localStorage.getItem(`${PALETTE_KEY}-v`)
+    if (storedVersion === PALETTE_VERSION) {
+      const value = localStorage.getItem(PALETTE_KEY)
+      if (PALETTES.some((p) => p.id === value)) return value
+    }
   } catch {
     /* 저장소 접근 불가 */
   }
@@ -104,6 +116,7 @@ export function applyPalette(id) {
   document.documentElement.setAttribute('data-palette', id)
   try {
     localStorage.setItem(PALETTE_KEY, id)
+    localStorage.setItem(`${PALETTE_KEY}-v`, PALETTE_VERSION)
   } catch {
     /* 저장 실패는 무시 — 화면은 이미 반영됨 */
   }

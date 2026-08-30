@@ -1,20 +1,23 @@
 {
   "name": "hct-web-design-template",
-  "version": "0.1.0",
-  "private": true,
+  "version": "1.0.0",
   "type": "module",
   "description": "HCT 대시보드·분석도구·관리도구용 디자인 시스템 템플릿",
   "scripts": {
     "dev": "vite",
     "build": "vite build",
+    "build:lib": "vite build --config vite.config.lib.mjs",
+    "build:standalone": "node scripts/build-standalone.mjs",
     "preview": "vite preview",
     "lint:design": "node scripts/lint-design.mjs src",
+    "verify:consumer": "npm pack --pack-destination /tmp && node scripts/verify-consumer.mjs /tmp/hct-web-design-template-$npm_package_version.tgz",
     "tokens:build": "node scripts/build-palettes.mjs",
-    "build:standalone": "node scripts/build-standalone.mjs"
+    "prepare": "npm run build:lib"
   },
   "peerDependencies": {
     "react": ">=18",
-    "react-dom": ">=18"
+    "react-dom": ">=18",
+    "tailwindcss": "^3.4"
   },
   "devDependencies": {
     "@vitejs/plugin-react": "^4.3.4",
@@ -35,5 +38,29 @@
   "dependencies": {
     "clsx": "^2.1.1",
     "tailwind-merge": "^2.5.5"
+  },
+  "license": "UNLICENSED",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/dytc880915-commits/hct-web-design-template.git"
+  },
+  "sideEffects": [
+    "*.css"
+  ],
+  "files": [
+    "dist",
+    "src/styles",
+    "tailwind-preset.js",
+    "tokens",
+    "AGENTS.md"
+  ],
+  "exports": {
+    ".": "./dist/index.js",
+    "./pages": "./dist/pages.js",
+    "./tailwind-preset": "./tailwind-preset.js",
+    "./styles/hct.css": "./src/styles/hct.css",
+    "./styles/*": "./src/styles/*",
+    "./tokens/*": "./tokens/*",
+    "./package.json": "./package.json"
   }
 }

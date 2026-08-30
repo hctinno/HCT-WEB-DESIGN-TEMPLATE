@@ -128,6 +128,119 @@ node scripts/build-standalone.mjs        # dist-standalone/hct-console.html
 
 ---
 
+## 다른 프로젝트에서 쓰기
+
+이 저장소는 **설치해서 쓰는 패키지**입니다. 화면을 만드는 사람이 사람이든
+에이전트든, 아래 세 줄을 거치면 색·간격·컴포넌트가 자동으로 이 시스템 안에
+들어옵니다.
+
+### 1. 설치
+
+```bash
+npm i github:dytc880915-commits/hct-web-design-template
+npm i -D "tailwindcss@^3.4" postcss autoprefixer
+```
+
+> **Tailwind 는 3.x 여야 합니다.** v4 는 설정 방식이 완전히 달라 이 프리셋이
+> 동작하지 않습니다. `npm i -D tailwindcss` 만 치면 v4 가 깔립니다.
+
+### 2. tailwind.config.js
+
+```js
+import hct, { hctContent } from 'hct-web-design-template/tailwind-preset'
+
+export default {
+  presets: [hct],
+  content: [...hctContent, './index.html', './src/**/*.{js,jsx,ts,tsx}'],
+}
+```
+
+`hctContent` 를 빼먹지 마세요. **Tailwind 는 프리셋의 `content` 를 병합하지
+않습니다** — 앱의 `content` 가 프리셋 것을 통째로 덮어씁니다. 그러면
+`node_modules` 안의 컴포넌트가 스캔되지 않아 클래스가 전부 purge 되고,
+**오류 없이** 스타일만 빠진 화면이 나옵니다.
+
+빼먹으면 개발 중 콘솔에 무엇을 고쳐야 하는지 적힌 오류가 뜹니다
+(`AppShell` 이 마운트될 때 실제로 측정해서 확인합니다).
+
+### 3. 앱의 CSS
+
+```css
+@import 'hct-web-design-template/styles/hct.css';
+
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+```
+
+`@tailwind` 지시어는 패키지가 넣지 않습니다. 앱마다 Tailwind 설정이 다르고,
+남의 패키지가 그걸 대신 정하면 안 됩니다.
+
+### 그리고 화면
+
+팔레트나 테마 설정은 **하지 않아도 됩니다.** 속성을 안 붙이면 기본 팔레트가
+그대로 적용됩니다.
+
+```jsx
+import {
+  PageContainer, PageHeader, DataGrid, GridCard, Button, StatusBadge,
+  ToastProvider, normalizeFields,
+} from 'hct-web-design-template'
+import { AppFrame } from 'hct-web-design-template/pages'
+
+const FIELDS = normalizeFields([
+  { key: 'id',    label: '번호',   type: 'text', width: '96px' },
+  { key: 'name',  label: '장비명', type: 'text' },
+  { key: 'state', label: '상태',   type: 'select', width: '104px', options: [
+    { value: 'run',  label: '가동', status: 'done' },
+    { value: 'stop', label: '정지', status: 'blocked' },
+  ] },
+])
+
+export function EquipmentPage() {
+  return (
+    <AppFrame active="list" counts={{ list: rows.length }}>
+      <PageContainer>
+        <PageHeader title="장비 현황" actions={<Button variant="primary">장비 추가</Button>} />
+        <GridCard>
+          <DataGrid fields={FIELDS} records={rows} selectable={false} primaryField="name" />
+        </GridCard>
+      </PageContainer>
+    </AppFrame>
+  )
+}
+```
+
+이 40줄이 아래 화면이 됩니다 — 사이드바·상단바·검색·표·상태 뱃지·다크 모드가
+전부 따라옵니다.
+
+![소비 프로젝트](docs/screenshots/consumer.png)
+
+### 에이전트에게 시킬 때
+
+작업을 맡기기 전에 이 한 줄을 붙이세요:
+
+> 이 프로젝트는 `hct-web-design-template` 디자인 시스템을 씁니다.
+> 화면을 만들기 전에 `node_modules/hct-web-design-template/AGENTS.md` 를 먼저 읽고,
+> 끝나면 `npm run lint:design` 을 통과시키세요.
+
+`AGENTS.md` 는 패키지에 함께 배포됩니다. 규칙을 외우게 하는 대신 **읽을 수 있는
+자리에 두는 것**이 핵심입니다.
+
+### 무엇이 강제되고 무엇이 안 되는가
+
+정직하게 말하면 두 층입니다.
+
+| | 어떻게 |
+|---|---|
+| **기계가 막습니다** | Tailwind 기본 팔레트가 제거되어 `bg-blue-500` 은 **CSS 가 생성되지 않습니다.** 간격도 4px 배수 밖은 무시됩니다. `lint:design` 이 13개 규칙으로 빌드를 실패시킵니다. CI 가 PR마다 돌립니다. |
+| **에이전트가 협조해야 합니다** | AGENTS.md 를 읽는 것, 컴포넌트를 쓰는 것(직접 `<div>` 로 표를 짜면 lint 가 경고는 하지만 막지는 못합니다), 로딩·빈 상태·오류 상태를 함께 구현하는 것. |
+
+두 번째 층을 좁히는 방법은 **원형을 복사하게 하는 것**입니다. 백지에서 시작하면
+협조에 기대야 하지만, `ListPage.jsx` 를 복사해 고치면 구조가 이미 들어 있습니다.
+
+---
+
 ## 저장소 구조
 
 ```

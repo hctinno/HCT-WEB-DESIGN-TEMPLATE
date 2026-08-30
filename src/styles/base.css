@@ -1,0 +1,100 @@
+/*
+ * 토큰 위에 얹는 기본 레이어 — 리셋, 포커스 링, 숫자 정렬, 스크롤바.
+ *
+ * Tailwind 지시어(@tailwind)는 여기 없습니다. 소비하는 앱이 자기 Tailwind 로
+ * 처리해야 하므로, 이 파일은 **토큰과 레이어만** 담습니다.
+ */
+@layer base {
+  *,
+  *::before,
+  *::after {
+    box-sizing: border-box;
+    border-color: var(--color-border-default);
+  }
+
+  html {
+    -webkit-text-size-adjust: 100%;
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+  }
+
+  body {
+    margin: 0;
+    font-family: var(--font-sans);
+    font-size: 14px;
+    line-height: 20px;
+    background-color: var(--color-bg-canvas);
+    color: var(--color-text-primary);
+    font-feature-settings: 'tnum' 0;
+
+    /*
+     * 한글 줄바꿈. 기본값(break-word)은 어절 한가운데를 끊습니다 —
+     * "저장이" 가 "저 / 장이" 로 잘리면 읽는 속도가 눈에 띄게 떨어집니다.
+     * keep-all 은 공백에서만 끊으므로 어절이 보존됩니다.
+     *
+     * 대신 긴 영문 토큰(URL·요청 ID)은 넘칠 수 있으므로, 그런 값을 담는
+     * 곳에는 overflow-wrap 을 따로 줍니다 (아래 .break-token).
+     */
+    word-break: keep-all;
+    overflow-wrap: break-word;
+  }
+
+  /* URL·ID·토큰처럼 공백이 없는 긴 문자열 전용 */
+  .break-token {
+    word-break: break-all;
+  }
+
+  /* 포커스 링 — 접근성 필수. 절대 outline:none 으로 지우지 마세요. */
+  :focus-visible {
+    outline: 2px solid var(--color-border-focus);
+    outline-offset: 1px;
+    border-radius: 3px;
+  }
+
+  /* 숫자 정렬 — 테이블·KPI에서 자릿수가 흔들리지 않도록 */
+  .tabular,
+  table td.numeric,
+  table th.numeric {
+    font-variant-numeric: tabular-nums;
+    font-feature-settings: 'tnum' 1;
+  }
+
+  /* 스크롤바 — 관리도구는 스크롤 영역이 많아 기본 스크롤바가 거슬립니다 */
+  .scroll-thin {
+    scrollbar-width: thin;
+    scrollbar-color: var(--color-border-strong) transparent;
+  }
+  .scroll-thin::-webkit-scrollbar { width: 10px; height: 10px; }
+  .scroll-thin::-webkit-scrollbar-track { background: transparent; }
+  .scroll-thin::-webkit-scrollbar-thumb {
+    background-color: var(--color-border-strong);
+    border-radius: 9999px;
+    border: 3px solid transparent;
+    background-clip: content-box;
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    *,
+    *::before,
+    *::after {
+      animation-duration: 0.01ms !important;
+      animation-iteration-count: 1 !important;
+      transition-duration: 0.01ms !important;
+    }
+  }
+}
+
+@layer components {
+  /* 스크린리더 전용 — 아이콘 버튼에 반드시 동반 */
+  .sr-only-focusable:not(:focus):not(:focus-within) {
+    position: absolute;
+    width: 1px;
+    height: 1px;
+    padding: 0;
+    margin: -1px;
+    overflow: hidden;
+    clip: rect(0, 0, 0, 0);
+    white-space: nowrap;
+    border-width: 0;
+  }
+}

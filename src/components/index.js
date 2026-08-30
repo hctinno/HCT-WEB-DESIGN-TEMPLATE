@@ -99,3 +99,4 @@ export {
   applyTheme, getStoredTheme, initTheme, isDarkActive,
   applyPalette, getStoredPalette, initPalette, PALETTES, DEFAULT_PALETTE,
 } from '../lib/theme'
+export { verifyStyles } from '../lib/verifyStyles'

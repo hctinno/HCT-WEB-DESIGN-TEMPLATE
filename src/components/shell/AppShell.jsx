@@ -1,5 +1,6 @@
 import { useEffect, useState } from 'react'
 import { cn } from '../../lib/cn'
+import { verifyStyles } from '../../lib/verifyStyles'
 
 /**
  * AppShell — 모든 화면의 최상위 골격.
@@ -30,6 +31,10 @@ export function AppShell({
 }) {
   /* lg 미만에서는 사이드바가 오버레이로 전환됩니다 */
   const [mobileNavOpen, setMobileNavOpen] = useState(false)
+
+  /* 설치가 제대로 됐는지 개발 모드에서 한 번 확인합니다. 배럴에 두면
+     트리셰이킹이 지워버릴 수 있어, 앱이 반드시 렌더하는 여기에 둡니다. */
+  useEffect(verifyStyles, [])
 
   useEffect(() => {
     if (!mobileNavOpen) return

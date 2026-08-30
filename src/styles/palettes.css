@@ -5,14 +5,20 @@
    생성: npm run tokens:build
 
    사용법:  <html data-palette="graphite">
-            기본값(속성 없음)은 tokens.css 에 정의된 팔레트입니다.
+            속성이 없으면 기본 팔레트(DEFAULT)가 그대로 적용됩니다.
+
+   기본 팔레트는 :root 에도 함께 걸립니다. 속성을 안 붙였을 때 어느 팔레트도
+   아닌 '반쯤 설정된' 상태가 되면, 사이드바만 밝고 그 위 로고는 어두운 면을
+   가정한 흰색이 얹혀 사라집니다. 실제로 이 패키지를 처음 설치한 프로젝트에서
+   그렇게 깨졌습니다. 속성을 붙이는 것을 잊어도 제품이 성립해야 합니다.
 
    상태 색(성공·주의·위험·정보·검토)은 팔레트가 바뀌어도 그대로입니다.
    의미를 나르는 색이라 제품 전체에서 고정되어야 합니다.
    ============================================================================ */
 
-/* ── HCT — 로고색 강조 · 짙은 남색 사이드바
+/* ── HCT — 로고색 강조 · 짙은 남색 사이드바 (기본 — 속성 없이도 적용됩니다)
    강조색이 회사 로고색 #2F4A9C 입니다. 보고서 템플릿(hct-report-template)이 '로고색은 밝은 지면 대비 7.51:1 로 강조색 요건을 만족한다'고 적어 두었고, 같은 색을 쓰면 보고서와 화면이 한 가족으로 읽힙니다. 사이드바 남색은 같은 색상환에서 어둡게 내린 값입니다. */
+:root,
 :root[data-palette="hct"] {
   --hct-neutral-0: #FFFFFF;
   --hct-neutral-25: #FCFDFE;
@@ -52,6 +58,7 @@
 }
 
 @media (prefers-color-scheme: dark) {
+  :root:not([data-palette]):not([data-theme="light"]),
   :root[data-palette="hct"]:not([data-theme="light"]) {
     --color-bg-canvas: #0B0F16;
     --color-bg-surface: #131922;
@@ -91,6 +98,7 @@
   }
 }
 
+:root:not([data-palette])[data-theme="dark"],
 :root[data-palette="hct"][data-theme="dark"] {
   --color-bg-canvas: #0B0F16;
   --color-bg-surface: #131922;

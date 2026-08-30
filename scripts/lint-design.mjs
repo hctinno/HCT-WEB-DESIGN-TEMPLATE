@@ -107,6 +107,35 @@ const RULES = [
     test: (line) => /<button(?![^>]*aria-label)[^>]*>\s*<svg/.test(line),
   },
   {
+    id: 'no-inline-color',
+    severity: 'error',
+    message:
+      '인라인 style 로 색을 지정하지 마세요. 토큰 클래스(bg-bg-surface, text-fg-primary)를 쓰거나, ' +
+      '값이 동적이라면 var(--...) 를 통해 넘기세요.',
+    /* hex 와 rgb() 는 위 규칙들이 이미 잡습니다. 여기서 남는 구멍은
+       `style={{ color: 'red' }}` 처럼 **이름 있는 CSS 색**입니다.
+       Tailwind 를 통째로 우회하므로 팔레트를 바꿔도 따라오지 않습니다.
+
+       변수로 넘기는 경우(`backgroundColor: color`)는 잡지 않습니다 —
+       차트 계열색처럼 토큰에서 계산된 값이 정당하게 들어옵니다. */
+    test: (line) => {
+      const re = /\b(?:color|background|backgroundColor|borderColor|outlineColor|fill|stroke)\s*:\s*['"`]([^'"`]+)['"`]/g
+      const allowed = /^(?:var\(--|transparent$|currentColor$|none$|inherit$|unset$|initial$)/i
+      let m
+      while ((m = re.exec(line)) !== null) {
+        if (!allowed.test(m[1].trim())) return true
+      }
+      return false
+    },
+  },
+  {
+    id: 'no-arbitrary-color-class',
+    severity: 'error',
+    message: '임의 색 클래스(bg-[red] 등) 대신 시맨틱 토큰을 쓰세요.',
+    /* bg-[#fff] 는 no-hardcoded-hex 가 잡지만 bg-[red] 는 빠져나갑니다 */
+    test: (line) => /\b(?:bg|text|border|ring|fill|stroke|outline|decoration)-\[(?!var\(|--)[a-zA-Z]+\]/.test(line),
+  },
+  {
     id: 'no-dark-class',
     severity: 'error',
     message: 'dark: 변형을 직접 쓰지 마세요. 시맨틱 토큰이 두 모드를 자동 처리합니다.',

@@ -147,6 +147,39 @@ import './styles/index.css'   // tokens.css 를 포함합니다
 
 ---
 
+## 1-0. 이 패키지를 설치해서 쓰는 프로젝트라면
+
+`node_modules/hct-web-design-template` 안에서 이 문서를 읽고 있다면, 앱 쪽 설정이
+아래와 같은지 먼저 확인하세요. 셋 중 하나라도 빠지면 화면이 **오류 없이** 스타일만
+빠진 채로 나옵니다.
+
+```js
+// tailwind.config.js
+import hct, { hctContent } from 'hct-web-design-template/tailwind-preset'
+export default {
+  presets: [hct],
+  content: [...hctContent, './index.html', './src/**/*.{js,jsx,ts,tsx}'],
+}
+```
+
+```css
+/* 앱의 CSS 맨 위 */
+@import 'hct-web-design-template/styles/hct.css';
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+```
+
+- Tailwind 는 **3.x** 여야 합니다. v4 는 설정 방식이 달라 동작하지 않습니다.
+- `hctContent` 는 필수입니다. Tailwind 가 프리셋의 `content` 를 병합하지 않아,
+  빼먹으면 `node_modules` 안의 컴포넌트 클래스가 전부 purge 됩니다.
+- 팔레트·테마 설정은 필요 없습니다. 속성을 안 붙이면 기본 팔레트가 적용됩니다.
+
+무언가 잘못되면 `AppShell` 이 마운트될 때 콘솔에 무엇을 고쳐야 하는지 적힌
+오류를 남깁니다. 화면이 밋밋하게 나오면 콘솔부터 보세요.
+
+---
+
 ## 1-1. 화면 원형 16종
 
 `src/pages/` 에 있는 화면들입니다. 각 파일 맨 위 주석에 **그 화면에서 흔히
@@ -808,6 +841,13 @@ const form = useForm({ initialValues, validate, onSubmit })
 
 ```bash
 npm run lint:design    # 디자인 규칙 (반드시 통과)
+```
+
+이 저장소 자체를 고쳤다면 배포 형태도 함께 확인합니다 — 저장소 안에서는 잘
+돌아가는데 설치한 쪽에서만 깨지는 사고가 실제로 있었습니다:
+
+```bash
+npm run verify:consumer   # 진짜로 설치해서 빌드하고, 클래스가 살아남았는지 검사
 ```
 
 그리고 눈으로 확인할 것:

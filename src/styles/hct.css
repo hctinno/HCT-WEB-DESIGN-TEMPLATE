@@ -1,0 +1,15 @@
+/*
+ * 다른 프로젝트에서 이 디자인 시스템을 쓸 때 가져가는 스타일 엔트리.
+ *
+ *   // 앱의 CSS 맨 위
+ *   @import 'hct-web-design-template/styles/hct.css';
+ *   @tailwind base;
+ *   @tailwind components;
+ *   @tailwind utilities;
+ *
+ * @tailwind 지시어는 일부러 넣지 않았습니다. 앱마다 Tailwind 설정이 다르고,
+ * 남의 패키지가 그걸 대신 정하면 안 됩니다.
+ */
+@import './tokens.css';
+@import './palettes.css';
+@import './base.css';

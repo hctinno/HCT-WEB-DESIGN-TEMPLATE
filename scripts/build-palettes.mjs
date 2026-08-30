@@ -98,7 +98,12 @@ let css = `/* ==================================================================
    생성: npm run tokens:build
 
    사용법:  <html data-palette="graphite">
-            기본값(속성 없음)은 tokens.css 에 정의된 팔레트입니다.
+            속성이 없으면 기본 팔레트(DEFAULT)가 그대로 적용됩니다.
+
+   기본 팔레트는 :root 에도 함께 걸립니다. 속성을 안 붙였을 때 어느 팔레트도
+   아닌 '반쯤 설정된' 상태가 되면, 사이드바만 밝고 그 위 로고는 어두운 면을
+   가정한 흰색이 얹혀 사라집니다. 실제로 이 패키지를 처음 설치한 프로젝트에서
+   그렇게 깨졌습니다. 속성을 붙이는 것을 잊어도 제품이 성립해야 합니다.
 
    상태 색(성공·주의·위험·정보·검토)은 팔레트가 바뀌어도 그대로입니다.
    의미를 나르는 색이라 제품 전체에서 고정되어야 합니다.
@@ -107,23 +112,38 @@ let css = `/* ==================================================================
 
 const report = []
 
+/* 속성을 안 붙였을 때 적용될 팔레트. src/lib/theme.js 의 DEFAULT_PALETTE 와
+   같은 값이어야 합니다 — 둘이 어긋나면 첫 페인트와 이후가 달라집니다. */
+const DEFAULT = 'hct'
+
 for (const [id, p] of Object.entries(palettes)) {
   if (id.startsWith('$')) continue
 
+  const isDefault = id === DEFAULT
+  /* 기본 팔레트는 속성이 없는 :root 에도 걸어, 아무것도 설정하지 않은
+     프로젝트가 곧바로 완성된 팔레트를 쓰게 합니다. */
+  const light = isDefault ? `:root,\n:root[data-palette="${id}"]` : `:root[data-palette="${id}"]`
+  const sysDark = isDefault
+    ? `  :root:not([data-palette]):not([data-theme="light"]),\n  :root[data-palette="${id}"]:not([data-theme="light"])`
+    : `  :root[data-palette="${id}"]:not([data-theme="light"])`
+  const dark = isDefault
+    ? `:root:not([data-palette])[data-theme="dark"],\n:root[data-palette="${id}"][data-theme="dark"]`
+    : `:root[data-palette="${id}"][data-theme="dark"]`
+
   css += `
-/* ── ${p.label} — ${p.tagline}
+/* ── ${p.label} — ${p.tagline}${isDefault ? ' (기본 — 속성 없이도 적용됩니다)' : ''}
    ${p.rationale} */
-:root[data-palette="${id}"] {
+${light} {
 ${lightBlock(p)}
 }
 
 @media (prefers-color-scheme: dark) {
-  :root[data-palette="${id}"]:not([data-theme="light"]) {
+${sysDark} {
 ${darkBlock(p, '    ')}
   }
 }
 
-:root[data-palette="${id}"][data-theme="dark"] {
+${dark} {
 ${darkBlock(p)}
 }
 `

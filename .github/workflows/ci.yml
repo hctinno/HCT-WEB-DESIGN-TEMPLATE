@@ -1,0 +1,59 @@
+# 디자인 규칙과 빌드를 PR마다 검사합니다.
+#
+# 이 저장소의 목적은 "여러 사람·에이전트가 만든 화면이 하나의 제품처럼 보이게"
+# 하는 것입니다. 규칙을 문서로만 두면 지켜지지 않으므로, 머지 전에 기계가
+# 확인합니다. lint:design 이 실패하면 머지되지 않습니다.
+name: CI
+
+on:
+  push:
+    branches: ['**']
+  pull_request:
+
+jobs:
+  verify:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+
+      # package-lock.json 을 커밋하면 npm ci 로 바꾸세요 — 더 빠르고 재현됩니다.
+      - name: 의존성 설치
+        run: npm install --no-audit --no-fund
+
+      - name: 디자인 규칙
+        run: npm run lint:design
+
+      # 팔레트 CSS 는 생성물입니다. 원본(tokens/palettes.json)만 고치고
+      # 재생성을 잊으면 화면과 토큰이 어긋나므로, 생성 결과가 커밋된 것과
+      # 같은지 확인합니다.
+      - name: 팔레트 CSS 가 최신인지
+        run: |
+          npm run tokens:build
+          git diff --exit-code -- src/styles/palettes.css \
+            || { echo "::error::tokens/palettes.json 을 고친 뒤 'npm run tokens:build' 를 실행하고 커밋하세요."; exit 1; }
+
+      - name: 라이브러리 빌드
+        run: npm run build:lib
+
+      - name: 미리보기 빌드
+        run: npm run build
+
+  # 다른 프로젝트에서 설치했을 때 실제로 동작하는지까지 확인합니다.
+  # 배럴 export 를 빠뜨리거나 files 목록에서 파일이 새면 여기서 걸립니다.
+  consume:
+    runs-on: ubuntu-latest
+    needs: verify
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+
+      - name: 소비 프로젝트에서 설치하고 빌드
+        run: |
+          npm install --no-audit --no-fund
+          npm run verify:consumer

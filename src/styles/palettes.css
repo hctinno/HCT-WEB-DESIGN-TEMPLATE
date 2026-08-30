@@ -96,89 +96,89 @@
   --color-accent-border: #4E4940;
 }
 
-/* ── 딥틸 — 깊은 청록 · 차가운 중성색
-   상태 색(초록·파랑)과 충분히 떨어진 청록을 강조색으로 씁니다. 차분하면서도 화면에 하나의 분명한 색이 남습니다. */
-:root[data-palette="teal"] {
+/* ── 딥블루 — 깊은 코발트 · 차가운 중성색
+   '진행중·정보' 상태색이 이미 밝은 파랑을 쓰므로, 강조색은 그보다 어둡고 채도를 눌러 구분되게 했습니다. 같은 색상환이라도 명도 차이가 충분하면 버튼과 상태 뱃지가 서로 다른 것으로 읽힙니다. */
+:root[data-palette="blue"] {
   --hct-neutral-0: #FFFFFF;
-  --hct-neutral-25: #FBFCFC;
-  --hct-neutral-50: #F6F8F8;
-  --hct-neutral-100: #EEF1F1;
-  --hct-neutral-200: #E3E7E7;
-  --hct-neutral-300: #D1D7D7;
-  --hct-neutral-400: #ABB4B4;
-  --hct-neutral-500: #818C8C;
-  --hct-neutral-600: #657070;
-  --hct-neutral-700: #485252;
-  --hct-neutral-800: #323A3A;
-  --hct-neutral-900: #1A2020;
-  --hct-neutral-950: #0E1212;
+  --hct-neutral-25: #FBFBFD;
+  --hct-neutral-50: #F6F7FA;
+  --hct-neutral-100: #EEF0F4;
+  --hct-neutral-200: #E3E6EC;
+  --hct-neutral-300: #D1D6DF;
+  --hct-neutral-400: #AAB1BF;
+  --hct-neutral-500: #808898;
+  --hct-neutral-600: #646D7E;
+  --hct-neutral-700: #475062;
+  --hct-neutral-800: #313846;
+  --hct-neutral-900: #191E28;
+  --hct-neutral-950: #0D1017;
 
-  --hct-accent-50: #EBFAF6;
-  --hct-accent-100: #CFF1E9;
-  --hct-accent-200: #A0E2D5;
-  --hct-accent-300: #65CBB9;
-  --hct-accent-400: #31AE99;
-  --hct-accent-500: #12907C;
-  --hct-accent-600: #0C7768;
-  --hct-accent-700: #0A5F53;
-  --hct-accent-800: #094B42;
-  --hct-accent-900: #083C35;
+  --hct-accent-50: #EEF3FC;
+  --hct-accent-100: #D9E4F7;
+  --hct-accent-200: #B4CAEF;
+  --hct-accent-300: #82A8E3;
+  --hct-accent-400: #4F82D3;
+  --hct-accent-500: #2C61BE;
+  --hct-accent-600: #1D4BA0;
+  --hct-accent-700: #173C82;
+  --hct-accent-800: #142F66;
+  --hct-accent-900: #112751;
 }
 
 @media (prefers-color-scheme: dark) {
-  :root[data-palette="teal"]:not([data-theme="light"]) {
-    --color-bg-canvas: #0A0D0D;
-    --color-bg-surface: #131818;
-    --color-bg-raised: #1B2121;
-    --color-bg-sunken: #0E1212;
-    --color-bg-hover: #1B2121;
-    --color-bg-active: #242B2B;
-    --color-bg-sidebar: #0E1212;
+  :root[data-palette="blue"]:not([data-theme="light"]) {
+    --color-bg-canvas: #0A0C11;
+    --color-bg-surface: #12151B;
+    --color-bg-raised: #1A1E26;
+    --color-bg-sunken: #0E1116;
+    --color-bg-hover: #1A1E26;
+    --color-bg-active: #232833;
+    --color-bg-sidebar: #0E1116;
     --color-bg-overlay: rgb(0 0 0 / 0.64);
-    --color-text-primary: #E5E9E9;
-    --color-text-secondary: #A5AFAF;
-    --color-text-tertiary: #7D8787;
-    --color-text-disabled: #525B5B;
-    --color-text-inverse: #0A0D0D;
-    --color-text-link: #65CBB9;
-    --color-border-subtle: #212828;
-    --color-border-default: #2D3535;
-    --color-border-strong: #465050;
-    --color-border-focus: #31AE99;
-    --color-accent-solid: #12907C;
-    --color-accent-solid-hover: #31AE99;
-    --color-accent-subtle: #0B2621;
-    --color-accent-subtle-hover: #0E322C;
-    --color-accent-text: #65CBB9;
-    --color-accent-border: #094B42;
+    --color-text-primary: #E6E9EF;
+    --color-text-secondary: #A6AEBD;
+    --color-text-tertiary: #7E8797;
+    --color-text-disabled: #525A69;
+    --color-text-inverse: #0A0C11;
+    --color-text-link: #82A8E3;
+    --color-border-subtle: #1F242D;
+    --color-border-default: #2B313C;
+    --color-border-strong: #454C5A;
+    --color-border-focus: #4F82D3;
+    --color-accent-solid: #4F82D3;
+    --color-accent-solid-hover: #82A8E3;
+    --color-accent-subtle: #101C33;
+    --color-accent-subtle-hover: #16253F;
+    --color-accent-text: #82A8E3;
+    --color-accent-border: #142F66;
   }
 }
 
-:root[data-palette="teal"][data-theme="dark"] {
-  --color-bg-canvas: #0A0D0D;
-  --color-bg-surface: #131818;
-  --color-bg-raised: #1B2121;
-  --color-bg-sunken: #0E1212;
-  --color-bg-hover: #1B2121;
-  --color-bg-active: #242B2B;
-  --color-bg-sidebar: #0E1212;
+:root[data-palette="blue"][data-theme="dark"] {
+  --color-bg-canvas: #0A0C11;
+  --color-bg-surface: #12151B;
+  --color-bg-raised: #1A1E26;
+  --color-bg-sunken: #0E1116;
+  --color-bg-hover: #1A1E26;
+  --color-bg-active: #232833;
+  --color-bg-sidebar: #0E1116;
   --color-bg-overlay: rgb(0 0 0 / 0.64);
-  --color-text-primary: #E5E9E9;
-  --color-text-secondary: #A5AFAF;
-  --color-text-tertiary: #7D8787;
-  --color-text-disabled: #525B5B;
-  --color-text-inverse: #0A0D0D;
-  --color-text-link: #65CBB9;
-  --color-border-subtle: #212828;
-  --color-border-default: #2D3535;
-  --color-border-strong: #465050;
-  --color-border-focus: #31AE99;
-  --color-accent-solid: #12907C;
-  --color-accent-solid-hover: #31AE99;
-  --color-accent-subtle: #0B2621;
-  --color-accent-subtle-hover: #0E322C;
-  --color-accent-text: #65CBB9;
-  --color-accent-border: #094B42;
+  --color-text-primary: #E6E9EF;
+  --color-text-secondary: #A6AEBD;
+  --color-text-tertiary: #7E8797;
+  --color-text-disabled: #525A69;
+  --color-text-inverse: #0A0C11;
+  --color-text-link: #82A8E3;
+  --color-border-subtle: #1F242D;
+  --color-border-default: #2B313C;
+  --color-border-strong: #454C5A;
+  --color-border-focus: #4F82D3;
+  --color-accent-solid: #4F82D3;
+  --color-accent-solid-hover: #82A8E3;
+  --color-accent-subtle: #101C33;
+  --color-accent-subtle-hover: #16253F;
+  --color-accent-text: #82A8E3;
+  --color-accent-border: #142F66;
 }
 
 /* ── 인디고 — 채도를 낮춘 남보라 · 중립 회색

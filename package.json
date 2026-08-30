@@ -1,0 +1,37 @@
+{
+  "name": "hct-web-design-template",
+  "version": "0.1.0",
+  "private": true,
+  "type": "module",
+  "description": "HCT 대시보드·분석도구·관리도구용 디자인 시스템 템플릿",
+  "scripts": {
+    "dev": "vite",
+    "build": "vite build",
+    "preview": "vite preview",
+    "lint:design": "node scripts/lint-design.mjs src"
+  },
+  "peerDependencies": {
+    "react": ">=18",
+    "react-dom": ">=18"
+  },
+  "devDependencies": {
+    "@vitejs/plugin-react": "^4.3.4",
+    "autoprefixer": "^10.4.20",
+    "postcss": "^8.4.49",
+    "react": "^18.3.1",
+    "react-dom": "^18.3.1",
+    "tailwindcss": "^3.4.17",
+    "vite": "^5.4.11"
+  },
+  "keywords": [
+    "design-system",
+    "dashboard",
+    "admin",
+    "tailwind",
+    "react"
+  ],
+  "dependencies": {
+    "clsx": "^2.1.1",
+    "tailwind-merge": "^2.5.5"
+  }
+}

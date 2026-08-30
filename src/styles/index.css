@@ -1,0 +1,84 @@
+@import './tokens.css';
+
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer base {
+  *,
+  *::before,
+  *::after {
+    box-sizing: border-box;
+    border-color: var(--color-border-default);
+  }
+
+  html {
+    -webkit-text-size-adjust: 100%;
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+  }
+
+  body {
+    margin: 0;
+    font-family: var(--font-sans);
+    font-size: 14px;
+    line-height: 20px;
+    background-color: var(--color-bg-canvas);
+    color: var(--color-text-primary);
+    font-feature-settings: 'tnum' 0;
+  }
+
+  /* 포커스 링 — 접근성 필수. 절대 outline:none 으로 지우지 마세요. */
+  :focus-visible {
+    outline: 2px solid var(--color-border-focus);
+    outline-offset: 1px;
+    border-radius: 3px;
+  }
+
+  /* 숫자 정렬 — 테이블·KPI에서 자릿수가 흔들리지 않도록 */
+  .tabular,
+  table td.numeric,
+  table th.numeric {
+    font-variant-numeric: tabular-nums;
+    font-feature-settings: 'tnum' 1;
+  }
+
+  /* 스크롤바 — 관리도구는 스크롤 영역이 많아 기본 스크롤바가 거슬립니다 */
+  .scroll-thin {
+    scrollbar-width: thin;
+    scrollbar-color: var(--color-border-strong) transparent;
+  }
+  .scroll-thin::-webkit-scrollbar { width: 10px; height: 10px; }
+  .scroll-thin::-webkit-scrollbar-track { background: transparent; }
+  .scroll-thin::-webkit-scrollbar-thumb {
+    background-color: var(--color-border-strong);
+    border-radius: 9999px;
+    border: 3px solid transparent;
+    background-clip: content-box;
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    *,
+    *::before,
+    *::after {
+      animation-duration: 0.01ms !important;
+      animation-iteration-count: 1 !important;
+      transition-duration: 0.01ms !important;
+    }
+  }
+}
+
+@layer components {
+  /* 스크린리더 전용 — 아이콘 버튼에 반드시 동반 */
+  .sr-only-focusable:not(:focus):not(:focus-within) {
+    position: absolute;
+    width: 1px;
+    height: 1px;
+    padding: 0;
+    margin: -1px;
+    overflow: hidden;
+    clip: rect(0, 0, 0, 0);
+    white-space: nowrap;
+    border-width: 0;
+  }
+}

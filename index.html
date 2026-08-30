@@ -1,0 +1,19 @@
+<!doctype html>
+<html lang="ko">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>HCT 디자인 시스템 미리보기</title>
+    <script>
+      /* 첫 페인트 전에 테마를 적용해 깜빡임을 막습니다 */
+      try {
+        var t = localStorage.getItem('hct-theme')
+        if (t === 'dark' || t === 'light') document.documentElement.setAttribute('data-theme', t)
+      } catch (e) {}
+    </script>
+  </head>
+  <body>
+    <div id="root"></div>
+    <script type="module" src="/src/preview.jsx"></script>
+  </body>
+</html>

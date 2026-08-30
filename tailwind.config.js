@@ -1,0 +1,190 @@
+/**
+ * HCT Design System — Tailwind 설정
+ *
+ * 이 설정은 tokens/tokens.json 및 src/styles/tokens.css 와 1:1로 대응합니다.
+ * 개발 에이전트는 이 설정이 제공하는 클래스만 사용합니다.
+ *
+ * 중요: Tailwind 기본 색상 팔레트를 의도적으로 제거했습니다.
+ *       `bg-blue-500`, `text-gray-700` 같은 클래스는 이 프로젝트에서 존재하지 않습니다.
+ *       그래야 에이전트가 임의의 색을 쓸 수 없습니다.
+ */
+
+/** @type {import('tailwindcss').Config} */
+export default {
+  darkMode: ['variant', [
+    '@media (prefers-color-scheme: dark) { &:not([data-theme="light"] *) }',
+    '&:is([data-theme="dark"] *)',
+  ]],
+  content: ['./index.html', './src/**/*.{js,jsx,ts,tsx}'],
+  theme: {
+    /* 기본 팔레트를 통째로 대체 — 규격 외 색상 사용을 원천 차단 */
+    colors: {
+      transparent: 'transparent',
+      current: 'currentColor',
+      inherit: 'inherit',
+
+      bg: {
+        canvas: 'var(--color-bg-canvas)',
+        surface: 'var(--color-bg-surface)',
+        raised: 'var(--color-bg-raised)',
+        sunken: 'var(--color-bg-sunken)',
+        hover: 'var(--color-bg-hover)',
+        active: 'var(--color-bg-active)',
+        sidebar: 'var(--color-bg-sidebar)',
+        overlay: 'var(--color-bg-overlay)',
+      },
+      fg: {
+        DEFAULT: 'var(--color-text-primary)',
+        primary: 'var(--color-text-primary)',
+        secondary: 'var(--color-text-secondary)',
+        tertiary: 'var(--color-text-tertiary)',
+        disabled: 'var(--color-text-disabled)',
+        inverse: 'var(--color-text-inverse)',
+        link: 'var(--color-text-link)',
+      },
+      line: {
+        DEFAULT: 'var(--color-border-default)',
+        subtle: 'var(--color-border-subtle)',
+        strong: 'var(--color-border-strong)',
+        focus: 'var(--color-border-focus)',
+      },
+      accent: {
+        DEFAULT: 'var(--color-accent-solid)',
+        solid: 'var(--color-accent-solid)',
+        'solid-hover': 'var(--color-accent-solid-hover)',
+        subtle: 'var(--color-accent-subtle)',
+        'subtle-hover': 'var(--color-accent-subtle-hover)',
+        text: 'var(--color-accent-text)',
+        border: 'var(--color-accent-border)',
+      },
+
+      /* 상태 색상 — 워크플로 의미가 고정되어 있습니다 */
+      success: {
+        bg: 'var(--color-success-bg)', border: 'var(--color-success-border)',
+        text: 'var(--color-success-text)', solid: 'var(--color-success-solid)',
+      },
+      warning: {
+        bg: 'var(--color-warning-bg)', border: 'var(--color-warning-border)',
+        text: 'var(--color-warning-text)', solid: 'var(--color-warning-solid)',
+      },
+      danger: {
+        bg: 'var(--color-danger-bg)', border: 'var(--color-danger-border)',
+        text: 'var(--color-danger-text)', solid: 'var(--color-danger-solid)',
+      },
+      info: {
+        bg: 'var(--color-info-bg)', border: 'var(--color-info-border)',
+        text: 'var(--color-info-text)', solid: 'var(--color-info-solid)',
+      },
+      muted: {
+        bg: 'var(--color-neutral-bg)', border: 'var(--color-neutral-border)',
+        text: 'var(--color-neutral-text)', solid: 'var(--color-neutral-solid)',
+      },
+      review: {
+        bg: 'var(--color-review-bg)', border: 'var(--color-review-border)',
+        text: 'var(--color-review-text)', solid: 'var(--color-review-solid)',
+      },
+    },
+
+    fontFamily: {
+      sans: 'var(--font-sans)',
+      mono: 'var(--font-mono)',
+    },
+
+    /* 고밀도 타입 스케일 — 본문 14px */
+    fontSize: {
+      micro: ['11px', { lineHeight: '14px' }],
+      xs: ['12px', { lineHeight: '16px' }],
+      sm: ['13px', { lineHeight: '18px' }],
+      base: ['14px', { lineHeight: '20px' }],
+      md: ['16px', { lineHeight: '24px' }],
+      lg: ['20px', { lineHeight: '28px' }],
+      xl: ['24px', { lineHeight: '32px' }],
+      metric: ['28px', { lineHeight: '34px', letterSpacing: '-0.01em' }],
+      'metric-lg': ['34px', { lineHeight: '40px', letterSpacing: '-0.02em' }],
+    },
+
+    /* 4px 기준 간격 — 임의 값(p-[13px]) 사용 금지 */
+    spacing: {
+      0: '0px', px: '1px', 0.5: '2px', 1: '4px', 1.5: '6px', 2: '8px',
+      2.5: '10px', 3: '12px', 4: '16px', 5: '20px', 6: '24px', 8: '32px',
+      10: '40px', 12: '48px', 16: '64px', 20: '80px', 24: '96px',
+    },
+
+    borderRadius: {
+      none: '0px', sm: '3px', DEFAULT: '6px', md: '6px',
+      lg: '8px', xl: '12px', full: '9999px',
+    },
+
+    boxShadow: {
+      none: 'none',
+      sm: 'var(--shadow-sm)',
+      DEFAULT: 'var(--shadow-sm)',
+      md: 'var(--shadow-md)',
+      lg: 'var(--shadow-lg)',
+      overlay: 'var(--shadow-overlay)',
+    },
+
+    screens: {
+      sm: '640px', md: '768px', lg: '1024px', xl: '1280px', '2xl': '1536px',
+    },
+
+    zIndex: {
+      auto: 'auto', 0: '0', base: '0', sticky: '10', sidebar: '20',
+      topbar: '30', drawer: '40', overlay: '50', modal: '60',
+      popover: '70', toast: '80', palette: '90',
+    },
+
+    extend: {
+      /* 앱 셸 고정 규격 */
+      width: {
+        sidebar: 'var(--layout-sidebar-width)',
+        'sidebar-collapsed': 'var(--layout-sidebar-collapsed-width)',
+        panel: 'var(--layout-right-panel-width)',
+        'panel-wide': 'var(--layout-right-panel-wide-width)',
+      },
+      height: {
+        topbar: 'var(--layout-topbar-height)',
+        'control-xs': 'var(--control-height-xs)',
+        'control-sm': 'var(--control-height-sm)',
+        'control-md': 'var(--control-height-md)',
+        'control-lg': 'var(--control-height-lg)',
+        'row-compact': 'var(--row-height-compact)',
+        'row-default': 'var(--row-height-default)',
+        'row-relaxed': 'var(--row-height-relaxed)',
+      },
+      maxWidth: { content: 'var(--layout-content-max-width)' },
+      transitionDuration: {
+        instant: 'var(--duration-instant)',
+        fast: 'var(--duration-fast)',
+        normal: 'var(--duration-normal)',
+        slow: 'var(--duration-slow)',
+      },
+      transitionTimingFunction: {
+        standard: 'var(--easing-standard)',
+        enter: 'var(--easing-enter)',
+        exit: 'var(--easing-exit)',
+      },
+      keyframes: {
+        'fade-in': { from: { opacity: '0' }, to: { opacity: '1' } },
+        'slide-in-right': {
+          from: { transform: 'translateX(100%)' },
+          to: { transform: 'translateX(0)' },
+        },
+        'scale-in': {
+          from: { opacity: '0', transform: 'scale(0.97)' },
+          to: { opacity: '1', transform: 'scale(1)' },
+        },
+        shimmer: {
+          '100%': { transform: 'translateX(100%)' },
+        },
+      },
+      animation: {
+        'fade-in': 'fade-in var(--duration-fast) var(--easing-enter)',
+        'slide-in-right': 'slide-in-right var(--duration-normal) var(--easing-standard)',
+        'scale-in': 'scale-in var(--duration-fast) var(--easing-enter)',
+        shimmer: 'shimmer 1.6s infinite',
+      },
+    },
+  },
+  plugins: [],
+}

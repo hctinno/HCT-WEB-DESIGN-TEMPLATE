@@ -1,0 +1,289 @@
+/* ============================================================================
+   HCT Design Tokens — CSS 변수
+   ----------------------------------------------------------------------------
+   tokens/tokens.json 에서 파생된 런타임 값입니다.
+   컴포넌트는 이 변수들만 사용하며, 생색(#RRGGBB)을 직접 쓰지 않습니다.
+
+   다크 모드 전략:
+     - :root                       → 라이트 (기본값)
+     - @media (prefers-color-scheme: dark) + :root:not([data-theme="light"])
+                                   → 시스템 설정 따름
+     - :root[data-theme="dark"]    → 명시적 선택이 항상 우선
+   ============================================================================ */
+
+:root {
+  color-scheme: light;
+
+  /* --- 원시 팔레트 (직접 사용 금지) ------------------------------------- */
+  --hct-neutral-0: #FFFFFF;
+  --hct-neutral-25: #FBFBFC;
+  --hct-neutral-50: #F7F8F9;
+  --hct-neutral-100: #F1F2F4;
+  --hct-neutral-200: #EBECF0;
+  --hct-neutral-300: #DCDFE4;
+  --hct-neutral-400: #B3B9C4;
+  --hct-neutral-500: #8590A2;
+  --hct-neutral-600: #6B778C;
+  --hct-neutral-700: #44546F;
+  --hct-neutral-800: #2C3E5D;
+  --hct-neutral-900: #172B4D;
+
+  /* --- 브랜드 강조색: 리브랜딩 시 이 10줄만 교체 ------------------------ */
+  --hct-accent-50: #EEF4FF;
+  --hct-accent-100: #DBE6FF;
+  --hct-accent-200: #BFD2FF;
+  --hct-accent-300: #93B4FF;
+  --hct-accent-400: #6090FF;
+  --hct-accent-500: #3B76F6;
+  --hct-accent-600: #2563EB;
+  --hct-accent-700: #1D4FD8;
+  --hct-accent-800: #1E40AF;
+  --hct-accent-900: #1E3A8A;
+
+  /* --- 시맨틱: 배경 ------------------------------------------------------ */
+  --color-bg-canvas: var(--hct-neutral-50);
+  --color-bg-surface: var(--hct-neutral-0);
+  --color-bg-raised: var(--hct-neutral-0);
+  --color-bg-sunken: var(--hct-neutral-100);
+  --color-bg-hover: var(--hct-neutral-100);
+  --color-bg-active: var(--hct-neutral-200);
+  --color-bg-sidebar: var(--hct-neutral-50);
+  --color-bg-overlay: rgb(9 30 66 / 0.42);
+
+  /* --- 시맨틱: 텍스트 ---------------------------------------------------- */
+  --color-text-primary: var(--hct-neutral-900);
+  --color-text-secondary: var(--hct-neutral-700);
+  --color-text-tertiary: var(--hct-neutral-600);
+  --color-text-disabled: var(--hct-neutral-400);
+  --color-text-inverse: var(--hct-neutral-0);
+  --color-text-link: var(--hct-accent-600);
+
+  /* --- 시맨틱: 테두리 ---------------------------------------------------- */
+  --color-border-subtle: var(--hct-neutral-200);
+  --color-border-default: var(--hct-neutral-300);
+  --color-border-strong: var(--hct-neutral-400);
+  --color-border-focus: var(--hct-accent-600);
+
+  /* --- 시맨틱: 강조 ------------------------------------------------------ */
+  --color-accent-solid: var(--hct-accent-600);
+  --color-accent-solid-hover: var(--hct-accent-700);
+  --color-accent-subtle: var(--hct-accent-50);
+  --color-accent-subtle-hover: var(--hct-accent-100);
+  --color-accent-text: var(--hct-accent-700);
+  --color-accent-border: var(--hct-accent-200);
+
+  /* --- 시맨틱: 상태 (관리도구의 핵심) ------------------------------------ */
+  --color-success-bg: #E7F7EE;
+  --color-success-border: #A7E3C0;
+  --color-success-text: #15803D;
+  --color-success-solid: #16A34A;
+
+  --color-warning-bg: #FEF5E0;
+  --color-warning-border: #F5D48A;
+  --color-warning-text: #B45309;
+  --color-warning-solid: #D97706;
+
+  --color-danger-bg: #FDECEC;
+  --color-danger-border: #F5B5B5;
+  --color-danger-text: #B91C1C;
+  --color-danger-solid: #DC2626;
+
+  --color-info-bg: #EAF2FF;
+  --color-info-border: #B8D2FF;
+  --color-info-text: #1D4FD8;
+  --color-info-solid: #2563EB;
+
+  --color-neutral-bg: var(--hct-neutral-100);
+  --color-neutral-border: var(--hct-neutral-300);
+  --color-neutral-text: var(--hct-neutral-700);
+  --color-neutral-solid: var(--hct-neutral-500);
+
+  --color-review-bg: #F2EEFE;
+  --color-review-border: #CFC0F7;
+  --color-review-text: #6D28D9;
+  --color-review-solid: #7C3AED;
+
+  /* --- 고도 (그림자) ----------------------------------------------------- */
+  --shadow-sm: 0 1px 2px 0 rgb(9 30 66 / 0.08);
+  --shadow-md: 0 2px 8px -1px rgb(9 30 66 / 0.12), 0 0 1px rgb(9 30 66 / 0.10);
+  --shadow-lg: 0 8px 24px -4px rgb(9 30 66 / 0.16), 0 0 1px rgb(9 30 66 / 0.10);
+  --shadow-overlay: 0 16px 48px -8px rgb(9 30 66 / 0.24);
+
+  /* --- 레이아웃 규격 (모드 무관) ----------------------------------------- */
+  --layout-sidebar-width: 240px;
+  --layout-sidebar-collapsed-width: 56px;
+  --layout-topbar-height: 48px;
+  --layout-right-panel-width: 360px;
+  --layout-right-panel-wide-width: 480px;
+  --layout-content-max-width: 1440px;
+  --layout-page-padding-x: 24px;
+  --layout-page-padding-y: 20px;
+
+  /* --- 컨트롤 높이 ------------------------------------------------------- */
+  --control-height-xs: 24px;
+  --control-height-sm: 28px;
+  --control-height-md: 32px;
+  --control-height-lg: 36px;
+  --row-height-compact: 32px;
+  --row-height-default: 40px;
+  --row-height-relaxed: 48px;
+
+  /* --- 모션 -------------------------------------------------------------- */
+  --duration-instant: 80ms;
+  --duration-fast: 120ms;
+  --duration-normal: 180ms;
+  --duration-slow: 260ms;
+  --easing-standard: cubic-bezier(0.2, 0, 0, 1);
+  --easing-enter: cubic-bezier(0, 0, 0.2, 1);
+  --easing-exit: cubic-bezier(0.4, 0, 1, 1);
+
+  /* --- 서체 -------------------------------------------------------------- */
+  --font-sans: "Pretendard Variable", Pretendard, -apple-system, BlinkMacSystemFont,
+    system-ui, Roboto, "Helvetica Neue", "Segoe UI", "Apple SD Gothic Neo",
+    "Noto Sans KR", "Malgun Gothic", sans-serif;
+  --font-mono: "JetBrains Mono", ui-monospace, SFMono-Regular, Menlo, Consolas,
+    "Liberation Mono", monospace;
+}
+
+/* ---------------------------------------------------------------------------
+   다크 모드 — 시스템 설정을 따르되, 명시적 라이트 선택은 존중
+   --------------------------------------------------------------------------- */
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme="light"]) {
+    color-scheme: dark;
+
+    --color-bg-canvas: #0D0F12;
+    --color-bg-surface: #16191E;
+    --color-bg-raised: #1E2228;
+    --color-bg-sunken: #101317;
+    --color-bg-hover: #1E2228;
+    --color-bg-active: #23272E;
+    --color-bg-sidebar: #101317;
+    --color-bg-overlay: rgb(0 0 0 / 0.62);
+
+    --color-text-primary: #E6E8EB;
+    --color-text-secondary: #A9B0BA;
+    --color-text-tertiary: #8A919D;
+    --color-text-disabled: #565D69;
+    --color-text-inverse: #0D0F12;
+    --color-text-link: var(--hct-accent-400);
+
+    --color-border-subtle: #23272E;
+    --color-border-default: #2E333B;
+    --color-border-strong: #464C56;
+    --color-border-focus: var(--hct-accent-400);
+
+    --color-accent-solid: var(--hct-accent-500);
+    --color-accent-solid-hover: var(--hct-accent-400);
+    --color-accent-subtle: #152238;
+    --color-accent-subtle-hover: #1B2C48;
+    --color-accent-text: var(--hct-accent-300);
+    --color-accent-border: var(--hct-accent-800);
+
+    --color-success-bg: #0F2E1E;
+    --color-success-border: #166534;
+    --color-success-text: #4ADE80;
+    --color-success-solid: #16A34A;
+
+    --color-warning-bg: #33230A;
+    --color-warning-border: #92400E;
+    --color-warning-text: #FBBF24;
+    --color-warning-solid: #D97706;
+
+    --color-danger-bg: #3A1516;
+    --color-danger-border: #991B1B;
+    --color-danger-text: #F87171;
+    --color-danger-solid: #DC2626;
+
+    --color-info-bg: #12233F;
+    --color-info-border: #1E40AF;
+    --color-info-text: #7CA9FF;
+    --color-info-solid: #2563EB;
+
+    --color-neutral-bg: #1E2228;
+    --color-neutral-border: #2E333B;
+    --color-neutral-text: #A9B0BA;
+    --color-neutral-solid: #646B77;
+
+    --color-review-bg: #241640;
+    --color-review-border: #5B21B6;
+    --color-review-text: #B292FA;
+    --color-review-solid: #7C3AED;
+
+    --shadow-sm: 0 1px 2px 0 rgb(0 0 0 / 0.4);
+    --shadow-md: 0 2px 8px -1px rgb(0 0 0 / 0.5);
+    --shadow-lg: 0 8px 24px -4px rgb(0 0 0 / 0.6);
+    --shadow-overlay: 0 16px 48px -8px rgb(0 0 0 / 0.7);
+  }
+}
+
+/* ---------------------------------------------------------------------------
+   다크 모드 — 사용자가 직접 선택한 경우 (토글이 항상 이깁니다)
+   위 미디어 쿼리와 값이 동일해야 합니다.
+   --------------------------------------------------------------------------- */
+:root[data-theme="dark"] {
+  color-scheme: dark;
+
+  --color-bg-canvas: #0D0F12;
+  --color-bg-surface: #16191E;
+  --color-bg-raised: #1E2228;
+  --color-bg-sunken: #101317;
+  --color-bg-hover: #1E2228;
+  --color-bg-active: #23272E;
+  --color-bg-sidebar: #101317;
+  --color-bg-overlay: rgb(0 0 0 / 0.62);
+
+  --color-text-primary: #E6E8EB;
+  --color-text-secondary: #A9B0BA;
+  --color-text-tertiary: #8A919D;
+  --color-text-disabled: #565D69;
+  --color-text-inverse: #0D0F12;
+  --color-text-link: var(--hct-accent-400);
+
+  --color-border-subtle: #23272E;
+  --color-border-default: #2E333B;
+  --color-border-strong: #464C56;
+  --color-border-focus: var(--hct-accent-400);
+
+  --color-accent-solid: var(--hct-accent-500);
+  --color-accent-solid-hover: var(--hct-accent-400);
+  --color-accent-subtle: #152238;
+  --color-accent-subtle-hover: #1B2C48;
+  --color-accent-text: var(--hct-accent-300);
+  --color-accent-border: var(--hct-accent-800);
+
+  --color-success-bg: #0F2E1E;
+  --color-success-border: #166534;
+  --color-success-text: #4ADE80;
+  --color-success-solid: #16A34A;
+
+  --color-warning-bg: #33230A;
+  --color-warning-border: #92400E;
+  --color-warning-text: #FBBF24;
+  --color-warning-solid: #D97706;
+
+  --color-danger-bg: #3A1516;
+  --color-danger-border: #991B1B;
+  --color-danger-text: #F87171;
+  --color-danger-solid: #DC2626;
+
+  --color-info-bg: #12233F;
+  --color-info-border: #1E40AF;
+  --color-info-text: #7CA9FF;
+  --color-info-solid: #2563EB;
+
+  --color-neutral-bg: #1E2228;
+  --color-neutral-border: #2E333B;
+  --color-neutral-text: #A9B0BA;
+  --color-neutral-solid: #646B77;
+
+  --color-review-bg: #241640;
+  --color-review-border: #5B21B6;
+  --color-review-text: #B292FA;
+  --color-review-solid: #7C3AED;
+
+  --shadow-sm: 0 1px 2px 0 rgb(0 0 0 / 0.4);
+  --shadow-md: 0 2px 8px -1px rgb(0 0 0 / 0.5);
+  --shadow-lg: 0 8px 24px -4px rgb(0 0 0 / 0.6);
+  --shadow-overlay: 0 16px 48px -8px rgb(0 0 0 / 0.7);
+}

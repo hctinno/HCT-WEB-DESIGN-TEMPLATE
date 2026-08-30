@@ -5,10 +5,25 @@
 # 확인합니다. lint:design 이 실패하면 머지되지 않습니다.
 name: CI
 
+# 커밋 하나에 워크플로가 한 번만 돌게 합니다.
+#
+# 처음에는 push 를 branches: ['**'] 로 걸어뒀는데, 그러면 같은 커밋이
+# 작업 브랜치 푸시 · release/ 브랜치 푸시 · PR 열기로 **세 번** 검사됩니다.
+# 실제로 첫 PR 에서 체크런이 9개(3잡 × 3실행) 잡혔습니다.
+#
+# 검사가 필요한 곳은 두 군데뿐입니다: 머지하기 전(PR)과 머지된 뒤(main).
+# release/ 브랜치는 이미 통과한 커밋의 스냅샷이라 다시 볼 이유가 없습니다.
 on:
   push:
-    branches: ['**']
+    branches: [main]
   pull_request:
+
+# 같은 브랜치에 연달아 푸시하면 앞선 실행을 취소합니다. 어차피 최신
+# 커밋의 결과만 의미가 있는데, 취소하지 않으면 러너를 물고 앉아 뒤엣것을
+# 기다리게 만듭니다.
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
 
 jobs:
   verify:

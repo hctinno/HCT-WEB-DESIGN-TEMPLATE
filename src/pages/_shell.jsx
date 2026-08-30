@@ -1,6 +1,6 @@
 import {
   AppShell, Sidebar, SidebarGroup, SidebarItem, WorkspaceRail, SidebarUser,
-  Topbar, Breadcrumb, TopbarIconButton,
+  Topbar, Breadcrumb, TopbarIconButton, CommandPaletteTrigger,
 } from '../components'
 import { NavIcons } from './_icons'
 import { SidebarBrand } from './_brand'
@@ -88,6 +88,8 @@ export function navItem(id) {
  *        생략하면 NAV 에서 "워크스페이스 / 그룹 / 항목" 을 만들어 씁니다
  * @param {React.ReactNode} [props.extraNav]   - 저장된 뷰처럼 화면 고유의 탐색
  * @param {React.ReactNode} [props.topbarSearch]
+ *        생략하면 검색 화면으로 가는 기본 검색창이 들어갑니다. 검색은
+ *        모든 화면에서 같은 자리에 있어야 찾을 수 있습니다.
  * @param {React.ReactNode} [props.topbarActions]
  * @param {React.ReactNode} [props.rightPanel]
  * @param {(id: string) => void} [props.onNavigate]
@@ -144,7 +146,7 @@ export function AppFrame({
       topbar={
         <Topbar
           breadcrumb={<Breadcrumb items={crumbs} />}
-          search={topbarSearch}
+          search={topbarSearch ?? <CommandPaletteTrigger onClick={() => onNavigate?.('search')} />}
           actions={
             topbarActions ?? (
               <TopbarIconButton

@@ -12,6 +12,10 @@ import { ErrorPagesDemo } from './pages/ErrorPages'
 import { InboxPage } from './pages/InboxPage'
 import { AccountPage } from './pages/AccountPage'
 import { ImportPage } from './pages/ImportPage'
+import { AuditPage } from './pages/AuditPage'
+import { ApprovalsPage } from './pages/ApprovalsPage'
+import { SearchPage } from './pages/SearchPage'
+import { JobsPage } from './pages/JobsPage'
 import { applyTheme, getStoredTheme, applyPalette, getStoredPalette, PALETTES } from './lib/theme'
 import { ToastProvider } from './components/feedback/Toast'
 
@@ -49,12 +53,16 @@ const PAGE_GROUPS = [
       { id: 'scale', label: '대용량 목록' },
       { id: 'inbox', label: '알림 인박스' },
       { id: 'import', label: '데이터 가져오기' },
+      { id: 'approvals', label: '승인 대기' },
+      { id: 'jobs', label: '예약 작업' },
+      { id: 'search', label: '검색 결과' },
     ],
   },
   {
     label: '관리',
     pages: [
       { id: 'admin', label: '사용자와 권한' },
+      { id: 'audit', label: '감사 로그' },
       { id: 'settings', label: '환경설정' },
       { id: 'account', label: '내 계정' },
     ],
@@ -110,6 +118,10 @@ function Preview() {
         : page === 'inbox' ? <InboxPage onNavigate={goto} onOpenObject={() => setPage('list')} />
         : page === 'account' ? <AccountPage onNavigate={goto} />
         : page === 'import' ? <ImportPage onNavigate={goto} />
+        : page === 'audit' ? <AuditPage onNavigate={goto} />
+        : page === 'approvals' ? <ApprovalsPage onNavigate={goto} />
+        : page === 'search' ? <SearchPage onNavigate={goto} />
+        : page === 'jobs' ? <JobsPage onNavigate={goto} />
         : page === 'list' ? <ListPage key={JSON.stringify(handoffQuery)} initialQuery={handoffQuery} onNavigate={goto} />
         : page === 'admin' ? <AdminPage onNavigate={goto} />
         : page === 'settings' ? <SettingsPage onNavigate={goto} />

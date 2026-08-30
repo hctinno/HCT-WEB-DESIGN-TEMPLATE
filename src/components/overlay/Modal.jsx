@@ -112,7 +112,7 @@ export function Modal({ open, onClose, title, description, size = 'md', footer, 
  * 취소가 왼쪽, 실행이 오른쪽입니다. 순서를 바꾸지 마세요.
  */
 export function ConfirmDialog({
-  open, onClose, onConfirm, title, description,
+  open, onClose, onConfirm, title, description, children,
   confirmLabel = '확인', cancelLabel = '취소', tone = 'default', loading = false,
 }) {
   return (
@@ -146,7 +146,9 @@ export function ConfirmDialog({
         </>
       }
     >
-      {null}
+      {/* 짧은 한 줄이면 description, 값이 섞인 문장이면 children.
+          둘 다 없으면 확인 대화상자가 제목만으로 판단을 요구하게 됩니다. */}
+      {children ?? null}
     </Modal>
   )
 }

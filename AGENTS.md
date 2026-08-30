@@ -153,6 +153,15 @@ import './styles/index.css'   // tokens.css 를 포함합니다
 아래와 같은지 먼저 확인하세요. 셋 중 하나라도 빠지면 화면이 **오류 없이** 스타일만
 빠진 채로 나옵니다.
 
+**Tailwind v4** 라면 앱의 CSS 두 줄이 전부입니다. 설정 파일이 필요 없습니다.
+
+```css
+@import 'tailwindcss';
+@import 'hct-web-design-template/styles/hct.v4.css';
+```
+
+**Tailwind v3** 라면 설정과 CSS 양쪽이 필요합니다.
+
 ```js
 // tailwind.config.js
 import hct, { hctContent } from 'hct-web-design-template/tailwind-preset'
@@ -170,9 +179,10 @@ export default {
 @tailwind utilities;
 ```
 
-- Tailwind 는 **3.x** 여야 합니다. v4 는 설정 방식이 달라 동작하지 않습니다.
-- `hctContent` 는 필수입니다. Tailwind 가 프리셋의 `content` 를 병합하지 않아,
-  빼먹으면 `node_modules` 안의 컴포넌트 클래스가 전부 purge 됩니다.
+- v3 에서 `hctContent` 는 필수입니다. Tailwind v3 가 프리셋의 `content` 를
+  병합하지 않아, 빼먹으면 `node_modules` 안의 컴포넌트 클래스가 전부 purge 됩니다.
+  (v4 는 `@source` 가 패키지 CSS 안에 있어 이 문제가 없습니다.)
+- 두 버전을 섞지 마세요. hct.css 와 hct.v4.css 중 하나만 씁니다.
 - 팔레트·테마 설정은 필요 없습니다. 속성을 안 붙이면 기본 팔레트가 적용됩니다.
 
 무언가 잘못되면 `AppShell` 이 마운트될 때 콘솔에 무엇을 고쳐야 하는지 적힌
@@ -847,7 +857,14 @@ npm run lint:design    # 디자인 규칙 (반드시 통과)
 돌아가는데 설치한 쪽에서만 깨지는 사고가 실제로 있었습니다:
 
 ```bash
-npm run verify:consumer   # 진짜로 설치해서 빌드하고, 클래스가 살아남았는지 검사
+npm run verify:consumer   # v3·v4 양쪽으로 진짜 설치해서 빌드하고 검사
+```
+
+토큰을 고쳤다면 v4 테마도 함께 생성해야 합니다. 이 저장소의 미리보기는 v3 를
+쓰기 때문에, 재생성을 잊으면 **설치한 쪽에서만** 어긋납니다:
+
+```bash
+npm run tokens:build      # 팔레트 CSS + v4 @theme 재생성
 ```
 
 그리고 눈으로 확인할 것:

@@ -27,14 +27,15 @@ jobs:
       - name: 디자인 규칙
         run: npm run lint:design
 
-      # 팔레트 CSS 는 생성물입니다. 원본(tokens/palettes.json)만 고치고
-      # 재생성을 잊으면 화면과 토큰이 어긋나므로, 생성 결과가 커밋된 것과
-      # 같은지 확인합니다.
-      - name: 팔레트 CSS 가 최신인지
+      # 팔레트 CSS 와 v4 테마는 생성물입니다. 원본만 고치고 재생성을 잊으면
+      # 화면과 토큰이 어긋나므로, 생성 결과가 커밋된 것과 같은지 확인합니다.
+      # v4 테마는 이 저장소의 미리보기가 쓰지 않아(미리보기는 v3), 여기서
+      # 확인하지 않으면 갈라진 채로 배포됩니다.
+      - name: 생성 파일이 최신인지
         run: |
           npm run tokens:build
-          git diff --exit-code -- src/styles/palettes.css \
-            || { echo "::error::tokens/palettes.json 을 고친 뒤 'npm run tokens:build' 를 실행하고 커밋하세요."; exit 1; }
+          git diff --exit-code -- src/styles/palettes.css src/styles/theme.v4.css \
+            || { echo "::error::원본을 고친 뒤 'npm run tokens:build' 를 실행하고 커밋하세요."; exit 1; }
 
       - name: 라이브러리 빌드
         run: npm run build:lib
@@ -43,6 +44,7 @@ jobs:
         run: npm run build
 
   # 다른 프로젝트에서 설치했을 때 실제로 동작하는지까지 확인합니다.
+  # Tailwind v3 와 v4 양쪽으로 진짜 프로젝트를 만들어 설치하고 빌드합니다.
   # 배럴 export 를 빠뜨리거나 files 목록에서 파일이 새면 여기서 걸립니다.
   consume:
     runs-on: ubuntu-latest

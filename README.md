@@ -138,15 +138,36 @@ node scripts/build-standalone.mjs        # dist-standalone/hct-console.html
 
 ```bash
 npm i github:dytc880915-commits/hct-web-design-template
+```
+
+Tailwind **3.x 와 4.x 를 모두 지원**합니다. 설정 방법이 다르니 쓰는 버전 쪽만
+보세요. 토큰은 한 곳(`tailwind-preset.js`)에서 나오고 v4 용 `@theme` 은 거기서
+생성되므로, 두 버전의 결과는 같습니다 — 실제로 두 프로젝트를 만들어 계산된
+스타일을 비교해 확인합니다(`npm run verify:consumer`).
+
+### 2. Tailwind v4 를 쓴다면
+
+```bash
+npm i -D tailwindcss @tailwindcss/vite
+```
+
+```css
+/* 앱의 CSS — 이게 전부입니다 */
+@import 'tailwindcss';
+@import 'hct-web-design-template/styles/hct.v4.css';
+```
+
+설정 파일은 필요 없습니다. `@source` 가 패키지 CSS 안에 들어 있어 앱이 경로를
+적을 일도 없습니다.
+
+### 2. Tailwind v3 를 쓴다면
+
+```bash
 npm i -D "tailwindcss@^3.4" postcss autoprefixer
 ```
 
-> **Tailwind 는 3.x 여야 합니다.** v4 는 설정 방식이 완전히 달라 이 프리셋이
-> 동작하지 않습니다. `npm i -D tailwindcss` 만 치면 v4 가 깔립니다.
-
-### 2. tailwind.config.js
-
 ```js
+// tailwind.config.js
 import hct, { hctContent } from 'hct-web-design-template/tailwind-preset'
 
 export default {
@@ -155,23 +176,22 @@ export default {
 }
 ```
 
-`hctContent` 를 빼먹지 마세요. **Tailwind 는 프리셋의 `content` 를 병합하지
-않습니다** — 앱의 `content` 가 프리셋 것을 통째로 덮어씁니다. 그러면
-`node_modules` 안의 컴포넌트가 스캔되지 않아 클래스가 전부 purge 되고,
-**오류 없이** 스타일만 빠진 화면이 나옵니다.
-
-빼먹으면 개발 중 콘솔에 무엇을 고쳐야 하는지 적힌 오류가 뜹니다
-(`AppShell` 이 마운트될 때 실제로 측정해서 확인합니다).
-
-### 3. 앱의 CSS
-
 ```css
+/* 앱의 CSS */
 @import 'hct-web-design-template/styles/hct.css';
 
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
 ```
+
+`hctContent` 를 빼먹지 마세요. **Tailwind v3 는 프리셋의 `content` 를 병합하지
+않습니다** — 앱의 `content` 가 프리셋 것을 통째로 덮어씁니다. 그러면
+`node_modules` 안의 컴포넌트가 스캔되지 않아 클래스가 전부 purge 되고,
+**오류 없이** 스타일만 빠진 화면이 나옵니다.
+
+빼먹으면 개발 중 콘솔에 무엇을 고쳐야 하는지 적힌 오류가 뜹니다
+(`AppShell` 이 마운트될 때 실제로 측정해서 확인합니다).
 
 `@tailwind` 지시어는 패키지가 넣지 않습니다. 앱마다 Tailwind 설정이 다르고,
 남의 패키지가 그걸 대신 정하면 안 됩니다.
@@ -233,7 +253,7 @@ export function EquipmentPage() {
 
 | | 어떻게 |
 |---|---|
-| **기계가 막습니다** | Tailwind 기본 팔레트가 제거되어 `bg-blue-500` 은 **CSS 가 생성되지 않습니다.** 간격도 4px 배수 밖은 무시됩니다. `lint:design` 이 13개 규칙으로 빌드를 실패시킵니다. CI 가 PR마다 돌립니다. |
+| **기계가 막습니다** | Tailwind 기본 팔레트가 제거되어 `bg-blue-500` 은 **CSS 가 생성되지 않습니다.** 간격도 4px 배수 밖은 무시됩니다(v3·v4 모두). `lint:design` 이 13개 규칙으로 빌드를 실패시킵니다. CI 가 PR마다, 그리고 진짜 소비 프로젝트를 만들어 v3·v4 양쪽으로 검증합니다. |
 | **에이전트가 협조해야 합니다** | AGENTS.md 를 읽는 것, 컴포넌트를 쓰는 것(직접 `<div>` 로 표를 짜면 lint 가 경고는 하지만 막지는 못합니다), 로딩·빈 상태·오류 상태를 함께 구현하는 것. |
 
 두 번째 층을 좁히는 방법은 **원형을 복사하게 하는 것**입니다. 백지에서 시작하면

@@ -11,13 +11,13 @@
     "preview": "vite preview",
     "lint:design": "node scripts/lint-design.mjs src",
     "verify:consumer": "npm pack --pack-destination /tmp && node scripts/verify-consumer.mjs /tmp/hct-web-design-template-$npm_package_version.tgz",
-    "tokens:build": "node scripts/build-palettes.mjs",
+    "tokens:build": "node scripts/build-palettes.mjs && node scripts/build-v4-theme.mjs",
     "prepare": "npm run build:lib"
   },
   "peerDependencies": {
     "react": ">=18",
     "react-dom": ">=18",
-    "tailwindcss": "^3.4"
+    "tailwindcss": "^3.4 || ^4.0"
   },
   "devDependencies": {
     "@vitejs/plugin-react": "^4.3.4",
@@ -59,6 +59,7 @@
     "./pages": "./dist/pages.js",
     "./tailwind-preset": "./tailwind-preset.js",
     "./styles/hct.css": "./src/styles/hct.css",
+    "./styles/hct.v4.css": "./src/styles/hct.v4.css",
     "./styles/*": "./src/styles/*",
     "./tokens/*": "./tokens/*",
     "./package.json": "./package.json"

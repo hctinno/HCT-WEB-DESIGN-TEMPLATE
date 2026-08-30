@@ -1,0 +1,280 @@
+/* ============================================================================
+   HCT 디자인 시스템 — Tailwind v4 테마 (자동 생성 파일, 직접 수정하지 마세요)
+   ----------------------------------------------------------------------------
+   원본: tailwind-preset.js   생성: npm run tokens:build
+
+   사용법 (앱의 CSS):
+
+     @import 'tailwindcss';
+     @import 'hct-web-design-template/styles/hct.css';
+     @import 'hct-web-design-template/styles/theme.v4.css';
+     @source '../node_modules/hct-web-design-template/dist';
+
+   @source 를 빼먹지 마세요. v4 는 node_modules 를 자동으로 훑지 않아,
+   없으면 컴포넌트 클래스가 통째로 생성되지 않습니다. 화면은 오류 없이
+   스타일만 빠진 채로 나옵니다.
+
+   Tailwind 기본 팔레트와 동적 간격은 의도적으로 제거했습니다:
+     --color-*: initial  →  bg-blue-500 같은 클래스가 존재하지 않습니다
+     --spacing: initial  →  p-7 처럼 스케일 밖 값은 CSS 가 생성되지 않습니다
+   ============================================================================ */
+
+/* 다크 모드 — 세 가지 상태를 모두 처리합니다.
+   (1) data-theme="dark"  명시적 선택
+   (2) 시스템이 다크이고 data-theme="light" 가 아님
+   토큰이 이미 두 모드를 처리하므로 dark: 를 직접 쓸 일은 거의 없습니다
+   (AGENTS.md 의 no-dark-class 규칙 참고). 두 버전의 동작을 맞추려고 둡니다. */
+@custom-variant dark {
+  @media (prefers-color-scheme: dark) {
+    &:not([data-theme="light"] *) { @slot; }
+  }
+  &:is([data-theme="dark"] *) { @slot; }
+}
+
+
+/* 그림자 별칭 — v4 가 값을 펼쳐 넣지 못하게 한 겹 감쌉니다.
+   실제 값은 tokens.css 가 테마별로 정합니다. */
+:root {
+  --hct-alias-shadow-sm: var(--shadow-sm);
+  --hct-alias-shadow-md: var(--shadow-md);
+  --hct-alias-shadow-lg: var(--shadow-lg);
+  --hct-alias-shadow-overlay: var(--shadow-overlay);
+}
+
+@theme {
+  /* 기본값 제거 — 이 두 줄이 이 시스템의 강제력입니다 */
+  --color-*: initial;
+  --spacing: initial;
+  --text-*: initial;
+  --radius-*: initial;
+  --shadow-*: initial;
+  --font-*: initial;
+  --breakpoint-*: initial;
+  --container-*: initial;
+
+  /* 색 — 시맨틱 토큰만. 값은 tokens.css/palettes.css 의 변수를 가리킵니다 */
+  --color-transparent: transparent;
+  --color-current: currentColor;
+  --color-inherit: inherit;
+  --color-bg-canvas: var(--hct-neutral-50);
+  --color-bg-surface: var(--hct-neutral-0);
+  --color-bg-raised: var(--hct-neutral-0);
+  --color-bg-sunken: var(--hct-neutral-100);
+  --color-bg-hover: var(--hct-neutral-100);
+  --color-bg-active: var(--hct-neutral-200);
+  --color-bg-sidebar: var(--hct-neutral-50);
+  --color-bg-overlay: rgb(9 30 66 / 0.42);
+  --color-fg: var(--color-text-primary);
+  --color-fg-primary: var(--color-text-primary);
+  --color-fg-secondary: var(--color-text-secondary);
+  --color-fg-tertiary: var(--color-text-tertiary);
+  --color-fg-disabled: var(--color-text-disabled);
+  --color-fg-inverse: var(--color-text-inverse);
+  --color-fg-link: var(--color-text-link);
+  --color-line: var(--color-border-default);
+  --color-line-subtle: var(--color-border-subtle);
+  --color-line-strong: var(--color-border-strong);
+  --color-line-focus: var(--color-border-focus);
+  --color-accent: var(--color-accent-solid);
+  --color-accent-solid: var(--hct-accent-600);
+  --color-accent-solid-hover: var(--hct-accent-700);
+  --color-accent-subtle: var(--hct-accent-50);
+  --color-accent-subtle-hover: var(--hct-accent-100);
+  --color-accent-text: var(--hct-accent-700);
+  --color-accent-border: var(--hct-accent-200);
+  --color-success-bg: #E7F7EE;
+  --color-success-border: #A7E3C0;
+  --color-success-text: #15803D;
+  --color-success-solid: #16A34A;
+  --color-warning-bg: #FEF5E0;
+  --color-warning-border: #F5D48A;
+  --color-warning-text: #B45309;
+  --color-warning-solid: #D97706;
+  --color-danger-bg: #FDECEC;
+  --color-danger-border: #F5B5B5;
+  --color-danger-text: #B91C1C;
+  --color-danger-solid: #DC2626;
+  --color-info-bg: #EAF2FF;
+  --color-info-border: #B8D2FF;
+  --color-info-text: #1D4FD8;
+  --color-info-solid: #2563EB;
+  --color-muted-bg: var(--color-neutral-bg);
+  --color-muted-border: var(--color-neutral-border);
+  --color-muted-text: var(--color-neutral-text);
+  --color-muted-solid: var(--color-neutral-solid);
+  --color-review-bg: #F2EEFE;
+  --color-review-border: #CFC0F7;
+  --color-review-text: #6D28D9;
+  --color-review-solid: #7C3AED;
+  --color-sidebar-bg: var(--hct-neutral-50);
+  --color-sidebar-fg: var(--hct-neutral-900);
+  --color-sidebar-muted: var(--color-sidebar-fg-muted);
+  --color-sidebar-subtle: var(--color-sidebar-fg-subtle);
+  --color-sidebar-hover: var(--hct-neutral-100);
+  --color-sidebar-active-bg: var(--color-accent-subtle);
+  --color-sidebar-active-fg: var(--color-accent-text);
+  --color-sidebar-border: var(--hct-neutral-200);
+  --color-sidebar-badge-bg: var(--color-danger-solid);
+  --color-sidebar-badge-fg: #FFFFFF;
+  --color-sidebar-rail: var(--color-sidebar-rail-bg);
+  --color-chart-1: var(--chart-1);
+  --color-chart-2: var(--chart-2);
+  --color-chart-3: var(--chart-3);
+  --color-chart-4: var(--chart-4);
+  --color-chart-5: var(--chart-5);
+  --color-chart-6: var(--chart-6);
+  --color-chart-grid: var(--chart-grid);
+  --color-chart-axis: var(--chart-axis);
+
+  /* 글꼴 */
+  --font-sans: "Pretendard Variable", Pretendard, -apple-system, BlinkMacSystemFont,
+    system-ui, Roboto, "Helvetica Neue", "Segoe UI", "Apple SD Gothic Neo",
+    "Noto Sans KR", "Malgun Gothic", sans-serif;
+  --font-mono: "JetBrains Mono", ui-monospace, SFMono-Regular, Menlo, Consolas,
+    "Liberation Mono", monospace;
+
+  /* 타입 스케일 — 크기와 줄높이가 짝입니다 */
+  --text-micro: 11px;
+  --text-micro--line-height: 14px;
+  --text-xs: 12px;
+  --text-xs--line-height: 16px;
+  --text-sm: 13px;
+  --text-sm--line-height: 18px;
+  --text-base: 14px;
+  --text-base--line-height: 20px;
+  --text-md: 16px;
+  --text-md--line-height: 24px;
+  --text-lg: 20px;
+  --text-lg--line-height: 28px;
+  --text-xl: 24px;
+  --text-xl--line-height: 32px;
+  --text-metric: 28px;
+  --text-metric--line-height: 34px;
+  --text-metric--letter-spacing: -0.01em;
+  --text-metric-lg: 34px;
+  --text-metric-lg--line-height: 40px;
+  --text-metric-lg--letter-spacing: -0.02em;
+
+  /* 간격 — 4px 배수만. 스케일 밖 값은 CSS 가 생성되지 않습니다 */
+  --spacing-0: 0px;
+  --spacing-1: 4px;
+  --spacing-2: 8px;
+  --spacing-3: 12px;
+  --spacing-4: 16px;
+  --spacing-5: 20px;
+  --spacing-6: 24px;
+  --spacing-8: 32px;
+  --spacing-10: 40px;
+  --spacing-12: 48px;
+  --spacing-16: 64px;
+  --spacing-20: 80px;
+  --spacing-24: 96px;
+  --spacing-px: 1px;
+  --spacing-0.5: 2px;
+  --spacing-1.5: 6px;
+  --spacing-2.5: 10px;
+
+  /* 모서리 — 최대 xl(12px). 2xl 이상은 이 시스템에 없습니다 */
+  --radius-none: 0px;
+  --radius-sm: 3px;
+  --radius: 6px;
+  --radius-md: 6px;
+  --radius-lg: 8px;
+  --radius-xl: 12px;
+  --radius-full: 9999px;
+
+  /* 그림자 */
+  --shadow-none: none;
+  --shadow-sm: var(--hct-alias-shadow-sm);
+  --shadow: var(--shadow-sm);
+  --shadow-md: var(--hct-alias-shadow-md);
+  --shadow-lg: var(--hct-alias-shadow-lg);
+  --shadow-overlay: var(--hct-alias-shadow-overlay);
+
+  /* 앱 셸 고정 규격 */
+  --width-sidebar: var(--layout-sidebar-width);
+  --width-sidebar-collapsed: var(--layout-sidebar-collapsed-width);
+  --width-rail: var(--layout-rail-width);
+  --width-panel: var(--layout-right-panel-width);
+  --width-panel-wide: var(--layout-right-panel-wide-width);
+  --height-topbar: var(--layout-topbar-height);
+  --height-control-xs: var(--control-height-xs);
+  --height-control-sm: var(--control-height-sm);
+  --height-control-md: var(--control-height-md);
+  --height-control-lg: var(--control-height-lg);
+  --height-row-compact: var(--row-height-compact);
+  --height-row-default: var(--row-height-default);
+  --height-row-relaxed: var(--row-height-relaxed);
+  --container-content: var(--layout-content-max-width);
+
+  /* 겹침 순서 — 숫자를 직접 쓰지 말고 이름을 쓰세요 */
+  --z-index-0: 0;
+  --z-index-auto: auto;
+  --z-index-base: 0;
+  --z-index-sticky: 10;
+  --z-index-sidebar: 20;
+  --z-index-topbar: 30;
+  --z-index-drawer: 40;
+  --z-index-overlay: 50;
+  --z-index-modal: 60;
+  --z-index-popover: 70;
+  --z-index-toast: 80;
+  --z-index-palette: 90;
+
+  /* 중단점 */
+  --breakpoint-sm: 640px;
+  --breakpoint-md: 768px;
+  --breakpoint-lg: 1024px;
+  --breakpoint-xl: 1280px;
+  --breakpoint-2xl: 1536px;
+
+  /* 전환 */
+  --duration-instant: 80ms;
+  --duration-fast: 120ms;
+  --duration-normal: 180ms;
+  --duration-slow: 260ms;
+  --ease-standard: var(--easing-standard);
+  --ease-enter: var(--easing-enter);
+  --ease-exit: var(--easing-exit);
+
+  /* 애니메이션 */
+  --animate-fade-in: fade-in var(--duration-fast) var(--easing-enter);
+  --animate-slide-in-right: slide-in-right var(--duration-normal) var(--easing-standard);
+  --animate-scale-in: scale-in var(--duration-fast) var(--easing-enter);
+  --animate-shimmer: shimmer 1.6s infinite;
+}
+
+@keyframes fade-in {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
+}
+
+@keyframes slide-in-right {
+  from {
+    transform: translateX(100%);
+  }
+  to {
+    transform: translateX(0);
+  }
+}
+
+@keyframes scale-in {
+  from {
+    opacity: 0;
+    transform: scale(0.97);
+  }
+  to {
+    opacity: 1;
+    transform: scale(1);
+  }
+}
+
+@keyframes shimmer {
+  100% {
+    transform: translateX(100%);
+  }
+}

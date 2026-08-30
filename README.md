@@ -137,18 +137,42 @@ node scripts/build-standalone.mjs        # dist-standalone/hct-console.html
 ### 1. 설치
 
 ```bash
-npm i github:dytc880915-commits/hct-web-design-template#v1.0.0
+npm i github:dytc880915-commits/hct-web-design-template#release/v1.1.0
 ```
 
-**버전을 고정하세요(`#v1.0.0`).** 태그를 빼면 기본 브랜치의 최신 커밋을
+**판을 반드시 고정하세요.** `#` 뒤를 빼면 기본 브랜치의 최신 커밋을
 가져갑니다 — 저장소에 무언가 푸시될 때마다 여러분의 다음 설치가 조용히
 바뀝니다. 디자인 시스템에서 그건 "어제까지 멀쩡하던 화면의 간격이 오늘
 달라지는" 일이라, 원인을 찾기가 매우 어렵습니다.
 
-올릴 때는 [CHANGELOG.md](./CHANGELOG.md) 를 보고 태그를 바꿔 다시 설치합니다.
-위 명령의 태그는 **지금 실제로 내려받을 수 있는 판**입니다. 저장소의
-`package.json` 이 더 앞서 있을 수 있는데, 태그를 찍기 전까지 그 판은 아직
-아무도 설치할 수 없습니다.
+올릴 때는 [CHANGELOG.md](./CHANGELOG.md) 를 보고 `#` 뒤를 바꿔 다시 설치합니다.
+
+<details>
+<summary><b>왜 태그가 아니라 <code>release/</code> 브랜치인가</b></summary>
+
+npm 의 `github:` 설치는 `#` 뒤에 **태그·브랜치·커밋 SHA 를 모두** 받습니다.
+셋 다 똑같이 동작하므로, 우리는 **항상 만들 수 있는 것**을 씁니다.
+
+이 저장소는 에이전트가 원격 실행 환경에서 관리합니다. 그 환경은 브랜치
+푸시는 허용하지만 **태그 푸시를 막습니다**(`git push origin v1.1.0` →
+HTTP 403). 그래서 태그로 배포를 묶어두면, 코드는 다 준비됐는데 사람이
+웹 UI 에 들어가 릴리스를 만들어주기 전까지 아무도 설치할 수 없는 상태가
+됩니다. 실제로 v1.0.1 과 v1.0.2 가 그렇게 **태그 없이 묻혔습니다.**
+
+`release/vX.Y.Z` 브랜치는 에이전트가 직접 만들 수 있습니다. 한 번 만든
+뒤 **절대 움직이지 않으므로** 소비 쪽에서는 태그와 구별되지 않습니다.
+
+더 확실하게 하려면 커밋 SHA 를 그대로 쓰세요. 브랜치는 이론상 누군가
+옮길 수 있지만 SHA 는 불가능합니다:
+
+```bash
+npm i github:dytc880915-commits/hct-web-design-template#4a402ab
+```
+
+보기 좋으라고 GitHub 릴리스(태그)를 따로 만드는 것은 자유입니다. 다만
+**설치가 그것에 의존하지는 않습니다.**
+
+</details>
 
 Tailwind **3.x 와 4.x 를 모두 지원**합니다. 설정 방법이 다르니 쓰는 버전 쪽만
 보세요. 토큰은 한 곳(`tailwind-preset.js`)에서 나오고 v4 용 `@theme` 은 거기서
@@ -260,9 +284,13 @@ npm run verify:consumer   # v3·v4 로 진짜 설치해서 빌드
 
 # package.json 의 version 을 올리고 CHANGELOG.md 에 항목을 추가한 뒤
 git commit -am "v1.1.0"
-git tag v1.1.0
-git push && git push --tags
+git push origin HEAD                     # 작업 브랜치 → main 으로 PR
+git push origin HEAD:release/v1.1.0      # 이 판을 고정 (소비 쪽이 이걸 씁니다)
 ```
+
+`release/vX.Y.Z` 브랜치는 **한 번 만들고 다시 밀지 않습니다.** 고쳐야 할
+것이 생기면 다음 판을 새로 냅니다. 이미 배포한 판을 조용히 바꾸면 소비
+프로젝트는 "설치를 안 바꿨는데 화면이 달라지는" 일을 겪습니다.
 
 버전을 어떻게 올릴지는 [CHANGELOG.md](./CHANGELOG.md) 맨 위의 표를 따릅니다.
 요점은 **눈에 보이는 변화를 patch 로 내보내지 않는 것**입니다 — 디자인

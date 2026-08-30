@@ -1,6 +1,6 @@
 {
   "name": "hct-web-design-template",
-  "version": "1.3.1",
+  "version": "1.3.2",
   "type": "module",
   "description": "HCT 대시보드·분석도구·관리도구용 디자인 시스템 템플릿",
   "scripts": {
@@ -14,6 +14,7 @@
     "audit:a11y": "npm run build && node scripts/audit-a11y.mjs",
     "audit:exports": "node scripts/audit-exports.mjs",
     "audit:charts": "node scripts/audit-chart-colors.mjs",
+    "audit:docs": "node scripts/audit-docs.mjs",
     "verify:consumer": "npm pack --pack-destination /tmp && node scripts/verify-consumer.mjs /tmp/hct-web-design-template-$npm_package_version.tgz",
     "tokens:build": "node scripts/build-palettes.mjs && node scripts/build-v4-theme.mjs && node scripts/audit-chart-colors.mjs",
     "prepare": "npm run build:lib"

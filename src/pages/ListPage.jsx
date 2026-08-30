@@ -277,7 +277,7 @@ export function ListPage({ initialQuery, onNavigate }) {
                     <>
                       <IconButton size="xs" label="상세 열기" icon={<NavIcons.Inbox />}
                                   onClick={() => setDetailKey(record.id)} />
-                      <IconButton size="xs" label="삭제" icon={<TrashIcon />}
+                      <IconButton size="xs" label="삭제" icon={<NavIcons.Trash />}
                                   onClick={() => { setSelected(new Set([record.id])); setConfirmDelete(true) }} />
                     </>
                   )}
@@ -313,14 +313,5 @@ export function ListPage({ initialQuery, onNavigate }) {
 
       <ShortcutHelp open={helpOpen} onClose={setHelpOpen} />
     </>
-  )
-}
-
-function TrashIcon() {
-  return (
-    <svg width="13" height="13" viewBox="0 0 13 13" fill="none" aria-hidden="true"
-         stroke="currentColor" strokeWidth="1.3" strokeLinecap="round">
-      <path d="M2.5 3.5h8M5 3.5V2.5h3v1M3.5 3.5l.5 7h5l.5-7" />
-    </svg>
   )
 }

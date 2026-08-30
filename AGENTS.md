@@ -508,7 +508,7 @@ const accent = getComputedStyle(document.documentElement)
     groupField={query.groupBy ? fm[query.groupBy] : null}
     sort={query.sort}
     onToggleSort={(k) => setQuery(toggleSort(query, k))}
-    rowActions={(r) => <IconButton size="xs" label="삭제" icon={<TrashIcon />} … />}
+    rowActions={(r) => <IconButton size="xs" label="삭제" icon={<NavIcons.Trash />} … />}
     bulkActions={<Button size="xs">완료 처리</Button>}
   />
   <GridPagination page={page} pageSize={20} total={visible.length} onPageChange={setPage} />
@@ -825,7 +825,7 @@ const dashes = assignSeriesDash(keys)   // 색과 짝을 이룹니다
 
 ## 6-10. 화면 하단 중앙은 셋이 다툽니다
 
-`BulkActionBar`, `SaveBar`, `Toast` 가 모두 하단 중앙에 뜹니다.
+`BulkActionBar`, `SaveBar`, 그리고 토스트가 모두 하단 중앙에 뜹니다.
 각자 `fixed bottom-4` 로 자리를 잡으면 둘이 동시에 뜨는 순간 겹칩니다.
 
 상주형 바는 `useBottomBar(active, height)` 로 자기 높이를 알리고,
@@ -938,6 +938,7 @@ npm run lint:design    # 디자인 규칙 (반드시 통과)
 ```bash
 npm run audit:a11y     # 전 화면 × 2폭 × 2테마 를 axe-core 로 검사 (WCAG 2.1 A/AA)
 npm run audit:charts   # 차트 색 대비 (axe 도 팔레트 검사도 못 보는 사각지대)
+npm run audit:docs     # 이 문서가 가리키는 이름이 실제로 있는지
 npm run audit:exports  # 아무도 안 쓰는 공개 컴포넌트 찾기
 ```
 

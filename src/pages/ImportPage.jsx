@@ -202,8 +202,9 @@ function UploadStep({ onFile, onSample, fields }) {
         </ul>
       </div>
 
-      <Dropzone accept=".csv" maxSizeMB={20} onFile={onFile}
-                hint="쉼표로 구분된 CSV. 최대 20MB." />
+      {/* Dropzone 이 허용 형식과 용량을 이미 적습니다. 힌트에 또 쓰면
+          ".csv · 최대 20MB · 최대 20MB" 처럼 겹칩니다. */}
+      <Dropzone accept=".csv" maxSizeMB={20} onFile={onFile} hint="쉼표로 구분" />
 
       <div className="mt-3 flex items-center gap-2">
         <Button variant="secondary" onClick={onSample}>예시 데이터로 둘러보기</Button>

@@ -149,14 +149,26 @@ export function PageHeader({ title, description, actions, breadcrumb }) {
   return (
     <div className="mb-5">
       {breadcrumb && <div className="mb-2">{breadcrumb}</div>}
-      <div className="flex items-start justify-between gap-4">
+      {/*
+        좁은 화면에서는 제목과 액션을 세로로 쌓습니다.
+
+        가로로만 두면 액션(기간 선택 + 버튼)이 폭을 다 가져가고 제목 영역이
+        0에 가까워집니다. 그러면 제목은 "운영..." 으로 잘리고 설명은 한 어절씩
+        세로로 쪼개져 읽을 수 없게 됩니다. 실제로 390px 에서 그렇게 깨졌습니다.
+      */}
+      <div className="flex flex-col gap-3 sm:flex-row sm:items-start sm:justify-between sm:gap-4">
         <div className="min-w-0">
-          <h1 className="truncate text-lg font-semibold text-fg-primary">{title}</h1>
+          {/* 좁을 때는 두 줄까지 허용합니다 — 한 줄 자르기는 넓을 때만 */}
+          <h1 className="text-lg font-semibold text-fg-primary sm:truncate">{title}</h1>
           {description && (
             <p className="mt-1 text-sm text-fg-tertiary">{description}</p>
           )}
         </div>
-        {actions && <div className="flex shrink-0 items-center gap-2">{actions}</div>}
+        {actions && (
+          <div className="flex flex-wrap items-center gap-2 sm:shrink-0 sm:flex-nowrap">
+            {actions}
+          </div>
+        )}
       </div>
     </div>
   )

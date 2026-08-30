@@ -13,8 +13,35 @@ import { cn } from '../../lib/cn'
  *     ("파일" 보다 "파일 올리기").
  */
 export function Stepper({ steps = [], current = 0, onStepClick, className }) {
+  const now = steps[current]
+
   return (
-    <ol className={cn('flex items-center gap-1', className)}>
+    <div className={className}>
+      {/*
+        좁은 화면에서는 단계 이름이 "1 파... 2 열... 3 확..." 으로 잘려
+        무슨 단계인지 알 수 없게 됩니다. 네 단계를 390px 에 나란히 넣을 방법은
+        없으므로, 지금 어디인지만 온전한 문장으로 보여줍니다.
+        (실제로 390px 에서 그렇게 깨진 것을 보고 고쳤습니다.)
+      */}
+      <div className="sm:hidden">
+        <p className="text-xs font-medium text-fg-tertiary">
+          <span className="tabular">{current + 1}</span> / {steps.length} 단계
+        </p>
+        <p className="mt-0.5 text-base font-semibold text-fg-primary">{now?.label}</p>
+        <div className="mt-2 flex gap-1" aria-hidden="true">
+          {steps.map((step, i) => (
+            <span
+              key={step.key ?? i}
+              className={cn(
+                'h-1 flex-1 rounded-full',
+                i < current ? 'bg-success-solid' : i === current ? 'bg-accent-solid' : 'bg-line-default',
+              )}
+            />
+          ))}
+        </div>
+      </div>
+
+    <ol className={cn('hidden items-center gap-1 sm:flex')}>
       {steps.map((step, i) => {
         const done = i < current
         const active = i === current
@@ -61,5 +88,6 @@ export function Stepper({ steps = [], current = 0, onStepClick, className }) {
         )
       })}
     </ol>
+    </div>
   )
 }

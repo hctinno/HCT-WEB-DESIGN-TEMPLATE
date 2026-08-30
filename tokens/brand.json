@@ -1,0 +1,14 @@
+{
+  "_설명": "HCT 브랜드 설정. 원본은 hct-report-template 저장소의 brand/hct/brand.json 이며, 보고서와 화면이 같은 값을 쓰도록 여기에 옮겨 둡니다.",
+  "_출처": "dytc880915-commits/hct-report-template · brand/hct/",
+  "company": "주식회사 에이치시티",
+  "wordmark": "HCT",
+  "logoColor": "#2F4A9C",
+  "logo": {
+    "onLight": "src/assets/brand/hct-logo-color.png",
+    "onDark": "src/assets/brand/hct-logo-white.png",
+    "intrinsic": { "width": 264, "height": 86 },
+    "_주의": "원본 로고 영역이 264×86 래스터입니다. 화면 표시(높이 24~40px)에는 충분하지만 인쇄·대형 확대에는 부족합니다. SVG 원본이 확보되면 교체하세요 — 보고서 템플릿 README 도 같은 지적을 하고 있습니다."
+  },
+  "_강조색_근거": "보고서 템플릿 README: '회사 지정색을 쓰려면 --br-cobalt 를 바꾼다. 로고색 #2f4a9c 는 밝은 지면 대비 7.51:1 로 강조색 요건을 만족한다.' 그래서 대시보드 강조색도 로고색에 맞춰 보고서와 한 가족이 되게 했습니다."
+}

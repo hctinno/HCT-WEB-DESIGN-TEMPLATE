@@ -15,6 +15,7 @@ import { assignSeriesColors, STATUS_CHART_COLOR } from '../components/chart/char
 import { computeMetric, compareMetric, breakdownMetric, timeSeries } from '../lib/metrics'
 import { REQUEST_FIELDS, REQUEST_RECORDS } from './_data'
 import { NavIcons } from './_icons'
+import { SidebarBrand } from './_brand'
 
 /**
  * 화면 원형: 운영 대시보드
@@ -171,7 +172,7 @@ export function DashboardPage({ onDrillDown }) {
     <>
       <AppShell
         sidebar={
-          <Sidebar header={<WorkspaceSwitcher name="HCT 운영" subtitle="프로덕션" />}>
+          <Sidebar header={<SidebarBrand />}>
             <SidebarGroup label="분석">
               <SidebarItem icon={<NavIcons.Dashboard />} label="대시보드" active />
               <SidebarItem icon={<NavIcons.Chart />} label="리포트" />

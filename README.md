@@ -141,6 +141,7 @@ src/lib/
   useMeasuredWidth.js    SVG 차트 반응형 폭
   cn.js / theme.js
 
+tokens/brand.json        회사 로고·워드마크 (보고서 저장소에서 옮겨옴)
 tokens/tokens.json       원천 토큰
 src/styles/tokens.css    CSS 변수 (라이트/다크)
 tailwind.config.js       토큰 → Tailwind 매핑
@@ -161,7 +162,9 @@ src/components/
   index.js   ← 여기서만 import
 
 src/pages/
+  LoginPage.jsx          로그인 원형
   DashboardPage.jsx      대시보드 원형 (드릴다운·차트)
+  AdminPage.jsx          관리자 원형 (사용자·권한)
   ListPage.jsx           목록+뷰+상세 원형
   SettingsPage.jsx       설정·폼 원형
   ScalePage.jsx          대용량·비동기 작업 원형
@@ -173,14 +176,55 @@ docs/
 
 ---
 
-## 화면 원형 4종
+## 브랜드
+
+로고와 회사 정보는 **보고서 템플릿 저장소**(`hct-report-template`)의
+`brand/hct/` 에서 가져왔습니다. 보고서와 화면이 같은 자산을 씁니다.
+
+강조색은 **로고색 `#2F4A9C`** 입니다. 보고서 템플릿 README 가
+*"회사 지정색을 쓰려면 `--br-cobalt` 를 바꾼다. 로고색 `#2f4a9c` 는 밝은 지면
+대비 7.51:1 로 강조색 요건을 만족한다"* 라고 적어 두었기 때문입니다.
+
+로고는 **면의 밝기에 따라 두 벌**을 씁니다. 원색은 어두운 배경에서 대비가
+2:1 수준이라 보이지 않으므로, 어두운 사이드바에는 흰색 녹아웃판이 나갑니다.
+
+```jsx
+<Logo on="dark" height={22} />   {/* 어두운 사이드바 */}
+<Logo on="light" height={40} />  {/* 흰 로그인 카드 */}
+```
+
+> 원본이 264×86 래스터입니다. 화면(24~40px)에는 충분하지만 인쇄·대형 확대에는
+> 부족합니다. **SVG 원본이 확보되면 `Logo.jsx` 만 고치면 됩니다.**
+> 보고서 템플릿 README 도 같은 지적을 하고 있습니다.
+
+---
+
+## 화면 원형 6종
 
 | | 무엇을 보여주는가 |
 |---|---|
+| **로그인** | SSO 우선, 실패 사유 구분(재시도 가능 vs 잠김), 계정 존재 여부 비노출 |
 | **대시보드** | 지표 = 질의 + 집계. 클릭하면 목록으로 드릴다운. 선·막대 차트, 임계값 |
 | **목록 + 상세** | 표↔보드 전환, 인라인 편집, 저장된 뷰, 키보드 조작, 실행 취소 |
+| **관리자** | 사용자·역할, 권한 매트릭스, 초대, 감사 로그, 마지막 관리자 보호 |
 | **설정** | 폼 검증, 오류 요약, 저장 바, 이탈 방지, Combobox |
 | **대용량** | 5,000건 가상화, 조건 전체 선택, 진행률과 부분 실패 |
+
+### 로그인
+
+| | |
+|---|---|
+| ![로그인](docs/screenshots/login.png) | 사내 도구의 로그인은 가입 유도가 없고 SSO 가 주 경로입니다. 실패는 **재시도로 풀리는 것**과 **잠김처럼 풀리지 않는 것**을 구분합니다 — "로그인 실패"만 반복하면 사용자는 열 번 더 틀리고 계정이 잠깁니다. 어느 쪽이 틀렸는지는 밝히지 않습니다(계정 존재 여부 노출). |
+
+### 관리자
+
+| 사용자 | 역할과 권한 |
+|---|---|
+| ![사용자](docs/screenshots/admin-users.png) | ![역할](docs/screenshots/admin-roles.png) |
+
+관리도구의 관리도구라 되돌릴 수 없는 일이 많습니다. **자기 권한을 스스로
+내리거나 마지막 관리자를 없애는 것을 막습니다** — 둘 다 시스템을 관리 불가
+상태로 만듭니다. 권한 매트릭스는 권한을 주기 전에 그게 무엇인지 보여줍니다.
 
 ### 설정 — 폼
 
@@ -201,9 +245,9 @@ docs/
 
 ## 색 팔레트
 
-| 네이비 (기본) | 아크틱 |
+| HCT (기본) | 그래파이트 |
 |---|---|
-| ![네이비](docs/screenshots/palette-navy.png) | ![아크틱](docs/screenshots/palette-arctic.png) |
+| ![HCT](docs/screenshots/palette-hct.png) | ![그래파이트](docs/screenshots/palette-graphite.png) |
 
 **네이비**는 탐색 영역과 작업 영역을 밝기로 가릅니다 — 사이드바가 짙은 남색,
 콘텐츠는 흰색. **아크틱**은 같은 색 계열로 사이드바까지 밝게 갑니다.
@@ -212,9 +256,9 @@ docs/
 
 중성색에 자주·황토 기운이 없어 배경이 순수한 흰색(`#F7F9FC`)으로 읽힙니다.
 
-| 네이비 다크 | 그래파이트 다크 |
+| 플럼 | 그래파이트 다크 |
 |---|---|
-| ![네이비 다크](docs/screenshots/palette-navy-dark.png) | ![그래파이트 다크](docs/screenshots/palette-graphite-dark.png) |
+| ![플럼](docs/screenshots/palette-plum.png) | ![그래파이트 다크](docs/screenshots/palette-graphite-dark.png) |
 
 
 
@@ -223,7 +267,8 @@ docs/
 
 | id | 이름 | 성격 |
 |---|---|---|
-| `navy` | 네이비 | 짙은 남색 사이드바 · 흰 콘텐츠 (**기본값**) |
+| `hct` | HCT | 로고색 강조 · 짙은 남색 사이드바 (**기본값**) |
+| `navy` | 네이비 | 짙은 남색 사이드바 · 흰 콘텐츠 |
 | `arctic` | 아크틱 | 전체 화이트 · 파랑 강조 |
 | `graphite` | 그래파이트 | 무채색 강조 · 따뜻한 중성색 |
 | `plum` | 플럼 | 어두운 자두색 사이드바 |

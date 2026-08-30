@@ -5,6 +5,8 @@ import { DashboardPage } from './pages/DashboardPage'
 import { ListPage } from './pages/ListPage'
 import { SettingsPage } from './pages/SettingsPage'
 import { ScalePage } from './pages/ScalePage'
+import { LoginPage } from './pages/LoginPage'
+import { AdminPage } from './pages/AdminPage'
 import { applyTheme, getStoredTheme, applyPalette, getStoredPalette, PALETTES } from './lib/theme'
 import { ToastProvider } from './components/feedback/Toast'
 
@@ -20,7 +22,7 @@ import { ToastProvider } from './components/feedback/Toast'
  */
 function Preview() {
   const initial = new URLSearchParams(location.search).get('page')
-  const PAGES = ['dashboard', 'list', 'settings', 'scale']
+  const PAGES = ['login', 'dashboard', 'list', 'admin', 'settings', 'scale']
   const [page, setPage] = useState(PAGES.includes(initial) ? initial : 'dashboard')
   const [handoffQuery, setHandoffQuery] = useState(null)
   const [theme, setTheme] = useState(getStoredTheme)
@@ -36,7 +38,9 @@ function Preview() {
 
   return (
     <>
-      {page === 'list' ? <ListPage key={JSON.stringify(handoffQuery)} initialQuery={handoffQuery} />
+      {page === 'login' ? <LoginPage onSignedIn={() => setPage('dashboard')} />
+        : page === 'list' ? <ListPage key={JSON.stringify(handoffQuery)} initialQuery={handoffQuery} />
+        : page === 'admin' ? <AdminPage />
         : page === 'settings' ? <SettingsPage />
         : page === 'scale' ? <ScalePage />
         : <DashboardPage onDrillDown={drillDown} />}
@@ -77,8 +81,10 @@ function Preview() {
 
         {shown && (
           <div className="flex items-center gap-1 rounded-lg border border-line-default bg-bg-raised p-1 shadow-lg">
+            <Chip active={page === 'login'} onClick={() => setPage('login')}>로그인</Chip>
             <Chip active={page === 'dashboard'} onClick={() => { setHandoffQuery(null); setPage('dashboard') }}>대시보드</Chip>
             <Chip active={page === 'list'} onClick={() => { setHandoffQuery(null); setPage('list') }}>목록</Chip>
+            <Chip active={page === 'admin'} onClick={() => setPage('admin')}>관리자</Chip>
             <Chip active={page === 'settings'} onClick={() => setPage('settings')}>설정</Chip>
             <Chip active={page === 'scale'} onClick={() => setPage('scale')}>대용량</Chip>
             <span className="mx-0.5 h-4 w-px bg-line-default" />

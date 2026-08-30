@@ -11,6 +11,124 @@
    의미를 나르는 색이라 제품 전체에서 고정되어야 합니다.
    ============================================================================ */
 
+/* ── HCT — 로고색 강조 · 짙은 남색 사이드바
+   강조색이 회사 로고색 #2F4A9C 입니다. 보고서 템플릿(hct-report-template)이 '로고색은 밝은 지면 대비 7.51:1 로 강조색 요건을 만족한다'고 적어 두었고, 같은 색을 쓰면 보고서와 화면이 한 가족으로 읽힙니다. 사이드바 남색은 같은 색상환에서 어둡게 내린 값입니다. */
+:root[data-palette="hct"] {
+  --hct-neutral-0: #FFFFFF;
+  --hct-neutral-25: #FCFDFE;
+  --hct-neutral-50: #F7F9FC;
+  --hct-neutral-100: #EFF3F8;
+  --hct-neutral-200: #E3E9F1;
+  --hct-neutral-300: #D0D9E5;
+  --hct-neutral-400: #A7B3C4;
+  --hct-neutral-500: #7C8899;
+  --hct-neutral-600: #616D7E;
+  --hct-neutral-700: #445062;
+  --hct-neutral-800: #2E3847;
+  --hct-neutral-900: #18202C;
+  --hct-neutral-950: #0C1219;
+
+  --hct-accent-50: #EFF2FA;
+  --hct-accent-100: #DCE3F4;
+  --hct-accent-200: #BAC8E8;
+  --hct-accent-300: #8EA4D5;
+  --hct-accent-400: #5D79BE;
+  --hct-accent-500: #3E5BA9;
+  --hct-accent-600: #2F4A9C;
+  --hct-accent-700: #263C80;
+  --hct-accent-800: #1F3166;
+  --hct-accent-900: #1A2950;
+  --color-sidebar-bg: #17264D;
+  --color-sidebar-fg: #EBEFF8;
+  --color-sidebar-fg-muted: #AAB7D2;
+  --color-sidebar-fg-subtle: #8494B4;
+  --color-sidebar-hover: #20325F;
+  --color-sidebar-active-bg: #2F4A9C;
+  --color-sidebar-active-fg: #FFFFFF;
+  --color-sidebar-border: #22355F;
+  --color-sidebar-badge-bg: #D02439;
+  --color-sidebar-badge-fg: #FFFFFF;
+  --color-sidebar-rail-bg: #101B39;
+}
+
+@media (prefers-color-scheme: dark) {
+  :root[data-palette="hct"]:not([data-theme="light"]) {
+    --color-bg-canvas: #0B0F16;
+    --color-bg-surface: #131922;
+    --color-bg-raised: #1B222D;
+    --color-bg-sunken: #0E131A;
+    --color-bg-hover: #1B222D;
+    --color-bg-active: #232B37;
+    --color-bg-sidebar: #0D1520;
+    --color-bg-overlay: rgb(0 0 0 / 0.64);
+    --color-text-primary: #E6EBF2;
+    --color-text-secondary: #A5B0BF;
+    --color-text-tertiary: #7D8896;
+    --color-text-disabled: #525C69;
+    --color-text-inverse: #0B0F16;
+    --color-text-link: #8EA4D5;
+    --color-border-subtle: #1F2733;
+    --color-border-default: #2B3542;
+    --color-border-strong: #45505F;
+    --color-border-focus: #5D79BE;
+    --color-accent-solid: #5D79BE;
+    --color-accent-solid-hover: #8EA4D5;
+    --color-accent-subtle: #141F3A;
+    --color-accent-subtle-hover: #1A2949;
+    --color-accent-text: #8EA4D5;
+    --color-accent-border: #1F3166;
+    --color-sidebar-bg: #0D1520;
+    --color-sidebar-fg: #E6EBF2;
+    --color-sidebar-fg-muted: #A5B0BF;
+    --color-sidebar-fg-subtle: #7D8896;
+    --color-sidebar-hover: #17202D;
+    --color-sidebar-active-bg: #3E5BA9;
+    --color-sidebar-active-fg: #FFFFFF;
+    --color-sidebar-border: #1C2634;
+    --color-sidebar-badge-bg: #D02439;
+    --color-sidebar-badge-fg: #FFFFFF;
+    --color-sidebar-rail-bg: #080D15;
+  }
+}
+
+:root[data-palette="hct"][data-theme="dark"] {
+  --color-bg-canvas: #0B0F16;
+  --color-bg-surface: #131922;
+  --color-bg-raised: #1B222D;
+  --color-bg-sunken: #0E131A;
+  --color-bg-hover: #1B222D;
+  --color-bg-active: #232B37;
+  --color-bg-sidebar: #0D1520;
+  --color-bg-overlay: rgb(0 0 0 / 0.64);
+  --color-text-primary: #E6EBF2;
+  --color-text-secondary: #A5B0BF;
+  --color-text-tertiary: #7D8896;
+  --color-text-disabled: #525C69;
+  --color-text-inverse: #0B0F16;
+  --color-text-link: #8EA4D5;
+  --color-border-subtle: #1F2733;
+  --color-border-default: #2B3542;
+  --color-border-strong: #45505F;
+  --color-border-focus: #5D79BE;
+  --color-accent-solid: #5D79BE;
+  --color-accent-solid-hover: #8EA4D5;
+  --color-accent-subtle: #141F3A;
+  --color-accent-subtle-hover: #1A2949;
+  --color-accent-text: #8EA4D5;
+  --color-accent-border: #1F3166;
+  --color-sidebar-bg: #0D1520;
+  --color-sidebar-fg: #E6EBF2;
+  --color-sidebar-fg-muted: #A5B0BF;
+  --color-sidebar-fg-subtle: #7D8896;
+  --color-sidebar-hover: #17202D;
+  --color-sidebar-active-bg: #3E5BA9;
+  --color-sidebar-active-fg: #FFFFFF;
+  --color-sidebar-border: #1C2634;
+  --color-sidebar-badge-bg: #D02439;
+  --color-sidebar-badge-fg: #FFFFFF;
+  --color-sidebar-rail-bg: #080D15;
+}
+
 /* ── 네이비 — 짙은 남색 사이드바 · 흰 콘텐츠
    탐색은 짙은 남색, 작업 영역은 흰색으로 갈라놓습니다. 슬랙식 밝기 대비를 유지하되 색은 파랑 계열로 통일했습니다. 중성색에 자주·황토 기운이 없어 배경이 순수한 흰색으로 읽힙니다. */
 :root[data-palette="navy"] {

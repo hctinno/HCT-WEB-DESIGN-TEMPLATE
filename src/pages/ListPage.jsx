@@ -15,6 +15,7 @@ import {
 } from '../components'
 import { REQUEST_FIELDS, REQUEST_RECORDS, INITIAL_VIEWS } from './_data'
 import { NavIcons } from './_icons'
+import { SidebarBrand } from './_brand'
 
 /**
  * 화면 원형: 목록 + 상세 (지라 이슈 목록에 해당)
@@ -140,7 +141,7 @@ export function ListPage({ initialQuery }) {
                 ]}
               />
             }
-            header={<WorkspaceSwitcher name="HCT 운영" subtitle="프로덕션" />}
+            header={<SidebarBrand />}
             footer={<SidebarUser name="김민수" status="online" detail="운영팀" />}
           >
             <SidebarGroup label="분석">

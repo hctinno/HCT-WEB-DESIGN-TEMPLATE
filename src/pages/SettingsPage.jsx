@@ -7,6 +7,7 @@ import {
   TextField, SelectField, Combobox, Button, Banner, useToast, useForm,
 } from '../components'
 import { NavIcons } from './_icons'
+import { SidebarBrand } from './_brand'
 
 /**
  * 화면 원형 3: 설정
@@ -95,7 +96,7 @@ export function SettingsPage() {
   return (
     <AppShell
       sidebar={
-        <Sidebar header={<WorkspaceSwitcher name="HCT 운영" subtitle="프로덕션" />}>
+        <Sidebar header={<SidebarBrand />}>
           <SidebarGroup label="분석">
             <SidebarItem icon={<NavIcons.Dashboard />} label="대시보드" />
           </SidebarGroup>

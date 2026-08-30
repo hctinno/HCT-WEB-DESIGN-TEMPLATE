@@ -8,6 +8,7 @@ import {
   normalizeFields, fieldMap, applyQuery, toggleSort, emptyQuery, useToast,
 } from '../components'
 import { NavIcons } from './_icons'
+import { SidebarBrand } from './_brand'
 
 /**
  * 화면 원형 4: 대용량 목록
@@ -124,7 +125,7 @@ export function ScalePage() {
   return (
     <AppShell
       sidebar={
-        <Sidebar header={<WorkspaceSwitcher name="HCT 운영" subtitle="프로덕션" />}>
+        <Sidebar header={<SidebarBrand />}>
           <SidebarGroup label="분석">
             <SidebarItem icon={<NavIcons.Dashboard />} label="대시보드" />
           </SidebarGroup>

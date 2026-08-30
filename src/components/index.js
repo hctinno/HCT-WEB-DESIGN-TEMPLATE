@@ -14,6 +14,7 @@ export {
   Sidebar, SidebarGroup, SidebarItem, WorkspaceSwitcher,
   WorkspaceRail, SidebarUser, Presence,
 } from './shell/Sidebar'
+export { Logo, LogoMark } from './shell/Logo'
 export { Topbar, Breadcrumb, TopbarIconButton } from './shell/Topbar'
 export { RightPanel, PropertyList, PropertyRow, PanelSection } from './shell/RightPanel'
 
@@ -42,6 +43,7 @@ export { CHART_SERIES, assignSeriesColors, foldToOther, STATUS_CHART_COLOR } fro
 
 /* 대시보드 */
 export { StatCard, StatGrid, ChartFrame, LegendItem } from './data/StatCard'
+export { MatrixTable } from './data/MatrixTable'
 
 /* 상태 */
 export { EmptyState, NoResults, ErrorState } from './state/EmptyState'

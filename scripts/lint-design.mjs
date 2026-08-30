@@ -92,11 +92,13 @@ const RULES = [
     id: 'no-raw-table',
     severity: 'warn',
     message: '<table> 을 직접 만들지 말고 DataGrid 컴포넌트를 쓰세요.',
-    /* DataGrid 는 표 자체를 만드는 컴포넌트이고, ChartTable 은 차트의 접근성
-       대체본(표 보기)이라 정당합니다. 그 외에는 DataGrid 를 쓰세요. */
+    /* 표를 직접 만드는 게 정당한 셋: DataGrid(목록), ChartTable(차트의 접근성
+       대체본), MatrixTable(역할×권한 같은 대조표). 그 외에는 이 셋 중 하나를
+       쓰세요 — 화면마다 표를 새로 짜면 밀도와 정렬이 어긋납니다. */
     test: (line, file) => /<table[\s>]/.test(line)
       && !file.includes('components/grid/DataGrid')
-      && !file.includes('components/chart/BarChart'),
+      && !file.includes('components/chart/BarChart')
+      && !file.includes('components/data/MatrixTable'),
   },
   {
     id: 'icon-button-needs-label',

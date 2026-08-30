@@ -38,7 +38,12 @@ export function isQueryActive(query) {
 
 function evaluateCondition(condition, record, fields) {
   const field = fields[condition.field]
-  if (!field) return true
+  if (!field) {
+    /* 스키마에서 사라진 필드를 가리키는 저장된 뷰일 수 있습니다. 그건 흔한
+       일이라 조건만 무시하고 넘어갑니다. 다만 조용히 넘기지는 않습니다. */
+    warnOnce(`알 수 없는 필드 "${condition.field}" — 이 조건은 무시됩니다.`)
+    return true
+  }
 
   const raw = record[condition.field]
   const { operator, value } = condition
@@ -86,8 +91,32 @@ function evaluateCondition(condition, record, fields) {
       return !list.includes(raw)
     }
     default:
-      return true
+      /*
+       * 모르는 연산자는 **아무것도 통과시키지 않습니다.**
+       *
+       * 예전에는 true 를 돌려줘서 그냥 넘겼는데, 그러면 오타 하나에
+       * 필터가 조용히 풀립니다. 화면에는 "상태 = 고장" 칩이 붙어 있는데
+       * 실제로는 전체 목록이 나오고, 사용자는 그게 걸러진 결과라고 믿고
+       * 일괄 작업을 겁니다. 관리도구에서 이건 사고로 이어집니다.
+       * (실제로 모니터링 예시를 만들다 operator 대신 op 라고 써서 겪었습니다.)
+       *
+       * 아무것도 안 나오면 즉시 이상하다는 걸 알아챕니다. 조용히 틀린 것보다
+       * 시끄럽게 비어 있는 편이 낫습니다.
+       */
+      warnOnce(
+        `알 수 없는 연산자 "${operator}" (필드: ${condition.field}). ` +
+        `쓸 수 있는 값: ${Object.keys(OPERATORS).join(', ')}`,
+      )
+      return false
   }
+}
+
+/* 같은 오류를 레코드 수만큼 찍으면 콘솔이 묻힙니다. 조합당 한 번만 알립니다. */
+const warned = new Set()
+function warnOnce(message) {
+  if (warned.has(message)) return
+  warned.add(message)
+  console.error(`[HCT 질의] ${message}`)
 }
 
 /**

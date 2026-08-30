@@ -209,11 +209,24 @@ export function formatValue(field, value) {
 export function formatRelative(value, now = Date.now()) {
   const t = value instanceof Date ? value.getTime() : new Date(value).getTime()
   if (Number.isNaN(t)) return ''
+
+  /*
+   * 과거와 미래를 모두 다룹니다.
+   *
+   * 과거만 가정하면 미래 날짜가 전부 "방금"으로 나옵니다. 관리도구에는
+   * 만료일·기한·다음 실행처럼 **미래를 가리키는 날짜가 흔합니다** —
+   * 교정 만료가 9일 남았는데 "방금"이라고 쓰면 당장 만료된 것처럼 읽힙니다.
+   * (실제로 장비 모니터링 화면을 만들다 발견했습니다.)
+   */
   const diff = Math.floor((now - t) / 1000)
-  if (diff < 60) return '방금'
-  if (diff < 3600) return `${Math.floor(diff / 60)}분 전`
-  if (diff < 86400) return `${Math.floor(diff / 3600)}시간 전`
-  if (diff < 604800) return `${Math.floor(diff / 86400)}일 전`
+  const abs = Math.abs(diff)
+  const suffix = diff < 0 ? '후' : '전'
+
+  if (abs < 60) return '방금'
+  if (abs < 3600) return `${Math.floor(abs / 60)}분 ${suffix}`
+  if (abs < 86400) return `${Math.floor(abs / 3600)}시간 ${suffix}`
+  if (abs < 604800) return `${Math.floor(abs / 86400)}일 ${suffix}`
+  /* 일주일을 넘어가면 상대 시간은 감이 안 옵니다. 날짜를 그대로 보여줍니다. */
   return formatDate(value)
 }
 

@@ -290,6 +290,12 @@ function JobCard({ job, running, onToggle, onRun, onOpen }) {
   )
 }
 
+/*
+ * formatRelative 와 겹쳐 보이지만 다릅니다. formatRelative 는 일주일이 넘으면
+ * 절대 날짜로 넘어가는데, 여기서는 바로 옆에 절대 시각을 이미 보여주고 있어
+ * 날짜가 두 번 나옵니다. 이 자리에서 알고 싶은 건 "얼마나 남았나" 하나뿐이라
+ * 몇 주가 걸려도 상대 표현을 유지합니다.
+ */
 function untilText(iso) {
   const diff = new Date(iso).getTime() - Date.now()
   if (diff < 0) return '지남'

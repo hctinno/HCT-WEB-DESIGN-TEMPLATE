@@ -137,8 +137,15 @@ node scripts/build-standalone.mjs        # dist-standalone/hct-console.html
 ### 1. 설치
 
 ```bash
-npm i github:dytc880915-commits/hct-web-design-template
+npm i github:dytc880915-commits/hct-web-design-template#v1.0.0
 ```
+
+**버전을 고정하세요(`#v1.0.0`).** 태그를 빼면 기본 브랜치의 최신 커밋을
+가져갑니다 — 저장소에 무언가 푸시될 때마다 여러분의 다음 설치가 조용히
+바뀝니다. 디자인 시스템에서 그건 "어제까지 멀쩡하던 화면의 간격이 오늘
+달라지는" 일이라, 원인을 찾기가 매우 어렵습니다.
+
+올릴 때는 [CHANGELOG.md](./CHANGELOG.md) 를 보고 태그를 바꿔 다시 설치합니다.
 
 Tailwind **3.x 와 4.x 를 모두 지원**합니다. 설정 방법이 다르니 쓰는 버전 쪽만
 보세요. 토큰은 한 곳(`tailwind-preset.js`)에서 나오고 v4 용 `@theme` 은 거기서
@@ -235,6 +242,26 @@ export function EquipmentPage() {
 전부 따라옵니다.
 
 ![소비 프로젝트](docs/screenshots/consumer.png)
+
+### 새 버전을 내보낼 때
+
+소비 프로젝트는 **태그를 고정해서** 씁니다. 저장소에 푸시한다고 그들의 빌드가
+바뀌지는 않습니다 — 태그를 새로 찍어야 올릴 수 있습니다.
+
+```bash
+npm run tokens:build      # 팔레트 CSS + v4 @theme 재생성 (원본을 고쳤다면)
+npm run lint:design       # 디자인 규칙
+npm run verify:consumer   # v3·v4 로 진짜 설치해서 빌드
+
+# package.json 의 version 을 올리고 CHANGELOG.md 에 항목을 추가한 뒤
+git commit -am "v1.1.0"
+git tag v1.1.0
+git push && git push --tags
+```
+
+버전을 어떻게 올릴지는 [CHANGELOG.md](./CHANGELOG.md) 맨 위의 표를 따릅니다.
+요점은 **눈에 보이는 변화를 patch 로 내보내지 않는 것**입니다 — 디자인
+시스템에서는 "색을 조금 다듬었다"가 소비 프로젝트 전체의 모습을 바꿉니다.
 
 ### 에이전트에게 시킬 때
 

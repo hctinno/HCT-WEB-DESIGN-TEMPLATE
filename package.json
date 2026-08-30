@@ -4,7 +4,7 @@
   "type": "module",
   "description": "HCT 대시보드·분석도구·관리도구용 디자인 시스템 템플릿",
   "scripts": {
-    "test": "node --test \"test/*.test.mjs\"",
+    "test": "node --test test/*.test.mjs",
     "dev": "vite",
     "build": "vite build",
     "build:lib": "vite build --config vite.config.lib.mjs",

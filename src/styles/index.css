@@ -27,6 +27,22 @@
     background-color: var(--color-bg-canvas);
     color: var(--color-text-primary);
     font-feature-settings: 'tnum' 0;
+
+    /*
+     * 한글 줄바꿈. 기본값(break-word)은 어절 한가운데를 끊습니다 —
+     * "저장이" 가 "저 / 장이" 로 잘리면 읽는 속도가 눈에 띄게 떨어집니다.
+     * keep-all 은 공백에서만 끊으므로 어절이 보존됩니다.
+     *
+     * 대신 긴 영문 토큰(URL·요청 ID)은 넘칠 수 있으므로, 그런 값을 담는
+     * 곳에는 overflow-wrap 을 따로 줍니다 (아래 .break-token).
+     */
+    word-break: keep-all;
+    overflow-wrap: break-word;
+  }
+
+  /* URL·ID·토큰처럼 공백이 없는 긴 문자열 전용 */
+  .break-token {
+    word-break: break-all;
   }
 
   /* 포커스 링 — 접근성 필수. 절대 outline:none 으로 지우지 마세요. */

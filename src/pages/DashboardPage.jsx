@@ -1,8 +1,6 @@
 import { useMemo, useState } from 'react'
 import {
-  AppShell, PageContainer, PageHeader,
-  Sidebar, SidebarGroup, SidebarItem, WorkspaceSwitcher,
-  Topbar, Breadcrumb, TopbarIconButton,
+  PageContainer, PageHeader,
   DataGrid, GridCard, GridToolbar,
   Button, SegmentedControl, Banner,
   CommandPalette, CommandPaletteTrigger,
@@ -15,7 +13,7 @@ import { assignSeriesColors, STATUS_CHART_COLOR } from '../components/chart/char
 import { computeMetric, compareMetric, breakdownMetric, timeSeries } from '../lib/metrics'
 import { REQUEST_FIELDS, REQUEST_RECORDS } from './_data'
 import { NavIcons } from './_icons'
-import { SidebarBrand } from './_brand'
+import { AppFrame } from './_shell'
 
 /**
  * 화면 원형: 운영 대시보드
@@ -33,7 +31,7 @@ import { SidebarBrand } from './_brand'
  * @param {object} props
  * @param {(query: object) => void} [props.onDrillDown] - 목록 화면으로 질의를 넘깁니다
  */
-export function DashboardPage({ onDrillDown }) {
+export function DashboardPage({ onDrillDown, onNavigate }) {
   const fields = REQUEST_FIELDS
   const fm = useMemo(() => fieldMap(fields), [fields])
   const records = REQUEST_RECORDS
@@ -170,26 +168,11 @@ export function DashboardPage({ onDrillDown }) {
 
   return (
     <>
-      <AppShell
-        sidebar={
-          <Sidebar header={<SidebarBrand />}>
-            <SidebarGroup label="분석">
-              <SidebarItem icon={<NavIcons.Dashboard />} label="대시보드" active />
-              <SidebarItem icon={<NavIcons.Chart />} label="리포트" />
-            </SidebarGroup>
-            <SidebarGroup label="운영">
-              <SidebarItem icon={<NavIcons.List />} label="요청" badge={records.length} />
-              <SidebarItem icon={<NavIcons.Alert />} label="알림" badge={attention.length || undefined} />
-            </SidebarGroup>
-          </Sidebar>
-        }
-        topbar={
-          <Topbar
-            breadcrumb={<Breadcrumb items={[{ label: 'HCT 운영', href: '#' }, { label: '대시보드' }]} />}
-            search={<CommandPaletteTrigger onClick={() => setPaletteOpen(true)} />}
-            actions={<TopbarIconButton icon={<NavIcons.Alert />} label="알림" badge={attention.length > 0} />}
-          />
-        }
+      <AppFrame
+        active="dashboard"
+        onNavigate={onNavigate}
+        counts={{ list: records.length, inbox: attention.length || undefined }}
+        topbarSearch={<CommandPaletteTrigger onClick={() => setPaletteOpen(true)} />}
       >
         <PageContainer>
           <PageHeader
@@ -359,7 +342,7 @@ export function DashboardPage({ onDrillDown }) {
             />
           </GridCard>
         </PageContainer>
-      </AppShell>
+      </AppFrame>
 
       <CommandPalette open={paletteOpen} onOpenChange={setPaletteOpen} commands={commands} />
     </>

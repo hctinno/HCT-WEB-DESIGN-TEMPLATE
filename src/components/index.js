@@ -15,6 +15,7 @@ export {
   WorkspaceRail, SidebarUser, Presence,
 } from './shell/Sidebar'
 export { Logo, LogoMark } from './shell/Logo'
+export { AuthLayout, PasswordStrength } from './auth/AuthLayout'
 export { Topbar, Breadcrumb, TopbarIconButton } from './shell/Topbar'
 export { RightPanel, PropertyList, PropertyRow, PanelSection } from './shell/RightPanel'
 
@@ -47,6 +48,7 @@ export { MatrixTable } from './data/MatrixTable'
 
 /* 상태 */
 export { EmptyState, NoResults, ErrorState } from './state/EmptyState'
+export { ErrorPage } from './state/ErrorPage'
 export { Skeleton, SkeletonText, SkeletonTable, SkeletonStatCard } from './state/Skeleton'
 
 /* 입력 */
@@ -54,6 +56,9 @@ export { Button, IconButton, ButtonGroup } from './input/Button'
 export { TextField, SelectField, SearchInput, SearchIcon } from './input/Input'
 export { Combobox } from './input/Combobox'
 export { FilterBar, FilterButton, SegmentedControl, DensityToggle } from './input/FilterBar'
+export { Stepper } from './input/Stepper'
+export { Dropzone } from './input/Dropzone'
+export { SecretField } from './input/SecretField'
 
 /* 폼 */
 export {

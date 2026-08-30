@@ -1,15 +1,12 @@
 import { useMemo, useState } from 'react'
 import {
-  AppShell, PageContainer, PageHeader,
-  Sidebar, SidebarGroup, SidebarItem, WorkspaceSwitcher, WorkspaceRail, SidebarUser,
-  Topbar, Breadcrumb,
+  PageContainer, PageHeader,
   DataGrid, GridCard, GridToolbar, GridPagination,
   QueryBar, StatusBadge, Button, IconButton, Modal, ConfirmDialog, Banner,
   TextField, Combobox, SegmentedControl, ActivityFeed, MatrixTable,
   normalizeFields, fieldMap, applyQuery, toggleSort, emptyQuery, useRecords, useToast,
 } from '../components'
-import { NavIcons } from './_icons'
-import { SidebarBrand } from './_brand'
+import { AppFrame } from './_shell'
 
 /**
  * 화면 원형 6: 관리자 — 사용자와 권한
@@ -62,7 +59,7 @@ const USERS = [
 /** 지금 로그인한 사람 — 자기 권한을 스스로 못 내리게 하는 판단에 씁니다 */
 const CURRENT_USER_ID = 'u1'
 
-export function AdminPage() {
+export function AdminPage({ onNavigate }) {
   const { toast } = useToast()
   const fields = USER_FIELDS
   const fm = useMemo(() => fieldMap(fields), [fields])
@@ -133,37 +130,11 @@ export function AdminPage() {
 
   return (
     <>
-      <AppShell
-        sidebar={
-          <Sidebar
-            rail={
-              <WorkspaceRail
-                activeId="prod"
-                items={[
-                  { id: 'prod', label: 'HCT 프로덕션', initial: 'P' },
-                  { id: 'stg', label: 'HCT 스테이징', initial: 'S', badge: 2 },
-                ]}
-              />
-            }
-            header={<SidebarBrand />}
-            footer={<SidebarUser name="김민수" status="online" detail="관리자" />}
-          >
-            <SidebarGroup label="분석">
-              <SidebarItem icon={<NavIcons.Dashboard />} label="대시보드" />
-            </SidebarGroup>
-            <SidebarGroup label="운영">
-              <SidebarItem icon={<NavIcons.List />} label="요청" badge={18} />
-              <SidebarItem icon={<NavIcons.Alert />} label="알림" unread mentions={3} />
-            </SidebarGroup>
-            <SidebarGroup label="관리">
-              <SidebarItem icon={<NavIcons.Users />} label="사용자" active badge={records.length} />
-              <SidebarItem icon={<NavIcons.Settings />} label="환경설정" />
-            </SidebarGroup>
-          </Sidebar>
-        }
-        topbar={<Topbar breadcrumb={
-          <Breadcrumb items={[{ label: 'HCT 운영', href: '#' }, { label: '관리' }, { label: '사용자' }]} />
-        } />}
+      <AppFrame
+        active="users"
+        onNavigate={onNavigate}
+        counts={{ list: 18, inbox: true, archive: 12, users: records.length }}
+        mentions={{ inbox: 3 }}
       >
         <PageContainer>
           <PageHeader
@@ -307,7 +278,7 @@ export function AdminPage() {
             </div>
           )}
         </PageContainer>
-      </AppShell>
+      </AppFrame>
 
       <InviteModal
         open={inviteOpen}

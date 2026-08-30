@@ -1,13 +1,10 @@
 import { useMemo, useState } from 'react'
 import {
-  AppShell, PageContainer, PageHeader,
-  Sidebar, SidebarGroup, SidebarItem, WorkspaceSwitcher,
-  Topbar, Breadcrumb,
+  PageContainer, PageHeader,
   Form, FormSection, FormRow, FormErrorSummary, SaveBar, SettingsNav, Switch, RadioCards,
   TextField, SelectField, Combobox, Button, Banner, useToast, useForm,
 } from '../components'
-import { NavIcons } from './_icons'
-import { SidebarBrand } from './_brand'
+import { AppFrame } from './_shell'
 
 /**
  * 화면 원형 3: 설정
@@ -19,7 +16,7 @@ import { SidebarBrand } from './_brand'
  *   - 제출 실패 시 오류 요약에서 해당 필드로 이동
  *   - 저장하지 않고 떠나려 하면 브라우저가 확인 (useForm 이 처리)
  */
-export function SettingsPage() {
+export function SettingsPage({ onNavigate }) {
   const { toast } = useToast()
   const [section, setSection] = useState('general')
 
@@ -94,24 +91,7 @@ export function SettingsPage() {
   ]
 
   return (
-    <AppShell
-      sidebar={
-        <Sidebar header={<SidebarBrand />}>
-          <SidebarGroup label="분석">
-            <SidebarItem icon={<NavIcons.Dashboard />} label="대시보드" />
-          </SidebarGroup>
-          <SidebarGroup label="운영">
-            <SidebarItem icon={<NavIcons.List />} label="요청" />
-          </SidebarGroup>
-          <SidebarGroup label="설정">
-            <SidebarItem icon={<NavIcons.Settings />} label="환경설정" active />
-          </SidebarGroup>
-        </Sidebar>
-      }
-      topbar={<Topbar breadcrumb={
-        <Breadcrumb items={[{ label: 'HCT 운영', href: '#' }, { label: '환경설정' }]} />
-      } />}
-    >
+    <AppFrame active="settings" onNavigate={onNavigate} counts={{ list: 18, inbox: true }} mentions={{ inbox: 3 }}>
       <PageContainer>
         <PageHeader title="환경설정" description="이 워크스페이스의 동작 방식을 정합니다." />
 
@@ -253,6 +233,6 @@ export function SettingsPage() {
         error={form.dirty && !form.valid && Object.keys(form.errors).length > 0
           ? '확인이 필요한 항목이 있습니다' : undefined}
       />
-    </AppShell>
+    </AppFrame>
   )
 }

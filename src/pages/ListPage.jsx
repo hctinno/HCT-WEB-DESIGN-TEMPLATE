@@ -1,9 +1,6 @@
 import { useMemo, useState } from 'react'
 import {
-  AppShell, PageContainer, PageHeader,
-  Sidebar, SidebarGroup, SidebarItem, WorkspaceSwitcher, SavedViewList,
-  WorkspaceRail, SidebarUser,
-  Topbar, Breadcrumb,
+  PageContainer, PageHeader, SidebarGroup, SavedViewList,
   DataGrid, GridCard, GridToolbar, GridPagination,
   BoardView, ViewTabs, ViewSwitcher, GroupByPicker,
   QueryBar,
@@ -15,7 +12,7 @@ import {
 } from '../components'
 import { REQUEST_FIELDS, REQUEST_RECORDS, INITIAL_VIEWS } from './_data'
 import { NavIcons } from './_icons'
-import { SidebarBrand } from './_brand'
+import { AppFrame } from './_shell'
 
 /**
  * 화면 원형: 목록 + 상세 (지라 이슈 목록에 해당)
@@ -33,7 +30,7 @@ import { SidebarBrand } from './_brand'
  *
  * **복사해서 시작하되, 구조는 유지하세요.** 이 배치가 통일성의 기준입니다.
  */
-export function ListPage({ initialQuery }) {
+export function ListPage({ initialQuery, onNavigate }) {
   const fields = REQUEST_FIELDS
   const fm = useMemo(() => fieldMap(fields), [fields])
 
@@ -127,49 +124,28 @@ export function ListPage({ initialQuery }) {
 
   return (
     <>
-      <AppShell
-        sidebar={
-          <Sidebar
-            /* 워크스페이스 레일 — 환경을 오가는 상위 축. 사이드바 밖에 둡니다. */
-            rail={
-              <WorkspaceRail
-                activeId="prod"
-                items={[
-                  { id: 'prod', label: 'HCT 프로덕션', initial: 'P' },
-                  { id: 'stg', label: 'HCT 스테이징', initial: 'S', badge: 2 },
-                  { id: 'dev', label: 'HCT 개발', initial: 'D' },
-                ]}
-              />
-            }
-            header={<SidebarBrand />}
-            footer={<SidebarUser name="김민수" status="online" detail="운영팀" />}
-          >
-            <SidebarGroup label="분석">
-              <SidebarItem icon={<NavIcons.Dashboard />} label="대시보드" />
-            </SidebarGroup>
-
-            {/* 안읽음은 굵기로, 나를 부른 것은 빨간 배지로.
-                둘을 구분하지 않으면 모든 숫자가 똑같이 급해 보입니다. */}
-            <SidebarGroup label="운영">
-              <SidebarItem icon={<NavIcons.List />} label="요청" active badge={records.length} />
-              <SidebarItem icon={<NavIcons.Alert />} label="알림" unread mentions={3} />
-              <SidebarItem icon={<NavIcons.Inbox />} label="보관함" badge={12} />
-            </SidebarGroup>
-
-            {/* 저장된 뷰가 곧 내비게이션 — 개발자가 아니라 사용자가 만든 항목들.
-                항목이 늘어나는 그룹이라 접을 수 있게 합니다. */}
-            <SidebarGroup label="내 뷰" collapsible count={viewsWithCounts.length}>
-              <SavedViewList
-                views={viewsWithCounts}
-                activeViewId={activeViewId}
-                onSelectView={selectView}
-              />
-            </SidebarGroup>
-          </Sidebar>
+      <AppFrame
+        active="list"
+        onNavigate={onNavigate}
+        /* 안읽음은 굵기로, 나를 부른 것은 빨간 배지로.
+           둘을 구분하지 않으면 모든 숫자가 똑같이 급해 보입니다. */
+        counts={{ list: records.length, inbox: true, archive: 12 }}
+        mentions={{ inbox: 3 }}
+        breadcrumb={[
+          { label: 'HCT 운영', href: '#' }, { label: '운영' },
+          { label: '요청' }, { label: activeView.name },
+        ]}
+        /* 저장된 뷰가 곧 내비게이션 — 개발자가 아니라 사용자가 만든 항목들.
+           화면 고유의 탐색이므로 공용 NAV 가 아니라 extraNav 로 붙입니다. */
+        extraNav={
+          <SidebarGroup label="내 뷰" collapsible count={viewsWithCounts.length}>
+            <SavedViewList
+              views={viewsWithCounts}
+              activeViewId={activeViewId}
+              onSelectView={selectView}
+            />
+          </SidebarGroup>
         }
-        topbar={<Topbar breadcrumb={
-          <Breadcrumb items={[{ label: 'HCT 운영', href: '#' }, { label: '요청' }, { label: activeView.name }]} />
-        } />}
         rightPanel={
           detailRecord && (
             <RightPanel
@@ -323,7 +299,7 @@ export function ListPage({ initialQuery }) {
             )}
           </GridCard>
         </PageContainer>
-      </AppShell>
+      </AppFrame>
 
       <ConfirmDialog
         open={confirmDelete}

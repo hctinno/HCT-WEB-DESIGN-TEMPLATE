@@ -68,4 +68,47 @@ export const NavIcons = {
       <path d="M2 9h3l1 1.5h4L11 9h3" />
     </svg>
   ),
+  Search: () => (
+    <svg {...base}><circle cx="7" cy="7" r="4.5" /><path d="M10.5 10.5L14 14" /></svg>
+  ),
+  Audit: () => (
+    <svg {...base}>
+      <path d="M8 1.75l5 2v4.1c0 2.9-2 5.4-5 6.4-3-1-5-3.5-5-6.4V3.75l5-2z" />
+      <path d="M6 8l1.5 1.5L10.5 6.5" />
+    </svg>
+  ),
+  Approve: () => (
+    <svg {...base}>
+      <path d="M3 3.5h10v9H3z" />
+      <path d="M5.5 8l1.75 1.75L10.5 6.5" />
+    </svg>
+  ),
+  Clock: () => (
+    <svg {...base}><circle cx="8" cy="8" r="6" /><path d="M8 4.5V8l2.25 1.5" /></svg>
+  ),
+  Upload: () => (
+    <svg {...base}><path d="M8 12.5V4.5M5 7.5L8 4.5l3 3" /><path d="M2.5 13.5h11" /></svg>
+  ),
+  Plug: () => (
+    <svg {...base}>
+      <path d="M6 1.75v3M10 1.75v3" />
+      <path d="M4 4.75h8v3a4 4 0 01-8 0v-3z" />
+      <path d="M8 11.75v2.5" />
+    </svg>
+  ),
+  Key: () => (
+    <svg {...base}>
+      <circle cx="5" cy="6" r="3" />
+      <path d="M7.2 7.8L13 13.6M10.5 11.3l-1.3 1.3M12 9.8l-1.3 1.3" />
+    </svg>
+  ),
+  Billing: () => (
+    <svg {...base}>
+      <rect x="1.75" y="3.5" width="12.5" height="9" rx="1.75" />
+      <path d="M1.75 6.75h12.5" />
+    </svg>
+  ),
+  User: () => (
+    <svg {...base}><circle cx="8" cy="5.5" r="2.75" /><path d="M3 13.5a5 5 0 0110 0" /></svg>
+  ),
 }

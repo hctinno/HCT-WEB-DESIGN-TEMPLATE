@@ -1,6 +1,6 @@
 import { useMemo, useState } from 'react'
 import { cn } from '../../lib/cn'
-import { assignSeriesColors } from './chartTokens'
+import { assignSeriesColors, axisPadLeft } from './chartTokens'
 import { ChartLegend } from './LineChart'
 import { useMeasuredWidth } from '../../lib/useMeasuredWidth'
 
@@ -47,7 +47,9 @@ export function BarChart({
     return Math.ceil(m / step) * step
   }, [data, series, stacked])
 
-  const PAD = { top: 8, right: 8, bottom: 24, left: 44 }
+  /* showValues 면 막대 위에 숫자가 올라가므로 위쪽 여백이 더 필요합니다.
+     8px 로 두면 가장 큰 막대의 값만 잘려 나가고, 하필 그게 가장 중요한 값입니다. */
+  const PAD = { top: showValues ? 20 : 8, right: 8, bottom: 24, left: 44 }
   const H = height
   const plotW = W - PAD.left - PAD.right
   const plotH = H - PAD.top - PAD.bottom
@@ -56,6 +58,7 @@ export function BarChart({
   const GAP = 2 /* 누적 조각 사이 표면색 간격 */
 
   const ticks = Array.from({ length: 5 }, (_, i) => (max / 4) * i)
+  PAD.left = axisPadLeft(ticks.map((t) => formatValue(Math.round(t))))
 
   return (
     <div className={cn('w-full', className)}>

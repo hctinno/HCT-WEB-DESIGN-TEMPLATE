@@ -16,6 +16,9 @@ import { AuditPage } from './pages/AuditPage'
 import { ApprovalsPage } from './pages/ApprovalsPage'
 import { SearchPage } from './pages/SearchPage'
 import { JobsPage } from './pages/JobsPage'
+import { IntegrationsPage } from './pages/IntegrationsPage'
+import { OnboardingPage } from './pages/OnboardingPage'
+import { BillingPage } from './pages/BillingPage'
 import { applyTheme, getStoredTheme, applyPalette, getStoredPalette, PALETTES } from './lib/theme'
 import { ToastProvider } from './components/feedback/Toast'
 
@@ -63,8 +66,16 @@ const PAGE_GROUPS = [
     pages: [
       { id: 'admin', label: '사용자와 권한' },
       { id: 'audit', label: '감사 로그' },
+      { id: 'integrations', label: '연동과 API' },
+      { id: 'billing', label: '사용량과 청구' },
       { id: 'settings', label: '환경설정' },
       { id: 'account', label: '내 계정' },
+    ],
+  },
+  {
+    label: '처음',
+    pages: [
+      { id: 'onboarding', label: '빈 워크스페이스' },
     ],
   },
   {
@@ -122,6 +133,9 @@ function Preview() {
         : page === 'approvals' ? <ApprovalsPage onNavigate={goto} />
         : page === 'search' ? <SearchPage onNavigate={goto} />
         : page === 'jobs' ? <JobsPage onNavigate={goto} />
+        : page === 'integrations' ? <IntegrationsPage onNavigate={goto} />
+        : page === 'onboarding' ? <OnboardingPage onNavigate={goto} />
+        : page === 'billing' ? <BillingPage onNavigate={goto} />
         : page === 'list' ? <ListPage key={JSON.stringify(handoffQuery)} initialQuery={handoffQuery} onNavigate={goto} />
         : page === 'admin' ? <AdminPage onNavigate={goto} />
         : page === 'settings' ? <SettingsPage onNavigate={goto} />

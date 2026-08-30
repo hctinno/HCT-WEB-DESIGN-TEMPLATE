@@ -1,6 +1,6 @@
 import { useMemo, useState } from 'react'
 import { cn } from '../../lib/cn'
-import { assignSeriesColors } from './chartTokens'
+import { assignSeriesColors, axisPadLeft } from './chartTokens'
 import { useMeasuredWidth } from '../../lib/useMeasuredWidth'
 
 /**
@@ -45,7 +45,7 @@ export function LineChart({
     return Math.ceil((m || 1) / step) * step
   }, [series])
 
-  const PAD = { top: 8, right: 12, bottom: 20, left: 44 }
+  const PAD = { top: 8, right: 12, bottom: 20, left: 44 } /* left 는 아래에서 라벨 폭에 맞춰 덮어씁니다 */
   const H = height
   const plotW = W - PAD.left - PAD.right
   const plotH = H - PAD.top - PAD.bottom
@@ -63,6 +63,7 @@ export function LineChart({
   }
 
   const ticks = Array.from({ length: yTicks + 1 }, (_, i) => (max / yTicks) * i)
+  PAD.left = axisPadLeft(ticks.map((t) => formatValue(Math.round(t))))
   const directLabels = series.length <= 4
 
   return (

@@ -65,3 +65,23 @@ export const STATUS_CHART_COLOR = {
   failed: 'var(--color-danger-solid)',
   warning: 'var(--color-warning-solid)',
 }
+
+/**
+ * Y축 라벨이 들어갈 왼쪽 여백을 라벨 길이에서 구합니다.
+ *
+ * 고정 44px 로 두면 "200천회" 처럼 긴 라벨이 왼쪽으로 잘려 나갑니다.
+ * SVG 는 넘친 글자를 지워버리므로 화면에는 "00천회" 만 남고, 차트가
+ * 조용히 거짓말을 하게 됩니다. 축 라벨은 잘리면 안 되는 값입니다.
+ *
+ * 실제 글자 폭을 재려면 렌더 후 측정이 필요하지만, 축 라벨은 숫자와
+ * 짧은 단위뿐이라 문자 종류로 어림해도 충분합니다(한글·전각은 넓게).
+ */
+export function axisPadLeft(labels, { min = 44, gutter = 12 } = {}) {
+  const width = (text) => {
+    let w = 0
+    for (const ch of String(text)) w += /[\u3000-\u9fff\uac00-\ud7af]/.test(ch) ? 11 : 6.2
+    return w
+  }
+  const widest = labels.reduce((m, l) => Math.max(m, width(l)), 0)
+  return Math.max(min, Math.ceil(widest) + gutter)
+}

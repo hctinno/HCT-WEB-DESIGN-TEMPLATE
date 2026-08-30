@@ -91,8 +91,8 @@ const RULES = [
   {
     id: 'no-raw-table',
     severity: 'warn',
-    message: '<table> 을 직접 만들지 말고 DataTable 컴포넌트를 쓰세요.',
-    test: (line, file) => /<table[\s>]/.test(line) && !file.includes('components/data/DataTable'),
+    message: '<table> 을 직접 만들지 말고 DataGrid 컴포넌트를 쓰세요.',
+    test: (line, file) => /<table[\s>]/.test(line) && !file.includes('components/grid/DataGrid'),
   },
   {
     id: 'icon-button-needs-label',

@@ -7,76 +7,106 @@
 
 ---
 
-## 무엇을 벤치마킹했나
+## 벤치마킹한 것 — 레이아웃이 아니라 구조
 
-노션 · 지라 · 슬랙은 겉모습이 달라 보이지만 골격이 같습니다. **웹페이지가 아니라 앱 셸**입니다.
+노션·지라·슬랙의 공통점은 "사이드바가 있다"가 아닙니다.
+셋 다 **하나의 원자(atom)와 그 위의 여러 투영(projection)** 구조입니다.
+
+| | 원자 | 투영 |
+|---|---|---|
+| 노션 | 페이지/블록 | 표 · 보드 · 갤러리 · 캘린더 |
+| 지라 | 이슈 | 백로그 · 보드 · 목록 · 대시보드 |
+| 슬랙 | 메시지 | 채널 · 스레드 · 저장됨 · 멘션 |
+
+그래서 이 시스템의 중심은 컴포넌트가 아니라 **필드 스키마**입니다.
+스키마 하나를 정의하면 표·보드·상세·필터·질의·대시보드가 전부 거기서 나옵니다.
 
 ```
-┌────────┬──────────────────────────────┬─────────┐
-│        │  상단바 (브레드크럼 / 검색)     │         │
-│ 사이드바 ├──────────────────────────────┤ 우측     │
-│        │                              │ 패널     │
-│ (탐색)  │       메인 콘텐츠 영역          │ (상세)   │
-│        │                              │         │
-└────────┴──────────────────────────────┴─────────┘
-                + 커맨드 팔레트 (⌘K)
+필드 스키마 (src/lib/fields.js)
+   ├─ DataGrid      표 뷰 + 인라인 편집 + 그룹핑
+   ├─ BoardView     보드 뷰 + 드래그로 상태 전환
+   ├─ ObjectDetail  상세 + 활동 기록
+   ├─ QueryBar      필터 빌더 + 질의문
+   └─ MetricTile    지표 = 질의 + 집계 → 클릭하면 목록으로
 ```
 
-이 저장소는 그 골격과, 그 안에 들어가는 블록들을 규격화한 것입니다.
-
-**시각 방향은 지라형 고밀도**입니다. 본문 14px, 행 높이 32~40px, 명확한 구분선,
-상태별 색상 코드. 관리도구는 한 화면에 정보가 많이 들어가야 하기 때문입니다.
+**시각 방향은 지라형 고밀도**입니다. 본문 14px, 행 32~40px, 명확한 구분선,
+상태별 색상 코드.
 
 ---
 
-## 통일성이 실제로 강제되는 방식
+## 이 시스템이 실제로 하는 것
 
-문서에 "규칙을 지켜주세요"라고 적으면 지켜지지 않습니다. 그래서 세 층으로 만들었습니다.
+### 1. 같은 데이터, 여러 뷰
 
-**1층 — 토큰이 선택지를 없앤다**
+표에서 보던 레코드를 보드로 전환하면 같은 레코드가 컬럼으로 재배치됩니다.
+카드를 끌어 옮기면 상태가 바뀌고, 표로 돌아가면 반영되어 있습니다.
+
+![보드 뷰](docs/screenshots/board.png)
+
+### 2. 저장된 뷰가 곧 내비게이션
+
+사이드바의 "내 뷰"는 개발자가 하드코딩한 메뉴가 아니라 사용자가 저장한 질의입니다.
+필터를 바꾸면 탭에 점이 뜨고, 저장하거나 되돌릴 수 있습니다.
+
+### 3. 필터는 다룰 수 있는 객체
+
+조건을 쌓고, 결합 방식(AND/OR)을 고르고, 질의문으로 읽고, 뷰로 저장합니다.
+
+![필터 빌더](docs/screenshots/filter-builder.png)
+
+### 4. 목록에서 바로 끝냅니다
+
+셀을 클릭하면 그 자리에서 편집됩니다. 상세 페이지로 갈 필요가 없습니다.
+Shift 로 범위 선택하고 벌크 액션을 실행합니다. 행 액션은 호버 시에만 나타납니다.
+
+![다중 선택](docs/screenshots/bulk-select.png)
+
+### 5. 상세는 살아있는 객체
+
+읽기 전용 속성 나열이 아니라, 인라인 편집 + 상태 전환 + 변경 이력과 댓글이
+한 줄기로 흐르는 활동 피드입니다.
+
+![상세 패널](docs/screenshots/detail-dark.png)
+
+### 6. 대시보드는 작업의 입구
+
+모든 지표가 **질의 + 집계**입니다. 숫자가 어떤 레코드에서 나왔는지 알고 있어서,
+클릭하면 그 조건으로 필터된 목록에 그대로 들어갑니다.
+
+| 대시보드 | 지표 클릭 → 드릴다운 |
+|---|---|
+| ![대시보드](docs/screenshots/dashboard-light.png) | ![드릴다운](docs/screenshots/drilldown.png) |
+
+임계값을 넘긴 지표는 스스로 알리고, 증감은 **비교 대상 값을 함께** 밝힙니다.
+분해(breakdown)는 지표와 같은 집계를 써서 합계와 조각이 일치합니다.
+
+라이트/다크는 시맨틱 토큰이 모두 처리합니다.
+
+![다크 모드](docs/screenshots/dashboard-dark.png)
+
+---
+
+## 통일성이 강제되는 방식
+
+문서에 "규칙을 지켜주세요"라고 적으면 지켜지지 않습니다. 세 층으로 만들었습니다.
+
+**1층 — 토큰이 선택지를 없앰**
 `tailwind.config.js` 에서 Tailwind 기본 색상 팔레트를 **삭제했습니다.**
-`bg-blue-500` 은 존재하지 않는 클래스라 아무 효과가 없습니다. 간격도 4px 배수로 제한됩니다.
-쓸 수 있는 값이 애초에 규격 안에만 있습니다.
+`bg-blue-500` 은 존재하지 않는 클래스라 아무 효과가 없습니다.
+간격도 4px 배수로 제한됩니다.
 
-**2층 — 컴포넌트가 결정을 대신한다**
+**2층 — 컴포넌트가 결정을 대신함**
 `<StatusBadge status="inProgress" />` 는 색을 고를 권한을 주지 않습니다.
-"진행중"은 어느 화면에서든 같은 파란색입니다.
+필드 스키마의 `status` 키가 색을 결정하므로, "진행중"은 표에서든 보드에서든
+상세에서든 대시보드에서든 같은 파란색입니다.
 
-**3층 — 검사가 위반을 잡는다**
+**3층 — 검사가 위반을 잡음**
 ```bash
 npm run lint:design
 ```
-생색 하드코딩, `dark:` 직접 사용, 스케일 밖 간격, 포커스 표시 제거, `<table>` 직접 작성,
-`aria-label` 없는 아이콘 버튼 등 10개 규칙을 검사하고 위반 시 종료 코드 1을 냅니다.
-
----
-
-## 저장소 구조
-
-```
-AGENTS.md              ← 에이전트 작업 규칙 (가장 중요)
-CLAUDE.md              ← AGENTS.md 로 연결
-
-tokens/tokens.json     ← 원천 토큰 (기계 판독용)
-src/styles/tokens.css  ← CSS 변수 (라이트/다크)
-tailwind.config.js     ← 토큰 → Tailwind 매핑
-
-src/components/
-  shell/     AppShell, Sidebar, Topbar, RightPanel
-  data/      DataTable, StatCard, ChartFrame
-  state/     EmptyState, NoResults, ErrorState, Skeleton
-  input/     Button, TextField, FilterBar, SegmentedControl
-  feedback/  StatusBadge, Tag, Banner
-  overlay/   Modal, ConfirmDialog, Drawer, CommandPalette
-  index.js   ← 여기서만 import
-
-src/pages/
-  DashboardPage.jsx    ← 대시보드 원형 (복사해서 시작)
-  ListPage.jsx         ← 목록+상세 원형 (복사해서 시작)
-
-scripts/lint-design.mjs
-docs/
-```
+생색 하드코딩, `dark:` 직접 사용, 스케일 밖 간격, 포커스 표시 제거,
+`<table>` 직접 작성 등 11개 규칙. 위반 시 종료 코드 1.
 
 ---
 
@@ -84,77 +114,63 @@ docs/
 
 ```bash
 npm install
-npm run dev          # 미리보기 — 두 화면 원형과 라이트/다크 전환
-npm run lint:design  # 디자인 규칙 검사
+npm run dev          # 미리보기 — 대시보드 지표를 클릭해 드릴다운을 확인하세요
+npm run lint:design
 ```
 
-미리보기 우하단 컨트롤로 페이지와 테마를 바꿔볼 수 있습니다.
-
-화면 하나 만들기:
-
-```jsx
-import { AppShell, PageContainer, PageHeader, DataTable, TableCard } from '@/components'
-import './styles/index.css'
-```
-
-`src/pages/ListPage.jsx` 를 복사해서 시작하는 것이 가장 빠릅니다.
+새 화면은 `src/pages/ListPage.jsx` 를 복사해서 시작하세요. 백지에서 시작하지 마세요.
 
 ---
 
-## 화면 원형
+## 저장소 구조
 
-### 대시보드
+```
+AGENTS.md                에이전트 작업 규칙 (가장 중요)
+CLAUDE.md                AGENTS.md 로 연결
 
-KPI → 차트 → 최근 항목 테이블. 대시보드는 "보기만 하는 화면"이 되면 안 되고,
-마지막에 항상 행동으로 이어지는 목록을 둡니다.
+src/lib/
+  fields.js              필드 타입 시스템 — 이 시스템의 원자
+  query.js               질의 모델 (필터·정렬·그룹핑·직렬화)
+  metrics.js             지표 = 질의 + 집계, 드릴다운·분해·임계값
+  useRecords.js          낙관적 편집 + 롤백 + 활동 기록
+  cn.js / theme.js
 
-| 라이트 | 다크 |
-|---|---|
-| ![대시보드 라이트](docs/screenshots/dashboard-light.png) | ![대시보드 다크](docs/screenshots/dashboard-dark.png) |
+tokens/tokens.json       원천 토큰
+src/styles/tokens.css    CSS 변수 (라이트/다크)
+tailwind.config.js       토큰 → Tailwind 매핑
 
-### 목록 + 상세 패널
+src/components/
+  shell/     AppShell, Sidebar, Topbar, RightPanel
+  grid/      DataGrid, GridCell, GridChrome
+  view/      BoardView, ViewTabs, ViewSwitcher, SavedViewList
+  query/     QueryBar, FilterBuilder
+  object/    ObjectDetail, StatusTransition, ActivityFeed
+  dashboard/ MetricTile, BreakdownList, Sparkline, Widget
+  state/     EmptyState, NoResults, ErrorState, Skeleton
+  input/     Button, TextField, SegmentedControl
+  feedback/  StatusBadge, Tag, Banner
+  overlay/   Modal, ConfirmDialog, Drawer, CommandPalette
+  index.js   ← 여기서만 import
 
-관리도구에서 가장 흔한 화면입니다. 행을 클릭하면 우측 패널이 열려
-목록의 스크롤 위치와 필터 맥락을 잃지 않습니다.
+src/pages/
+  DashboardPage.jsx      대시보드 원형 (드릴다운)
+  ListPage.jsx           목록+뷰+상세 원형
+  _data.js               스키마와 예시 레코드
 
-| 라이트 | 다크 |
-|---|---|
-| ![목록 라이트](docs/screenshots/list-detail-light.png) | ![목록 다크](docs/screenshots/list-detail-dark.png) |
-
-### 커맨드 팔레트 (⌘K)
-
-노션·지라·슬랙이 모두 갖고 있는 기능입니다. 화면이 늘어나도 탐색 비용이 늘지 않습니다.
-**새 화면을 추가하면 사이드바뿐 아니라 팔레트에도 등록하세요.**
-
-![커맨드 팔레트](docs/screenshots/command-palette.png)
-
----
-
-## 다크 모드
-
-시맨틱 토큰이 두 모드를 모두 정의하므로 **개발자가 신경 쓸 것이 없습니다.**
-`dark:` 변형을 직접 쓰면 검사에서 실패합니다.
-
-테마 상태는 세 가지입니다:
-
-```js
-import { applyTheme } from '@/components'
-
-applyTheme('light')   // 시스템이 다크여도 라이트 고정
-applyTheme('dark')
-applyTheme('system')  // prefers-color-scheme 를 따름 (기본값)
+scripts/lint-design.mjs
+docs/
 ```
 
 ---
 
 ## 브랜드 색상 교체
 
-현재는 중립적인 기본 팔레트입니다. HCT 브랜드 색상이 확정되면 **두 곳만** 고치면 됩니다:
+현재는 중립 팔레트입니다. HCT 색상이 확정되면 **두 곳만** 고치면 됩니다:
 
 1. `tokens/tokens.json` → `brand.accent` (50~900)
 2. `src/styles/tokens.css` → `--hct-accent-*` (50~900)
 
-시맨틱 레이어는 건드리지 않습니다. 그 위에서 자동으로 재계산됩니다.
+시맨틱 레이어는 건드리지 않습니다.
 
 ---
 

@@ -6,65 +6,55 @@ import { ListPage } from './pages/ListPage'
 import { applyTheme, getStoredTheme } from './lib/theme'
 
 /**
- * 미리보기 진입점 — `npm run dev` 로 실행합니다.
+ * 미리보기 진입점 — `npm run dev`
  *
- * 이 파일은 디자인 시스템을 눈으로 확인하기 위한 것입니다.
- * 실제 앱에서는 이 파일 대신 각자의 진입점을 만드세요.
- * 우상단 컨트롤로 페이지와 테마를 전환할 수 있습니다.
+ * 대시보드의 지표를 클릭하면 그 질의를 들고 목록 화면으로 넘어갑니다.
+ * 이 연결이 두 화면이 **같은 데이터 모델을 공유한다**는 증거입니다.
+ * 실제 앱에서는 라우터가 이 역할을 합니다(질의를 URL 에 직렬화).
  */
-const PAGES = {
-  dashboard: { label: '대시보드', Component: DashboardPage },
-  list: { label: '목록 + 상세', Component: ListPage },
-}
-
 function Preview() {
   const initial = new URLSearchParams(location.search).get('page')
-  const [page, setPage] = useState(PAGES[initial] ? initial : 'dashboard')
+  const [page, setPage] = useState(initial === 'list' ? 'list' : 'dashboard')
+  const [handoffQuery, setHandoffQuery] = useState(null)
   const [theme, setTheme] = useState(getStoredTheme)
 
   useEffect(() => { applyTheme(theme) }, [theme])
 
-  const { Component } = PAGES[page]
+  const drillDown = (query) => { setHandoffQuery(query); setPage('list') }
 
   return (
     <>
-      <Component />
+      {page === 'list'
+        ? <ListPage key={JSON.stringify(handoffQuery)} initialQuery={handoffQuery} />
+        : <DashboardPage onDrillDown={drillDown} />}
 
       {/* 미리보기 전용 컨트롤 — 실제 앱에는 없습니다 */}
       <div className="fixed bottom-3 right-3 z-toast flex items-center gap-1 rounded-lg border border-line-default bg-bg-raised p-1 shadow-lg">
-        {Object.entries(PAGES).map(([key, { label }]) => (
-          <button
-            key={key}
-            type="button"
-            onClick={() => setPage(key)}
-            className={
-              'h-control-sm rounded-md px-2 text-xs font-medium ' +
-              (page === key
-                ? 'bg-accent-subtle text-accent-text'
-                : 'text-fg-secondary hover:bg-bg-hover')
-            }
-          >
-            {label}
-          </button>
-        ))}
+        <Chip active={page === 'dashboard'} onClick={() => { setHandoffQuery(null); setPage('dashboard') }}>대시보드</Chip>
+        <Chip active={page === 'list'} onClick={() => { setHandoffQuery(null); setPage('list') }}>목록</Chip>
         <span className="mx-1 h-4 w-px bg-line-default" />
         {['light', 'dark', 'system'].map((mode) => (
-          <button
-            key={mode}
-            type="button"
-            onClick={() => setTheme(mode)}
-            className={
-              'h-control-sm rounded-md px-2 text-xs font-medium ' +
-              (theme === mode
-                ? 'bg-accent-subtle text-accent-text'
-                : 'text-fg-secondary hover:bg-bg-hover')
-            }
-          >
+          <Chip key={mode} active={theme === mode} onClick={() => setTheme(mode)}>
             {mode === 'light' ? '라이트' : mode === 'dark' ? '다크' : '시스템'}
-          </button>
+          </Chip>
         ))}
       </div>
     </>
+  )
+}
+
+function Chip({ active, onClick, children }) {
+  return (
+    <button
+      type="button"
+      onClick={onClick}
+      className={
+        'h-control-sm rounded-md px-2 text-xs font-medium ' +
+        (active ? 'bg-accent-subtle text-accent-text' : 'text-fg-secondary hover:bg-bg-hover')
+      }
+    >
+      {children}
+    </button>
   )
 }
 

@@ -1,61 +1,83 @@
 import { useMemo, useState } from 'react'
 import {
   AppShell, PageContainer, PageHeader,
-  Sidebar, SidebarGroup, SidebarItem, WorkspaceSwitcher,
+  Sidebar, SidebarGroup, SidebarItem, WorkspaceSwitcher, SavedViewList,
   Topbar, Breadcrumb,
-  RightPanel, PropertyList, PropertyRow, PanelSection,
-  DataTable, TableCard, TableToolbar, TablePagination,
-  FilterBar, FilterButton, SearchInput, DensityToggle,
-  StatusBadge, Button, ConfirmDialog, Banner,
+  DataGrid, GridCard, GridToolbar, GridPagination,
+  BoardView, ViewTabs, ViewSwitcher, GroupByPicker,
+  QueryBar,
+  ObjectDetail,
+  RightPanel,
+  Button, IconButton, DensityToggle, ConfirmDialog, Banner,
+  fieldMap, applyQuery, toggleSort, useRecords, emptyQuery,
 } from '../components'
+import { REQUEST_FIELDS, REQUEST_RECORDS, INITIAL_VIEWS } from './_data'
 import { NavIcons } from './_icons'
 
 /**
- * 페이지 원형 2: 목록 + 상세 패널
+ * 화면 원형: 목록 + 상세 (지라 이슈 목록에 해당)
  *
- * 관리도구에서 가장 흔한 화면입니다. 지라 이슈 목록과 같은 구조로,
- * 행을 클릭하면 우측 패널이 열려 맥락을 잃지 않습니다.
+ * 이 한 화면이 보여주는 것 — 전부 같은 데이터셋 위에서 동작합니다:
  *
- * 이 원형이 보여주는 필수 요소:
- *   - 필터 상태가 눈에 보임 + 초기화 수단
- *   - 총 건수 표시
- *   - 행 선택 ↔ 우측 패널 연동
- *   - 파괴적 동작의 확인 대화상자
- *   - 밀도 전환
+ *   저장된 뷰      뷰 탭과 사이드바가 사용자가 만든 질의에서 나옵니다
+ *   뷰 전환        표 ↔ 보드. 같은 레코드의 다른 투영입니다
+ *   질의           필터를 쌓고, 텍스트로 읽고, 뷰로 저장합니다
+ *   인라인 편집     셀을 클릭하면 그 자리에서 고쳐집니다
+ *   보드 드래그     카드를 옮기면 상태가 바뀌고 표에도 반영됩니다
+ *   다중 선택      Shift 범위 선택 + 벌크 액션
+ *   호버 액션      평소엔 숨어 있다가 행 위에서만 나타납니다
+ *   활동 기록      편집이 자동으로 이력에 남습니다
+ *
+ * **복사해서 시작하되, 구조는 유지하세요.** 이 배치가 통일성의 기준입니다.
  */
+export function ListPage({ initialQuery }) {
+  const fields = REQUEST_FIELDS
+  const fm = useMemo(() => fieldMap(fields), [fields])
 
-const ROWS = [
-  { id: 'REQ-1042', title: '결제 승인 지연 조사', owner: '김민수', status: 'inProgress', priority: '높음', updated: '10분 전' },
-  { id: 'REQ-1041', title: '대시보드 응답 속도 개선', owner: '이서연', status: 'inReview', priority: '보통', updated: '32분 전' },
-  { id: 'REQ-1039', title: '외부 연동 인증서 만료', owner: '박지훈', status: 'blocked', priority: '긴급', updated: '1시간 전' },
-  { id: 'REQ-1035', title: '월간 리포트 자동화', owner: '최유진', status: 'done', priority: '낮음', updated: '어제' },
-  { id: 'REQ-1031', title: '사용자 권한 정책 정리', owner: '정하늘', status: 'todo', priority: '보통', updated: '2일 전' },
-]
+  const { records, editRecord, bulkEdit, removeRecords, addComment, activityOf } =
+    useRecords(REQUEST_RECORDS, { actor: '김민수' })
 
-export function ListPage() {
-  const [selected, setSelected] = useState(null)
+  const [views, setViews] = useState(INITIAL_VIEWS)
+  const [activeViewId, setActiveViewId] = useState('all')
+  const activeView = views.find((v) => v.id === activeViewId) ?? views[0]
+
+  const [query, setQuery] = useState(initialQuery ?? activeView.query)
+  const [viewType, setViewType] = useState(activeView.viewType)
   const [density, setDensity] = useState('default')
-  const [query, setQuery] = useState('')
-  const [statusFilter, setStatusFilter] = useState(null)
+  const [selected, setSelected] = useState(() => new Set())
+  const [detailKey, setDetailKey] = useState(null)
+  const [confirmDelete, setConfirmDelete] = useState(false)
   const [page, setPage] = useState(1)
-  const [confirmOpen, setConfirmOpen] = useState(false)
 
-  const activeFilters = useMemo(() => {
-    const list = []
-    if (statusFilter) list.push({ key: 'status', label: '상태', value: statusFilter })
-    if (query) list.push({ key: 'query', label: '검색', value: query })
-    return list
-  }, [statusFilter, query])
+  /* 현재 질의가 저장된 뷰와 달라졌는가 — 저장 버튼 노출 판단 */
+  const dirty = useMemo(
+    () => JSON.stringify(query) !== JSON.stringify(activeView.query) || viewType !== activeView.viewType,
+    [query, activeView, viewType],
+  )
 
-  const rows = useMemo(() => {
-    return ROWS.filter((r) => {
-      if (statusFilter && r.status !== statusFilter) return false
-      if (query && !r.title.includes(query) && !r.id.includes(query)) return false
-      return true
-    })
-  }, [statusFilter, query])
+  const visible = useMemo(() => applyQuery(records, query, fm), [records, query, fm])
+  const detailRecord = records.find((r) => r.id === detailKey) ?? null
 
-  const clearFilters = () => { setStatusFilter(null); setQuery('') }
+  const selectView = (view) => {
+    setActiveViewId(view.id)
+    setQuery(view.query)
+    setViewType(view.viewType)
+    setPage(1)
+  }
+
+  const saveView = () => {
+    setViews((prev) => prev.map((v) => (v.id === activeViewId ? { ...v, query, viewType } : v)))
+  }
+
+  const createView = () => {
+    const id = `view-${Date.now()}`
+    const view = { id, name: `새 뷰 ${views.length + 1}`, query, viewType }
+    setViews((prev) => [...prev, view])
+    setActiveViewId(id)
+  }
+
+  const groupField = query.groupBy ? fm[query.groupBy] : null
+  const viewsWithCounts = views.map((v) => ({ ...v, count: applyQuery(records, v.query, fm).length }))
 
   return (
     <>
@@ -65,45 +87,43 @@ export function ListPage() {
             <SidebarGroup label="분석">
               <SidebarItem icon={<NavIcons.Dashboard />} label="대시보드" />
             </SidebarGroup>
+
             <SidebarGroup label="운영">
-              <SidebarItem icon={<NavIcons.List />} label="요청" active badge={rows.length} />
+              <SidebarItem icon={<NavIcons.List />} label="요청" active badge={records.length} />
               <SidebarItem icon={<NavIcons.Alert />} label="알림" badge={3} />
+            </SidebarGroup>
+
+            {/* 저장된 뷰가 곧 내비게이션 — 개발자가 아니라 사용자가 만든 항목들 */}
+            <SidebarGroup label="내 뷰">
+              <SavedViewList
+                views={viewsWithCounts}
+                activeViewId={activeViewId}
+                onSelectView={selectView}
+              />
             </SidebarGroup>
           </Sidebar>
         }
-        topbar={
-          <Topbar breadcrumb={<Breadcrumb items={[{ label: 'HCT 운영', href: '#' }, { label: '요청' }]} />} />
-        }
+        topbar={<Topbar breadcrumb={
+          <Breadcrumb items={[{ label: 'HCT 운영', href: '#' }, { label: '요청' }, { label: activeView.name }]} />
+        } />}
         rightPanel={
-          selected && (
+          detailRecord && (
             <RightPanel
-              title={selected.title}
-              subtitle={selected.id}
-              onClose={() => setSelected(null)}
-              footer={
-                <div className="flex justify-end gap-2">
-                  <Button variant="danger-subtle" size="sm" onClick={() => setConfirmOpen(true)}>
-                    삭제
-                  </Button>
-                  <Button variant="primary" size="sm">저장</Button>
-                </div>
-              }
+              title={detailRecord.id}
+              subtitle={fm.system.options.find((o) => o.value === detailRecord.system)?.label}
+              onClose={() => setDetailKey(null)}
             >
-              <PanelSection title="세부 정보">
-                <PropertyList>
-                  <PropertyRow label="상태"><StatusBadge status={selected.status} dot /></PropertyRow>
-                  <PropertyRow label="담당자">{selected.owner}</PropertyRow>
-                  <PropertyRow label="우선순위">{selected.priority}</PropertyRow>
-                  <PropertyRow label="최근 수정">{selected.updated}</PropertyRow>
-                </PropertyList>
-              </PanelSection>
-
-              <PanelSection title="설명">
-                <p className="text-sm leading-5 text-fg-secondary">
-                  이 영역은 상세 본문입니다. 목록에서 항목을 선택했을 때, 페이지를 떠나지 않고
-                  맥락을 유지한 채 내용을 확인·수정할 수 있습니다.
-                </p>
-              </PanelSection>
+              {/* RightPanel 이 껍데기, ObjectDetail 이 내용 — 드로어에도 같은 걸 넣을 수 있습니다 */}
+              <ObjectDetail
+                record={detailRecord}
+                fields={fields}
+                detailFields={['priority', 'owner', 'system', 'errors', 'tags', 'updatedAt']}
+                onEdit={(key, value) => editRecord(detailRecord, key, value)}
+                activity={activityOf(detailRecord.id)}
+                onAddComment={(body) => addComment(detailRecord.id, body)}
+                onToggleWatch={() => {}}
+                watchers={['김민수', '이서연']}
+              />
             </RightPanel>
           )
         }
@@ -111,78 +131,136 @@ export function ListPage() {
         <PageContainer>
           <PageHeader
             title="요청"
-            description="처리 대기 중인 운영 요청 목록입니다."
+            description="처리 대기 중인 운영 요청입니다. 목록에서 바로 수정할 수 있습니다."
             actions={<Button variant="primary">새 요청</Button>}
           />
 
-          {rows.some((r) => r.status === 'blocked') && (
-            <Banner tone="warning" title="차단된 요청이 있습니다" className="mb-4">
-              담당자 확인이 필요한 항목이 포함되어 있습니다.
+          {records.some((r) => r.status === 'blocked') && (
+            <Banner tone="warning" title="차단된 요청이 있습니다" className="mb-3"
+                    action={
+                      <Button size="sm" variant="secondary"
+                              onClick={() => setQuery({ ...query, conditions: [{ field: 'status', operator: 'in', value: ['blocked'] }] })}>
+                        차단된 항목만 보기
+                      </Button>
+                    }>
+              담당자 확인이 필요한 항목이 {records.filter((r) => r.status === 'blocked').length}건 있습니다.
             </Banner>
           )}
 
-          <FilterBar
-            className="mb-3"
-            activeFilters={activeFilters}
-            onRemoveFilter={(key) => (key === 'status' ? setStatusFilter(null) : setQuery(''))}
-            onClearAll={clearFilters}
-          >
-            <SearchInput
-              size="md"
-              className="w-[240px]"
-              value={query}
-              onChange={(e) => { setQuery(e.target.value); setPage(1) }}
-              placeholder="ID 또는 제목 검색"
+          <GridCard>
+            {/* 저장된 뷰 탭 */}
+            <ViewTabs
+              views={viewsWithCounts}
+              activeViewId={activeViewId}
+              onSelectView={selectView}
+              onCreateView={createView}
+              onSaveView={saveView}
+              onResetView={() => { setQuery(activeView.query); setViewType(activeView.viewType) }}
+              dirty={dirty}
             />
-            <FilterButton
-              label="상태"
-              value={statusFilter ? '1개' : undefined}
-              active={!!statusFilter}
-              onClick={() => setStatusFilter(statusFilter ? null : 'blocked')}
-            />
-            <FilterButton label="담당자" />
-            <FilterButton label="우선순위" />
-            <div className="ml-auto"><DensityToggle value={density} onChange={setDensity} /></div>
-          </FilterBar>
 
-          <TableCard>
-            <TableToolbar
-              left={<span className="text-xs text-fg-tertiary tabular">{rows.length}건</span>}
-              right={<Button size="sm" variant="ghost" iconLeft={<NavIcons.Download />}>내보내기</Button>}
+            <div className="border-b border-line-subtle px-3 py-2">
+              <QueryBar
+                fields={fields}
+                query={query}
+                onChange={(next) => { setQuery(next); setPage(1) }}
+                onSaveView={createView}
+                resultCount={visible.length}
+              />
+            </div>
+
+            <GridToolbar
+              left={
+                <>
+                  <ViewSwitcher value={viewType} onChange={setViewType} />
+                  <GroupByPicker
+                    fields={fields}
+                    value={query.groupBy}
+                    onChange={(g) => setQuery({ ...query, groupBy: g })}
+                    required={viewType === 'board'}
+                  />
+                </>
+              }
+              right={
+                <>
+                  {viewType === 'table' && <DensityToggle value={density} onChange={setDensity} />}
+                  <Button size="sm" variant="ghost" iconLeft={<NavIcons.Download />}>내보내기</Button>
+                </>
+              }
             />
-            <DataTable
-              density={density}
-              rows={rows}
-              searchQuery={query}
-              onClearFilters={clearFilters}
-              selectedKey={selected?.id}
-              onRowClick={setSelected}
-              columns={[
-                { key: 'id', header: 'ID', width: '104px' },
-                { key: 'title', header: '제목', sortable: true },
-                { key: 'owner', header: '담당자', width: '92px' },
-                {
-                  key: 'status', header: '상태', width: '96px',
-                  render: (r) => <StatusBadge status={r.status} dot size="sm" />,
-                },
-                { key: 'priority', header: '우선순위', width: '88px' },
-                { key: 'updated', header: '수정', width: '92px', align: 'right', sortable: true },
-              ]}
-            />
-            <TablePagination page={page} pageSize={20} total={rows.length} onPageChange={setPage} />
-          </TableCard>
+
+            {viewType === 'board' ? (
+              <BoardView
+                fields={fields}
+                records={visible}
+                groupField={fm[query.groupBy] ?? fm.status}
+                cardFields={['owner', 'priority', 'errors']}
+                activeKey={detailKey}
+                onCardClick={(r) => setDetailKey(r.id)}
+                onMoveRecord={(record, next) => editRecord(record, query.groupBy ?? 'status', next)}
+              />
+            ) : (
+              <>
+                <DataGrid
+                  fields={fields}
+                  visibleFields={['id', 'title', 'status', 'priority', 'owner', 'errors', 'updatedAt']}
+                  primaryField="title"
+                  records={visible}
+                  density={density}
+                  groupField={groupField}
+                  sort={query.sort}
+                  onToggleSort={(key) => setQuery(toggleSort(query, key))}
+                  activeKey={detailKey}
+                  onRowClick={(r) => setDetailKey(r.id)}
+                  onEditRecord={editRecord}
+                  selectedKeys={selected}
+                  onSelectedKeysChange={setSelected}
+                  searchQuery={query.search}
+                  onClearFilters={() => setQuery(emptyQuery())}
+                  rowActions={(record) => (
+                    <>
+                      <IconButton size="xs" label="상세 열기" icon={<NavIcons.Inbox />}
+                                  onClick={() => setDetailKey(record.id)} />
+                      <IconButton size="xs" label="삭제" icon={<TrashIcon />}
+                                  onClick={() => { setSelected(new Set([record.id])); setConfirmDelete(true) }} />
+                    </>
+                  )}
+                  bulkActions={
+                    <>
+                      <Button size="xs" variant="secondary"
+                              onClick={() => bulkEdit(selected, 'status', 'done')}>완료 처리</Button>
+                      <Button size="xs" variant="secondary"
+                              onClick={() => bulkEdit(selected, 'owner', '김민수')}>나에게 배정</Button>
+                      <Button size="xs" variant="danger-subtle"
+                              onClick={() => setConfirmDelete(true)}>삭제</Button>
+                    </>
+                  }
+                />
+                <GridPagination page={page} pageSize={20} total={visible.length} onPageChange={setPage} />
+              </>
+            )}
+          </GridCard>
         </PageContainer>
       </AppShell>
 
       <ConfirmDialog
-        open={confirmOpen}
-        onClose={() => setConfirmOpen(false)}
-        onConfirm={() => setConfirmOpen(false)}
+        open={confirmDelete}
+        onClose={() => setConfirmDelete(false)}
+        onConfirm={() => { removeRecords(selected); setSelected(new Set()); setConfirmDelete(false) }}
         tone="danger"
-        title="요청을 삭제할까요?"
+        title={`요청 ${selected.size}건을 삭제할까요?`}
         description="삭제한 요청은 복구할 수 없습니다."
         confirmLabel="삭제"
       />
     </>
+  )
+}
+
+function TrashIcon() {
+  return (
+    <svg width="13" height="13" viewBox="0 0 13 13" fill="none" aria-hidden="true"
+         stroke="currentColor" strokeWidth="1.3" strokeLinecap="round">
+      <path d="M2.5 3.5h8M5 3.5V2.5h3v1M3.5 3.5l.5 7h5l.5-7" />
+    </svg>
   )
 }

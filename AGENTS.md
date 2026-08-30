@@ -15,11 +15,110 @@
 | `bg-gray-100`, `text-blue-600` | `bg-bg-sunken`, `text-fg-link` |
 | `style={{ color: '#333' }}` | `className="text-fg-primary"` |
 | `dark:bg-slate-900` | 아무것도 안 함 (토큰이 자동 처리) |
-| `<table>` 직접 작성 | `<DataTable />` |
+| `<table>` 직접 작성 | `<DataGrid />` |
 | `<button className="...">` | `<Button variant="..." />` |
 | `p-[13px]`, `h-7` | 4px 배수 스케일 (`p-3`, `h-6`) |
 | 로딩 스피너 하나 | `<SkeletonTable />` |
 | 빈 배열이면 아무것도 안 그림 | `<EmptyState />` / `<NoResults />` |
+
+---
+
+## 0-1. 가장 중요한 규칙: 스키마가 먼저입니다
+
+이 시스템은 **하나의 원자(레코드) + 여러 투영(뷰)** 구조입니다.
+노션의 데이터베이스, 지라의 이슈와 같은 모델입니다.
+
+화면을 만들기 전에 **필드 스키마부터 정의하세요.**
+
+```jsx
+import { normalizeFields } from '@/components'
+
+const FIELDS = normalizeFields([
+  { key: 'id',     label: 'ID',   type: 'text', editable: false },
+  { key: 'title',  label: '제목', type: 'text' },
+  { key: 'status', label: '상태', type: 'select', options: [
+      // status 키가 StatusBadge 의 고정 색에 연결됩니다
+      { value: 'todo',  label: '대기',   status: 'todo' },
+      { value: 'doing', label: '진행중', status: 'inProgress' },
+      { value: 'done',  label: '완료',   status: 'done' },
+  ]},
+  { key: 'owner',  label: '담당자', type: 'user' },
+  { key: 'count',  label: '건수',   type: 'number' },
+])
+```
+
+이 스키마 하나에서 아래가 **전부 자동으로** 나옵니다:
+
+| 파생되는 것 | 어떻게 |
+|---|---|
+| 표 열 | `DataGrid` 에 `fields` 를 넘기면 끝 |
+| 보드 컬럼 | `BoardView` 의 `groupField` 로 select 필드 지정 |
+| 인라인 편집기 | 타입별로 알맞은 에디터가 자동 선택 |
+| 필터 연산자 | 타입별 사용 가능 연산자 자동 결정 |
+| 정렬 | select 는 선택지 순서로 (알파벳순 아님) |
+| 상세 화면 필드 | `ObjectDetail` 에 같은 스키마 전달 |
+
+**컬럼 정의를 화면에 하드코딩하지 마세요.** 그러면 표와 보드가 서로 다른
+데이터를 보게 되고, 뷰 전환이 성립하지 않습니다.
+
+### 필드 타입
+
+`text` `longtext` `number` `select` `tags` `user` `date` `checkbox` `link`
+
+새 타입이 필요하면 `src/lib/fields.js` 에 추가하세요.
+화면에서 `if (key === 'status')` 같은 특수 처리를 하면 안 됩니다.
+
+---
+
+## 0-2. 질의(Query)로 필터를 다루세요
+
+필터를 개별 `useState` 로 흩어놓지 마세요. 질의 객체 하나로 관리합니다.
+
+```jsx
+const [query, setQuery] = useState(emptyQuery())
+const visible = applyQuery(records, query, fieldMap(FIELDS))
+```
+
+질의 구조: `{ search, match: 'all'|'any', conditions, sort, groupBy }`
+
+이렇게 해야 아래가 전부 공짜로 따라옵니다:
+
+- **저장된 뷰** — 질의를 저장하면 그게 곧 사용자의 화면이 됩니다
+- **드릴다운** — 대시보드 지표가 질의를 목록에 그대로 넘길 수 있습니다
+- **URL 동기화** — 질의를 직렬화해 링크로 공유할 수 있습니다
+- **뷰 전환** — 표든 보드든 같은 질의 결과를 봅니다
+
+**새 화면을 만들기 전에 "이건 기존 목록의 저장된 뷰로 되는 것 아닌가?"를
+먼저 물으세요.** 대부분 그렇습니다. 화면이 늘어나면 유지보수가 무너집니다.
+
+---
+
+## 0-3. 대시보드 지표 = 질의 + 집계
+
+지표를 서버가 준 숫자 하나로 다루지 마세요. 클릭해도 갈 곳이 없는 지표는
+사용자를 막다른 길에 세웁니다.
+
+```jsx
+const metric = {
+  id: 'blocked', label: '차단됨', unit: '건',
+  query: { ...emptyQuery(), conditions: [{ field: 'status', operator: 'in', value: ['blocked'] }] },
+  aggregate: 'count',
+  lowerIsBetter: true,
+  threshold: { warn: 3, danger: 5 },
+}
+const computed = computeMetric(metric, records, fields)
+// computed.matched 에 실제 레코드가 있으므로 드릴다운이 가능합니다
+```
+
+규칙:
+
+- `MetricTile` 의 `onDrillDown` 을 **반드시** 연결하세요.
+- 낮을수록 좋은 지표(오류율·응답시간·비용)에는 `lowerIsBetter` 를 지정하세요.
+  빠뜨리면 오류율 상승이 초록색으로 표시됩니다.
+- 임계값은 **실제로 조치가 필요한 선**에 두세요. 지표 4개가 전부 빨간
+  대시보드는 아무것도 알리지 못합니다.
+- 분해(`breakdownMetric`)는 지표와 같은 집계를 씁니다. 합계와 조각이
+  맞지 않으면 사용자가 숫자를 신뢰하지 않습니다.
 
 ---
 
@@ -163,48 +262,100 @@ const accent = getComputedStyle(document.documentElement)
 
 ---
 
-## 6. 데이터 표시
+## 6. 목록 — DataGrid
 
-### 테이블
-
-`<table>` 을 직접 만들지 마세요. `DataTable` 이 로딩·에러·빈 결과를 모두 처리합니다.
+`<table>` 을 직접 만들지 마세요. `DataGrid` 가 로딩·에러·빈 결과·선택·편집을
+모두 처리합니다.
 
 ```jsx
-<TableCard>
-  <TableToolbar left={…} right={…} />
-  <DataTable
-    columns={[
-      { key: 'id', header: 'ID', width: '104px' },
-      { key: 'name', header: '이름', sortable: true },
-      { key: 'status', header: '상태', render: (r) => <StatusBadge status={r.status} dot size="sm" /> },
-      { key: 'count', header: '건수', align: 'right' },   // 숫자는 우측 정렬 + 자릿수 고정
-    ]}
-    rows={rows}
-    loading={isLoading}
-    error={error?.message}
-    onRetry={refetch}
-    searchQuery={query}
-    onClearFilters={clearFilters}
-    onRowClick={setSelected}
-    selectedKey={selected?.id}
+<GridCard>
+  <ViewTabs views={views} activeViewId={id} onSelectView={…} dirty={dirty} />
+  <QueryBar fields={FIELDS} query={query} onChange={setQuery} resultCount={visible.length} />
+  <GridToolbar
+    left={<><ViewSwitcher value={viewType} onChange={setViewType} />
+            <GroupByPicker fields={FIELDS} value={query.groupBy} onChange={…} /></>}
+    right={<DensityToggle value={density} onChange={setDensity} />}
   />
-  <TablePagination page={page} pageSize={20} total={total} onPageChange={setPage} />
-</TableCard>
+  <DataGrid
+    fields={FIELDS}
+    visibleFields={['id', 'title', 'status', 'owner', 'count']}
+    primaryField="title"
+    records={visible}
+    onEditRecord={editRecord}
+    onRowClick={openDetail}
+    groupField={query.groupBy ? fm[query.groupBy] : null}
+    sort={query.sort}
+    onToggleSort={(k) => setQuery(toggleSort(query, k))}
+    rowActions={(r) => <IconButton size="xs" label="삭제" icon={<TrashIcon />} … />}
+    bulkActions={<Button size="xs">완료 처리</Button>}
+  />
+  <GridPagination page={page} pageSize={20} total={visible.length} onPageChange={setPage} />
+</GridCard>
 ```
 
-- 숫자 열은 `align: 'right'` — 자릿수가 자동 정렬됩니다.
-- 열이 6개를 넘으면 우선순위 낮은 열은 숨기고 상세 패널로 보내세요.
+### primaryField 를 반드시 지정하세요
 
-### KPI 카드
+인라인 편집과 "상세 열기"는 둘 다 클릭이라 충돌합니다. 노션의 해법을 씁니다:
 
-한 줄에 **3~4개가 상한**입니다. 6개를 넘기면 아무것도 눈에 들어오지 않습니다.
+- **주 필드(제목) 클릭 → 레코드를 엽니다**
+- **나머지 필드 클릭 → 그 자리에서 편집합니다**
 
-증감의 좋고 나쁨은 지표마다 다릅니다. 오류율·응답시간처럼 **낮을수록 좋은 지표에는
-`invertDelta` 를 넘기세요.** 안 그러면 오류율 상승이 초록색으로 표시됩니다.
+화면마다 다르게 정하면 사용자가 매번 어디를 눌러야 할지 헷갈립니다.
+
+### 인라인 편집은 useRecords 로
+
+직접 `setState` 로 구현하면 롤백과 활동 기록이 빠집니다.
 
 ```jsx
-<StatCard label="오류율" value="0.42" unit="%" delta={1.8} invertDelta />
+const { records, editRecord, bulkEdit, addComment, activityOf } =
+  useRecords(initial, { actor: currentUser, persist: saveToServer })
 ```
+
+`persist` 가 실패하면 **자동으로 되돌리고 알립니다.** 조용히 되돌리면
+사용자는 자기가 고친 줄 압니다.
+
+### 호버로 드러나는 행 액션
+
+`rowActions` 는 평소 숨어 있다가 행 위에서만 나타납니다.
+항상 보이게 만들면 목록이 버튼밭이 되어 데이터가 안 읽힙니다.
+노션의 밀도는 여백이 아니라 **평소에 아무것도 안 보이는 것**에서 나옵니다.
+
+### 벌크 액션
+
+선택 기능은 기본으로 켜져 있습니다. Shift 로 범위 선택이 됩니다.
+`bulkActions` 를 넘기면 하단에 액션 바가 뜹니다.
+선택 개수와 해제 수단이 항상 함께 보입니다.
+
+---
+
+## 6-1. 객체 상세 — ObjectDetail
+
+읽기 전용 속성 나열 + 저장 버튼은 이 시스템에서 쓰지 않습니다.
+
+```jsx
+<ObjectDetail
+  record={record}
+  fields={FIELDS}
+  onEdit={(key, value) => editRecord(record, key, value)}
+  activity={activityOf(record.id)}
+  onAddComment={(body) => addComment(record.id, body)}
+/>
+```
+
+- 제목·필드가 그 자리에서 편집됩니다 (저장 버튼 없음)
+- 상태는 `StatusTransition` 으로 바뀝니다 — 필드 편집이 아니라 워크플로 진행입니다
+- **변경 이력과 댓글이 한 줄기로 흐릅니다.** 탭으로 나누지 마세요.
+  "누가 상태를 바꿨고 → 그래서 누가 뭐라고 했는지"가 이어져 읽혀야 합니다
+
+---
+
+## 6-2. 어디에 상세를 띄울까
+
+| 상황 | 사용 |
+|---|---|
+| 목록 맥락을 유지한 상시 상세 | `RightPanel` + `ObjectDetail` |
+| 넓은 폭이 필요한 임시 상세 | `Drawer` + `ObjectDetail` |
+| 확인·짧은 폼 | `Modal` / `ConfirmDialog` |
 
 ---
 

@@ -9,8 +9,11 @@ import { normalizeFields } from '../lib/fields'
  */
 
 export const REQUEST_FIELDS = normalizeFields([
-  { key: 'id',       label: 'ID',      type: 'text',   editable: false, width: '104px' },
-  { key: 'title',    label: '제목',     type: 'text' },
+  /* required 는 표에서는 안 쓰이지만 **만들기·가져오기 화면이 같은 규칙을
+     쓰게** 하는 자리입니다. 화면마다 필수 항목을 따로 정하면, 가져오기로는
+     들어오는데 폼으로는 못 만드는 레코드가 생깁니다. */
+  { key: 'id',       label: 'ID',      type: 'text',   editable: false, required: true, width: '104px' },
+  { key: 'title',    label: '제목',     type: 'text',   required: true },
   { key: 'status',   label: '상태',     type: 'select', width: '116px', options: [
       /* status 키가 StatusBadge 의 고정 색에 연결됩니다.
          화면마다 색을 고르지 않게 하는 지점입니다. */

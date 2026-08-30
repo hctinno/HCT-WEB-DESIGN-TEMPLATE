@@ -91,6 +91,9 @@ export function normalizeField(field) {
   const defaults = TYPE_DEFAULTS[field.type] ?? TYPE_DEFAULTS.text
   return {
     editable: true,
+    /* 이 필드 없이는 레코드가 성립하지 않는가. 만들기 폼과 가져오기
+       검증이 함께 봅니다 — 두 곳이 따로 정하면 규칙이 갈라집니다. */
+    required: false,
     ...defaults,
     ...field,
     operators: TYPE_OPERATORS[field.type] ?? TYPE_OPERATORS.text,

@@ -11,6 +11,7 @@ import { InviteAcceptPage, PasswordResetRequestPage, PasswordResetPage } from '.
 import { ErrorPagesDemo } from './pages/ErrorPages'
 import { InboxPage } from './pages/InboxPage'
 import { AccountPage } from './pages/AccountPage'
+import { ImportPage } from './pages/ImportPage'
 import { applyTheme, getStoredTheme, applyPalette, getStoredPalette, PALETTES } from './lib/theme'
 import { ToastProvider } from './components/feedback/Toast'
 
@@ -47,6 +48,7 @@ const PAGE_GROUPS = [
       { id: 'list', label: '요청 목록' },
       { id: 'scale', label: '대용량 목록' },
       { id: 'inbox', label: '알림 인박스' },
+      { id: 'import', label: '데이터 가져오기' },
     ],
   },
   {
@@ -107,6 +109,7 @@ function Preview() {
         : page === 'errors' ? <ErrorPagesDemo onNavigate={goto} />
         : page === 'inbox' ? <InboxPage onNavigate={goto} onOpenObject={() => setPage('list')} />
         : page === 'account' ? <AccountPage onNavigate={goto} />
+        : page === 'import' ? <ImportPage onNavigate={goto} />
         : page === 'list' ? <ListPage key={JSON.stringify(handoffQuery)} initialQuery={handoffQuery} onNavigate={goto} />
         : page === 'admin' ? <AdminPage onNavigate={goto} />
         : page === 'settings' ? <SettingsPage onNavigate={goto} />

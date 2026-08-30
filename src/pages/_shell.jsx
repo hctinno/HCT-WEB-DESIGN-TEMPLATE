@@ -62,6 +62,7 @@ export const NAV = [
       { id: 'integrations', label: '연동과 API', icon: NavIcons.Plug },
       { id: 'billing', label: '사용량과 청구', icon: NavIcons.Billing },
       { id: 'settings', label: '환경설정', icon: NavIcons.Settings },
+      { id: 'account', label: '내 계정', icon: NavIcons.User },
     ],
   },
 ]
@@ -116,7 +117,7 @@ export function AppFrame({
         <Sidebar
           rail={<WorkspaceRail activeId="prod" items={WORKSPACES} />}
           header={<SidebarBrand />}
-          footer={<SidebarUser {...CURRENT_USER} />}
+          footer={<SidebarUser {...CURRENT_USER} onClick={() => onNavigate?.('account')} />}
         >
           {NAV.map((group) => (
             <SidebarGroup key={group.label} label={group.label}>

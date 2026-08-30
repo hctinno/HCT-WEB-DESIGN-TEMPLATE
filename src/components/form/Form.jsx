@@ -58,11 +58,14 @@ export function FormSection({ id, title, description, children, actions, classNa
  * @param {string} [props.error]    - 있으면 hint 대신 표시됩니다
  * @param {boolean} [props.optional] - '선택' 배지
  */
+/** 라벨 열 + 필드 열. FormRow 와 FormActions 가 공유합니다. */
+const FORM_GRID = 'grid gap-1 sm:grid-cols-[180px_1fr] sm:gap-4'
+
 export function FormRow({ label, hint, error, optional = false, htmlFor, children, className }) {
   const autoId = useId()
   const id = htmlFor ?? autoId
   return (
-    <div className={cn('grid gap-1 sm:grid-cols-[180px_1fr] sm:gap-4', className)}>
+    <div className={cn(FORM_GRID, className)}>
       <label htmlFor={id} className="pt-1.5 text-base font-medium text-fg-secondary">
         {label}
         {optional && <span className="ml-1.5 text-xs font-normal text-fg-tertiary">선택</span>}
@@ -82,6 +85,21 @@ export function FormRow({ label, hint, error, optional = false, htmlFor, childre
           <p className="mt-1 text-xs text-fg-tertiary">{hint}</p>
         ) : null}
       </div>
+    </div>
+  )
+}
+
+/**
+ * 폼 안의 버튼 줄. FormRow 와 **같은 격자**를 써서 필드 열에 맞춥니다.
+ *
+ * 이걸 안 쓰고 각자 `pl-[196px]` 같은 값을 넣으면, 나중에 라벨 열 너비를
+ * 바꿀 때 화면마다 버튼이 어긋납니다. 격자 정의는 한 곳에만 있어야 합니다.
+ */
+export function FormActions({ children, className }) {
+  return (
+    <div className={cn(FORM_GRID, className)}>
+      <span aria-hidden="true" className="hidden sm:block" />
+      <div className="flex flex-wrap items-center gap-2">{children}</div>
     </div>
   )
 }
@@ -190,8 +208,15 @@ export function SettingsNav({ sections = [], activeId, onSelect, className }) {
   )
 }
 
-/** 켜고 끄는 스위치. 체크박스보다 상태가 즉시 읽힙니다. */
-export function Switch({ checked, onChange, label, description, disabled = false, id }) {
+/**
+ * 켜고 끄는 스위치. 체크박스보다 상태가 즉시 읽힙니다.
+ *
+ * `label` 은 **항상 필요합니다** — 없으면 스크린리더에는 "스위치, 켜짐"
+ * 이라고만 읽혀 무엇의 스위치인지 알 수 없습니다. 다만 격자(타입 × 채널)
+ * 안에서는 열 머리글이 이미 설명하고 있어 라벨을 또 그리면 화면이
+ * 무너집니다. 그럴 때 `hideLabel` 로 **숨기되 지우지는 않습니다.**
+ */
+export function Switch({ checked, onChange, label, hideLabel = false, description, disabled = false, id }) {
   const autoId = useId()
   const fieldId = id ?? autoId
   return (
@@ -203,6 +228,7 @@ export function Switch({ checked, onChange, label, description, disabled = false
         aria-checked={checked}
         disabled={disabled}
         onClick={() => onChange?.(!checked)}
+        aria-label={hideLabel ? label : undefined}
         className={cn(
           'relative mt-0.5 h-4 w-8 shrink-0 rounded-full transition-colors duration-fast',
           checked ? 'bg-accent-solid' : 'bg-line-strong',
@@ -218,7 +244,7 @@ export function Switch({ checked, onChange, label, description, disabled = false
           )}
         />
       </button>
-      {(label || description) && (
+      {!hideLabel && (label || description) && (
         <label htmlFor={fieldId} className="min-w-0 cursor-pointer">
           {label && <span className="block text-base text-fg-primary">{label}</span>}
           {description && <span className="block text-xs text-fg-tertiary">{description}</span>}

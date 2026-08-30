@@ -26,12 +26,14 @@ export function Combobox({
   placeholder = '검색해서 선택',
   hint,
   error,
+  invalid = false,
   disabled = false,
   showAvatar = false,
   emptyMessage = '일치하는 항목이 없습니다',
   className,
   id,
 }) {
+  const bad = Boolean(error) || invalid
   const autoId = useId()
   const fieldId = id ?? autoId
   const listId = `${fieldId}-list`
@@ -115,7 +117,7 @@ export function Combobox({
           className={cn(
             'flex min-h-control-md w-full flex-wrap items-center gap-1 rounded-md border bg-bg-surface px-1.5 py-1',
             'transition-colors duration-instant',
-            error ? 'border-danger-border' : 'border-line-default',
+            bad ? 'border-danger-border' : 'border-line-default',
             /* 포커스 표시는 이 껍데기가 담당합니다 — 안의 input 이 아니라
                태그+입력 전체가 하나의 컨트롤로 보여야 하기 때문입니다 */
             'focus-within:border-line-focus focus-within:ring-1 focus-within:ring-line-focus',
@@ -151,7 +153,7 @@ export function Combobox({
             aria-controls={listId}
             aria-autocomplete="list"
             aria-activedescendant={open && filtered[activeIndex] ? `${listId}-${activeIndex}` : undefined}
-            aria-invalid={error ? true : undefined}
+            aria-invalid={bad ? true : undefined}
             disabled={disabled}
             value={open ? search : (multiple ? '' : selectedLabel)}
             placeholder={multiple && selected.length > 0 ? '' : placeholder}

@@ -9,6 +9,8 @@ import { LoginPage } from './pages/LoginPage'
 import { AdminPage } from './pages/AdminPage'
 import { InviteAcceptPage, PasswordResetRequestPage, PasswordResetPage } from './pages/AuthPages'
 import { ErrorPagesDemo } from './pages/ErrorPages'
+import { InboxPage } from './pages/InboxPage'
+import { AccountPage } from './pages/AccountPage'
 import { applyTheme, getStoredTheme, applyPalette, getStoredPalette, PALETTES } from './lib/theme'
 import { ToastProvider } from './components/feedback/Toast'
 
@@ -44,6 +46,7 @@ const PAGE_GROUPS = [
       { id: 'dashboard', label: '대시보드' },
       { id: 'list', label: '요청 목록' },
       { id: 'scale', label: '대용량 목록' },
+      { id: 'inbox', label: '알림 인박스' },
     ],
   },
   {
@@ -51,6 +54,7 @@ const PAGE_GROUPS = [
     pages: [
       { id: 'admin', label: '사용자와 권한' },
       { id: 'settings', label: '환경설정' },
+      { id: 'account', label: '내 계정' },
     ],
   },
   {
@@ -101,6 +105,8 @@ function Preview() {
         : page === 'reset-request' ? <PasswordResetRequestPage onBack={() => setPage('login')} />
         : page === 'reset' ? <PasswordResetPage onDone={() => setPage('login')} />
         : page === 'errors' ? <ErrorPagesDemo onNavigate={goto} />
+        : page === 'inbox' ? <InboxPage onNavigate={goto} onOpenObject={() => setPage('list')} />
+        : page === 'account' ? <AccountPage onNavigate={goto} />
         : page === 'list' ? <ListPage key={JSON.stringify(handoffQuery)} initialQuery={handoffQuery} onNavigate={goto} />
         : page === 'admin' ? <AdminPage onNavigate={goto} />
         : page === 'settings' ? <SettingsPage onNavigate={goto} />

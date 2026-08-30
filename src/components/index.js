@@ -62,7 +62,7 @@ export { SecretField } from './input/SecretField'
 
 /* 폼 */
 export {
-  Form, FormSection, FormRow, FormErrorSummary, SaveBar, SettingsNav, Switch, RadioCards,
+  Form, FormSection, FormRow, FormActions, FormErrorSummary, SaveBar, SettingsNav, Switch, RadioCards,
 } from './form/Form'
 export { useForm } from '../lib/useForm'
 

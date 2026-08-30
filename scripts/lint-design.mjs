@@ -139,7 +139,35 @@ for (const file of files) {
   if (EXEMPT.some((e) => rel === e || rel.endsWith(e))) continue
 
   const lines = readFileSync(file, 'utf8').split('\n')
+
+  /*
+   * 주석 줄은 건너뜁니다.
+   *
+   * 이 규칙들을 설명하는 주석("`pl-[196px]` 같은 값을 쓰지 마세요")이
+   * 규칙 자신에게 걸립니다. 규칙을 문서화할 수 없는 린터는 결국
+   * 주석을 지우게 만들고, 그러면 왜 그런 규칙인지 아무도 모르게 됩니다.
+   *
+   * 파서 없이 줄 단위로 판정하므로 완벽하지는 않습니다. 블록 주석의
+   * 시작·끝을 세어 그 안쪽과 `//` 줄만 제외합니다. 클래스명이 주석 뒤에
+   * 붙은 줄(`<div className="p-2" /> // 메모`)은 여전히 검사됩니다.
+   */
+  let inBlockComment = false
+  const isComment = (line) => {
+    const t = line.trim()
+    if (inBlockComment) {
+      if (t.includes('*/')) inBlockComment = false
+      return true
+    }
+    if (t.startsWith('//')) return true
+    if (t.startsWith('/*') || t.startsWith('{/*')) {
+      if (!t.includes('*/')) inBlockComment = true
+      return true
+    }
+    return false
+  }
+
   lines.forEach((line, i) => {
+    if (isComment(line)) return
     /* eslint 스타일 인라인 예외: // design-lint-disable-next-line <rule-id> */
     const prev = lines[i - 1] ?? ''
     for (const rule of RULES) {

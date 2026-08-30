@@ -9,6 +9,12 @@ import { cn } from '../../lib/cn'
  *     label 자체를 생략하지 마세요.
  *   - 오류는 error prop 으로 전달합니다. 빨간 테두리만으로 표시하지 않고
  *     반드시 메시지를 함께 보여줍니다(색맹 접근성).
+ *   - FormRow 안에서 쓸 때는 메시지를 FormRow 가 그리므로 필드에는
+ *     `invalid` 만 넘깁니다. FormRow 의 렌더 프롭이 주는 값이 바로 이겁니다:
+ *       <FormRow label="이름" error={...}>
+ *         {({ id, invalid }) => <TextField id={id} invalid={invalid} ... />}
+ *       </FormRow>
+ *     `invalid` 는 테두리와 aria-invalid 만 담당하고 메시지는 만들지 않습니다.
  */
 
 const FIELD_BASE = cn(
@@ -23,12 +29,14 @@ export function TextField({
   hideLabel = false,
   hint,
   error,
+  invalid = false,
   size = 'md',
   iconLeft,
   className,
   id,
   ...rest
 }) {
+  const bad = Boolean(error) || invalid
   const autoId = useId()
   const fieldId = id ?? autoId
   const describedBy = error ? `${fieldId}-error` : hint ? `${fieldId}-hint` : undefined
@@ -53,13 +61,13 @@ export function TextField({
         )}
         <input
           id={fieldId}
-          aria-invalid={error ? true : undefined}
+          aria-invalid={bad ? true : undefined}
           aria-describedby={describedBy}
           className={cn(
             FIELD_BASE,
             heights[size] ?? heights.md,
             iconLeft && 'pl-6',
-            error ? 'border-danger-border' : 'border-line-default',
+            bad ? 'border-danger-border' : 'border-line-default',
             'focus:border-line-focus focus:outline-none focus:ring-1 focus:ring-line-focus',
           )}
           {...rest}
@@ -78,7 +86,8 @@ export function TextField({
   )
 }
 
-export function SelectField({ label, hideLabel = false, hint, error, options = [], size = 'md', className, id, ...rest }) {
+export function SelectField({ label, hideLabel = false, hint, error, invalid = false, options = [], size = 'md', className, id, ...rest }) {
+  const bad = Boolean(error) || invalid
   const autoId = useId()
   const fieldId = id ?? autoId
   const heights = { sm: 'h-control-sm text-sm', md: 'h-control-md', lg: 'h-control-lg' }
@@ -90,12 +99,12 @@ export function SelectField({ label, hideLabel = false, hint, error, options = [
       </label>
       <select
         id={fieldId}
-        aria-invalid={error ? true : undefined}
+        aria-invalid={bad ? true : undefined}
         className={cn(
           FIELD_BASE,
           heights[size] ?? heights.md,
           'pr-6',
-          error ? 'border-danger-border' : 'border-line-default',
+          bad ? 'border-danger-border' : 'border-line-default',
           'focus:border-line-focus focus:outline-none focus:ring-1 focus:ring-line-focus',
         )}
         {...rest}

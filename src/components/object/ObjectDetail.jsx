@@ -40,6 +40,9 @@ export function ObjectDetail({
   watchers = [],
   onToggleWatch,
   isWatching = false,
+  onPrev,
+  onNext,
+  position,
   headerExtra,
   children,
   className,
@@ -50,6 +53,41 @@ export function ObjectDetail({
 
   return (
     <div className={cn('flex h-full min-h-0 flex-col', className)}>
+      {/* 레코드 간 이동 — 목록으로 돌아갔다가 다시 여는 왕복을 없앱니다.
+          지라·리니어가 상세 화면에 이 컨트롤을 두는 이유입니다. 검토는 보통
+          한 건이 아니라 여러 건을 연달아 보는 일이라, 왕복 비용이 곧 작업 속도입니다. */}
+      {(onPrev || onNext) && (
+        <div className="flex shrink-0 items-center gap-1 border-b border-line-subtle px-3 py-1.5">
+          <button
+            type="button"
+            onClick={onPrev}
+            disabled={!onPrev}
+            aria-label="이전 항목"
+            className={NAV_BTN}
+          >
+            <svg width="12" height="12" viewBox="0 0 12 12" fill="none" aria-hidden="true">
+              <path d="M7.5 2.5L4 6l3.5 3.5" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" />
+            </svg>
+          </button>
+          <button
+            type="button"
+            onClick={onNext}
+            disabled={!onNext}
+            aria-label="다음 항목"
+            className={NAV_BTN}
+          >
+            <svg width="12" height="12" viewBox="0 0 12 12" fill="none" aria-hidden="true">
+              <path d="M4.5 2.5L8 6l-3.5 3.5" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" />
+            </svg>
+          </button>
+          {position && (
+            <span className="tabular text-xs text-fg-tertiary">
+              {position.index} / {position.total}
+            </span>
+          )}
+        </div>
+      )}
+
       <div className="scroll-thin min-h-0 flex-1 overflow-y-auto">
         <div className="px-4 pb-4 pt-3">
           {/* 제목 — 클릭하면 그 자리에서 편집 */}
@@ -128,6 +166,12 @@ export function ObjectDetail({
     </div>
   )
 }
+
+const NAV_BTN = cn(
+  'flex h-control-sm w-control-sm items-center justify-center rounded-md',
+  'text-fg-secondary hover:bg-bg-hover hover:text-fg-primary',
+  'disabled:cursor-not-allowed disabled:opacity-30',
+)
 
 /** 제목 인라인 편집. 저장 버튼 없이 Enter/blur 로 확정됩니다. */
 export function InlineTitle({ value, onChange, placeholder = '제목 없음' }) {

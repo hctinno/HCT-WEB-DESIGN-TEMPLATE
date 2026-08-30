@@ -4,6 +4,7 @@ import { GridCell } from './GridCell'
 import { groupRecords } from '../../lib/query'
 import { SkeletonTable } from '../state/Skeleton'
 import { NoResults, ErrorState } from '../state/EmptyState'
+import { useGridKeyboard } from '../../lib/useGridKeyboard'
 
 /**
  * DataGrid — 관리도구의 중심 컴포넌트.
@@ -18,6 +19,8 @@ import { NoResults, ErrorState } from '../state/EmptyState'
  *   - 셀 인라인 편집 (낙관적 반영)
  *   - 호버 시에만 드러나는 행 액션
  *   - 필드 기준 그룹핑 + 그룹 접기
+ *   - 키보드 조작 (↑↓/jk 이동, Enter 열기, x 선택, Shift 범위, ⌘A 전체, Esc 해제)
+ *     ('?' 도움말은 ShortcutHelp 가 전역에서 받습니다 — 여기서 처리하지 않습니다)
  *   - 로딩·에러·빈 결과
  *
  * 개발 에이전트 사용 규칙:
@@ -73,6 +76,16 @@ export function DataGrid({
   const setSelected = onSelectedKeysChange ?? setInternalSelected
   const [collapsedGroups, setCollapsedGroups] = useState(() => new Set())
   const lastClickedIndex = useRef(null)
+
+  /* 키보드 조작 — 마우스 없이 목록을 훑고 고르고 열 수 있어야 합니다 */
+  const keyboard = useGridKeyboard({
+    records,
+    rowKey,
+    onOpen: onRowClick,
+    selectedKeys: selected,
+    onSelectedKeysChange: setSelected,
+    enabled: selectable || Boolean(onRowClick),
+  })
 
   const columns = useMemo(() => {
     if (!visibleFields) return fields
@@ -140,6 +153,8 @@ export function DataGrid({
     return (
       <tr
         key={key}
+        id={`row-${key}`}
+        data-row-index={index}
         onClick={onRowClick ? () => onRowClick(record) : undefined}
         aria-selected={isSelected || undefined}
         className={cn(
@@ -147,6 +162,10 @@ export function DataGrid({
           'group border-b border-line-subtle transition-colors duration-instant',
           isSelected ? 'bg-accent-subtle' : isActive ? 'bg-bg-active' : 'bg-bg-surface hover:bg-bg-hover',
           onRowClick && 'cursor-pointer',
+          /* 키보드 포커스 행 — 그리드가 활성일 때만 표시합니다.
+             항상 보이면 마우스 사용자에게는 정체불명의 강조로 보입니다. */
+          keyboard.active && keyboard.focusedIndex === index &&
+            'relative outline outline-2 -outline-offset-2 outline-line-focus',
         )}
       >
         {selectable && (
@@ -210,7 +229,18 @@ export function DataGrid({
 
   return (
     <div className={cn('relative', className)}>
-      <div className="overflow-x-auto scroll-thin">
+      {/* 선택 상태를 스크린리더에 알립니다 — 시각적으로는 하단 바가 알리지만
+          화면을 못 보는 사용자에게는 아무 일도 일어나지 않은 것과 같습니다 */}
+      <span aria-live="polite" className="sr-only">
+        {selected.size > 0 ? `${selected.size}개 선택됨` : ''}
+      </span>
+
+      {/* 포커스는 컨테이너가 받지만 표시는 현재 행에 나타납니다
+          (aria-activedescendant 패턴). 컨테이너에도 테두리를 그리면 표 전체가
+          둘러싸여 어느 행에 있는지가 오히려 흐려집니다. onFocus 에서
+          focusedIndex 를 0 으로 올리므로 표시가 없는 순간은 없습니다.
+          design-lint-disable-next-line no-focus-outline-removal */}
+      <div {...keyboard.containerProps} className="overflow-x-auto scroll-thin focus:outline-none">
         <table className="w-full border-collapse text-left">
           <thead className="sticky top-0 z-sticky bg-bg-sunken">
             <tr>

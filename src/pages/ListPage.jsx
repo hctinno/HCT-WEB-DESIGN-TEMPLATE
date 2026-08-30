@@ -9,7 +9,8 @@ import {
   ObjectDetail,
   RightPanel,
   Button, IconButton, DensityToggle, ConfirmDialog, Banner,
-  fieldMap, applyQuery, toggleSort, useRecords, emptyQuery,
+  ColumnSettings, ShortcutHelp, useToast,
+  fieldMap, applyQuery, toggleSort, useRecords, emptyQuery, useQuerySync,
 } from '../components'
 import { REQUEST_FIELDS, REQUEST_RECORDS, INITIAL_VIEWS } from './_data'
 import { NavIcons } from './_icons'
@@ -48,6 +49,14 @@ export function ListPage({ initialQuery }) {
   const [detailKey, setDetailKey] = useState(null)
   const [confirmDelete, setConfirmDelete] = useState(false)
   const [page, setPage] = useState(1)
+  const [helpOpen, setHelpOpen] = useState(false)
+  const [columns, setColumns] = useState(
+    ['id', 'title', 'status', 'priority', 'owner', 'errors', 'updatedAt'],
+  )
+  const { toast } = useToast()
+
+  /* 질의를 주소창과 묶습니다 — 필터된 목록을 링크로 공유할 수 있습니다 */
+  useQuerySync(query, setQuery, { fields: fm })
 
   /* 현재 질의가 저장된 뷰와 달라졌는가 — 저장 버튼 노출 판단 */
   const dirty = useMemo(
@@ -74,6 +83,38 @@ export function ListPage({ initialQuery }) {
     const view = { id, name: `새 뷰 ${views.length + 1}`, query, viewType }
     setViews((prev) => [...prev, view])
     setActiveViewId(id)
+  }
+
+  /**
+   * 벌크 액션은 결과를 알리고 되돌릴 기회를 줍니다.
+   * 조용히 20건을 바꾸면 사용자는 무슨 일이 있었는지 모릅니다.
+   */
+  const runBulk = (field, value, label) => {
+    const { count, undo } = bulkEdit(selected, field, value)
+    setSelected(new Set())
+    toast({
+      message: `${count}건을 ${label}했습니다`,
+      action: { label: '실행 취소', onClick: undo },
+    })
+  }
+
+  const runDelete = () => {
+    const { count, undo } = removeRecords(selected)
+    setSelected(new Set())
+    setConfirmDelete(false)
+    setDetailKey(null)
+    toast({
+      message: `${count}건을 삭제했습니다`,
+      tone: 'danger',
+      action: { label: '실행 취소', onClick: undo },
+    })
+  }
+
+  /* 상세 패널에서 이전/다음으로 이동 — 목록으로 돌아가는 왕복을 없앱니다 */
+  const detailIndex = visible.findIndex((r) => r.id === detailKey)
+  const goRelative = (delta) => {
+    const next = visible[detailIndex + delta]
+    if (next) setDetailKey(next.id)
   }
 
   const groupField = query.groupBy ? fm[query.groupBy] : null
@@ -117,6 +158,9 @@ export function ListPage({ initialQuery }) {
               <ObjectDetail
                 record={detailRecord}
                 fields={fields}
+                onPrev={detailIndex > 0 ? () => goRelative(-1) : undefined}
+                onNext={detailIndex < visible.length - 1 ? () => goRelative(1) : undefined}
+                position={detailIndex >= 0 ? { index: detailIndex + 1, total: visible.length } : undefined}
                 detailFields={['priority', 'owner', 'system', 'errors', 'tags', 'updatedAt']}
                 onEdit={(key, value) => editRecord(detailRecord, key, value)}
                 activity={activityOf(detailRecord.id)}
@@ -183,7 +227,17 @@ export function ListPage({ initialQuery }) {
               }
               right={
                 <>
-                  {viewType === 'table' && <DensityToggle value={density} onChange={setDensity} />}
+                  {viewType === 'table' && (
+                    <>
+                      <ColumnSettings
+                        fields={fields}
+                        visibleFields={columns}
+                        onChange={setColumns}
+                        primaryField="title"
+                      />
+                      <DensityToggle value={density} onChange={setDensity} />
+                    </>
+                  )}
                   <Button size="sm" variant="ghost" iconLeft={<NavIcons.Download />}>내보내기</Button>
                 </>
               }
@@ -198,12 +252,14 @@ export function ListPage({ initialQuery }) {
                 activeKey={detailKey}
                 onCardClick={(r) => setDetailKey(r.id)}
                 onMoveRecord={(record, next) => editRecord(record, query.groupBy ?? 'status', next)}
+                searchQuery={query.search}
+                onClearFilters={() => setQuery(emptyQuery())}
               />
             ) : (
               <>
                 <DataGrid
                   fields={fields}
-                  visibleFields={['id', 'title', 'status', 'priority', 'owner', 'errors', 'updatedAt']}
+                  visibleFields={columns}
                   primaryField="title"
                   records={visible}
                   density={density}
@@ -227,10 +283,12 @@ export function ListPage({ initialQuery }) {
                   )}
                   bulkActions={
                     <>
-                      <Button size="xs" variant="secondary"
-                              onClick={() => bulkEdit(selected, 'status', 'done')}>완료 처리</Button>
-                      <Button size="xs" variant="secondary"
-                              onClick={() => bulkEdit(selected, 'owner', '김민수')}>나에게 배정</Button>
+                      <Button size="xs" variant="secondary" onClick={() => runBulk('status', 'done', '완료 처리')}>
+                        완료 처리
+                      </Button>
+                      <Button size="xs" variant="secondary" onClick={() => runBulk('owner', '김민수', '나에게 배정')}>
+                        나에게 배정
+                      </Button>
                       <Button size="xs" variant="danger-subtle"
                               onClick={() => setConfirmDelete(true)}>삭제</Button>
                     </>
@@ -246,12 +304,14 @@ export function ListPage({ initialQuery }) {
       <ConfirmDialog
         open={confirmDelete}
         onClose={() => setConfirmDelete(false)}
-        onConfirm={() => { removeRecords(selected); setSelected(new Set()); setConfirmDelete(false) }}
+        onConfirm={runDelete}
         tone="danger"
         title={`요청 ${selected.size}건을 삭제할까요?`}
         description="삭제한 요청은 복구할 수 없습니다."
         confirmLabel="삭제"
       />
+
+      <ShortcutHelp open={helpOpen} onClose={setHelpOpen} />
     </>
   )
 }

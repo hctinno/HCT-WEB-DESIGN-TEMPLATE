@@ -80,27 +80,84 @@ export function useRecords(initialRecords, options = {}) {
     }
   }, [rowKey, actor, persist, onError, appendActivity])
 
-  /** 여러 레코드에 같은 값 적용 (벌크 액션) */
+  /**
+   * 여러 레코드에 같은 값 적용 (벌크 액션).
+   *
+   * **되돌릴 수 있는 스냅샷을 함께 반환합니다.** 벌크 액션은 한 번에 수십 건을
+   * 바꾸므로, 실행 취소 없이 내보내면 사고가 복구 불가능해집니다.
+   *
+   * @returns {{count: number, undo: () => void}}
+   */
   const bulkEdit = useCallback((keys, fieldKey, value) => {
     const keySet = new Set([...keys].map(String))
-    setRecords((prev) => prev.map((r) => (keySet.has(String(rowKey(r))) ? { ...r, [fieldKey]: value } : r)))
-    setRecords((current) => {
-      current.forEach((r) => {
-        const k = rowKey(r)
-        if (keySet.has(String(k))) {
-          appendActivity(k, {
-            id: nextId(), type: 'change', actor, at: new Date().toISOString(),
-            field: fieldKey, from: null, to: value,
-          })
-        }
-      })
-      return current
+    let affected = []
+
+    setRecords((prev) => {
+      affected = prev
+        .filter((r) => keySet.has(String(rowKey(r))))
+        .map((r) => ({ key: rowKey(r), previous: r[fieldKey] }))
+      return prev.map((r) => (keySet.has(String(rowKey(r))) ? { ...r, [fieldKey]: value } : r))
     })
+
+    for (const { key, previous } of affected) {
+      appendActivity(key, {
+        id: nextId(), type: 'change', actor, at: new Date().toISOString(),
+        field: fieldKey, from: previous, to: value,
+      })
+    }
+
+    return {
+      count: affected.length,
+      undo: () => {
+        setRecords((prev) => {
+          const restore = new Map(affected.map((a) => [String(a.key), a.previous]))
+          return prev.map((r) => {
+            const k = String(rowKey(r))
+            return restore.has(k) ? { ...r, [fieldKey]: restore.get(k) } : r
+          })
+        })
+        /* 되돌리면 이력에서도 해당 항목을 제거합니다 — 없던 일이 되어야 합니다 */
+        setActivityByKey((prev) => {
+          const next = { ...prev }
+          for (const { key } of affected) next[key] = (next[key] ?? []).slice(0, -1)
+          return next
+        })
+      },
+    }
   }, [rowKey, actor, appendActivity])
 
+  /**
+   * 레코드 삭제. 삭제된 레코드와 원래 위치를 담아 복원 가능하게 합니다.
+   *
+   * 확인 대화상자로 막는 것보다 실행 취소가 낫습니다. 확인창은 매번 귀찮고
+   * 결국 읽지 않고 누르게 되지만, 실행 취소는 실제로 되돌려 줍니다.
+   *
+   * @returns {{count: number, undo: () => void}}
+   */
   const removeRecords = useCallback((keys) => {
     const keySet = new Set([...keys].map(String))
-    setRecords((prev) => prev.filter((r) => !keySet.has(String(rowKey(r)))))
+    let removed = []
+
+    setRecords((prev) => {
+      removed = prev
+        .map((r, index) => ({ record: r, index }))
+        .filter(({ record }) => keySet.has(String(rowKey(record))))
+      return prev.filter((r) => !keySet.has(String(rowKey(r))))
+    })
+
+    return {
+      count: removed.length,
+      undo: () => {
+        setRecords((prev) => {
+          const next = [...prev]
+          /* 원래 위치로 되돌립니다. 끝에 붙이면 목록 순서가 어긋납니다. */
+          for (const { record, index } of removed) {
+            next.splice(Math.min(index, next.length), 0, record)
+          }
+          return next
+        })
+      },
+    }
   }, [rowKey])
 
   const addComment = useCallback((key, body) => {

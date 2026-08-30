@@ -40,6 +40,19 @@ export function AppShell({
 
   return (
     <div className="flex h-screen w-full overflow-hidden bg-bg-canvas text-fg-primary">
+      {/* 건너뛰기 링크 — 평소엔 숨어 있다가 Tab 첫 타에 나타납니다.
+          이게 없으면 키보드 사용자는 화면을 바꿀 때마다 사이드바 항목 전체를
+          Tab 으로 통과해야 본문에 닿습니다. */}
+      <a
+        href="#main-content"
+        className={cn(
+          'sr-only-focusable absolute left-3 top-3 z-palette rounded-md',
+          'border border-line-focus bg-bg-raised px-3 py-2 text-base font-medium text-fg-primary shadow-lg',
+        )}
+      >
+        본문으로 건너뛰기
+      </a>
+
       {/* --- 사이드바: lg 이상에서 고정 --- */}
       <aside
         className={cn(

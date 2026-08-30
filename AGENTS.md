@@ -274,7 +274,11 @@ const accent = getComputedStyle(document.documentElement)
   <GridToolbar
     left={<><ViewSwitcher value={viewType} onChange={setViewType} />
             <GroupByPicker fields={FIELDS} value={query.groupBy} onChange={…} /></>}
-    right={<DensityToggle value={density} onChange={setDensity} />}
+    right={<>
+      <ColumnSettings fields={FIELDS} visibleFields={columns}
+                      onChange={setColumns} primaryField="title" />
+      <DensityToggle value={density} onChange={setDensity} />
+    </>}
   />
   <DataGrid
     fields={FIELDS}
@@ -356,6 +360,70 @@ const { records, editRecord, bulkEdit, addComment, activityOf } =
 | 목록 맥락을 유지한 상시 상세 | `RightPanel` + `ObjectDetail` |
 | 넓은 폭이 필요한 임시 상세 | `Drawer` + `ObjectDetail` |
 | 확인·짧은 폼 | `Modal` / `ConfirmDialog` |
+
+---
+
+## 6-3. 목록을 바꾸는 행동에는 토스트와 실행 취소
+
+18건 중 4건을 골라 "완료 처리"를 눌렀는데 화면이 조용하면, 사용자는 눌린
+건지 몇 건이 바뀐 건지 모릅니다. 실수였다면 되돌릴 방법도 없습니다.
+
+```jsx
+const { toast } = useToast()
+const { count, undo } = bulkEdit(selected, 'status', 'done')
+toast({ message: `${count}건을 완료 처리했습니다`, action: { label: '실행 취소', onClick: undo } })
+```
+
+규칙:
+
+- 목록을 바꾸는 행동은 **반드시** 토스트로 결과를 알립니다
+- 되돌릴 수 있는 행동은 **반드시** 실행 취소를 함께 제공합니다
+- `useRecords` 의 `bulkEdit` / `removeRecords` 는 `{ count, undo }` 를 반환합니다.
+  직접 `setState` 로 구현하면 이 스냅샷이 없습니다
+- **확인 대화상자보다 실행 취소가 낫습니다.** 확인창은 매번 귀찮고 결국
+  읽지 않고 누르게 되지만, 실행 취소는 실제로 되돌려 줍니다
+
+앱 최상단을 `<ToastProvider>` 로 감싸세요.
+
+---
+
+## 6-4. 키보드로 목록을 다룰 수 있어야 합니다
+
+관리도구를 하루 종일 쓰는 사람에게 키보드는 편의가 아니라 속도의 전부입니다.
+`DataGrid` 는 기본으로 아래를 지원합니다 — 별도 설정이 필요 없습니다.
+
+| 키 | 동작 |
+|---|---|
+| `↑` `↓` 또는 `k` `j` | 행 이동 |
+| `Enter` | 상세 열기 |
+| `X` 또는 `Space` | 선택 토글 |
+| `Shift` + `↑↓` | 선택 확장 |
+| `⌘/Ctrl` + `A` | 전체 선택 |
+| `Esc` | 선택 해제 |
+| `?` | 단축키 도움말 |
+
+`<ShortcutHelp open={helpOpen} onClose={setHelpOpen} />` 를 화면에 두세요.
+
+**전역 단축키의 주인은 한 곳이어야 합니다.** 두 컴포넌트가 같은 키를
+처리하면 서로를 토글해 아무 일도 일어나지 않습니다. `?` 의 주인은
+`ShortcutHelp` 입니다 — 다른 곳에서 처리하지 마세요.
+
+---
+
+## 6-5. 질의를 주소창과 묶으세요
+
+```jsx
+useQuerySync(query, setQuery, { fields: fm })
+```
+
+이 한 줄로 필터된 목록이 링크가 됩니다:
+
+```
+?q=결제&f=status:in:blocked,doing;errors:gte:100&s=errors:desc&g=system
+```
+
+팀 도구에서 "이 화면 좀 봐줘"를 말로 설명하지 않아도 됩니다.
+형식은 일부러 사람이 읽고 손으로 고칠 수 있게 유지했습니다.
 
 ---
 

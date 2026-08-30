@@ -18,6 +18,7 @@ export { RightPanel, PropertyList, PropertyRow, PanelSection } from './shell/Rig
 export { DataGrid, BulkActionBar, Checkbox } from './grid/DataGrid'
 export { GridCell, CellDisplay, Avatar } from './grid/GridCell'
 export { GridCard, GridToolbar, GridPagination } from './grid/GridChrome'
+export { ColumnSettings } from './grid/ColumnSettings'
 
 /* 뷰 — 같은 데이터의 여러 투영 */
 export { BoardView } from './view/BoardView'
@@ -45,10 +46,12 @@ export { FilterBar, FilterButton, SegmentedControl, DensityToggle } from './inpu
 
 /* 피드백 */
 export { StatusBadge, Tag, Banner, WORKFLOW_STATUS } from './feedback/StatusBadge'
+export { ToastProvider, useToast } from './feedback/Toast'
 
 /* 오버레이 */
 export { Modal, ConfirmDialog, Drawer } from './overlay/Modal'
 export { CommandPalette, CommandPaletteTrigger } from './overlay/CommandPalette'
+export { ShortcutHelp } from './overlay/ShortcutHelp'
 
 /* 데이터 모델 — 화면을 만들기 전에 여기부터 읽으세요 */
 export {
@@ -62,6 +65,8 @@ export {
   addCondition, updateCondition, removeCondition,
 } from '../lib/query'
 export { useRecords } from '../lib/useRecords'
+export { useGridKeyboard, GRID_SHORTCUTS } from '../lib/useGridKeyboard'
+export { encodeQuery, decodeQuery, useQuerySync } from '../lib/queryUrl'
 
 /* 유틸 */
 export { cn } from '../lib/cn'

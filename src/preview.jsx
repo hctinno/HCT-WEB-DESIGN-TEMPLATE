@@ -4,6 +4,7 @@ import './styles/index.css'
 import { DashboardPage } from './pages/DashboardPage'
 import { ListPage } from './pages/ListPage'
 import { applyTheme, getStoredTheme, applyPalette, getStoredPalette, PALETTES } from './lib/theme'
+import { ToastProvider } from './components/feedback/Toast'
 
 /**
  * 미리보기 진입점 — `npm run dev`
@@ -123,4 +124,8 @@ function Chip({ active, onClick, children }) {
   )
 }
 
-createRoot(document.getElementById('root')).render(<Preview />)
+createRoot(document.getElementById('root')).render(
+  <ToastProvider>
+    <Preview />
+  </ToastProvider>,
+)

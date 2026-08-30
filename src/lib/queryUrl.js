@@ -20,7 +20,13 @@ const SEP_COND = ';'
 const SEP_PART = ':'
 const SEP_LIST = ','
 
-/** 값 안에 구분자가 들어가도 깨지지 않게 인코딩합니다 */
+/**
+ * 값 안에 구분자가 들어가도 깨지지 않게 인코딩합니다.
+ *
+ * encodeURIComponent 는 `:` `;` `,` 를 `%3A` `%3B` `%2C` 로 바꿉니다.
+ * 그래서 값 안의 구분자는 구조 구분자와 구별됩니다 — **쪼개기 전에 풀지만
+ * 않는다면.** 읽는 쪽(decodeQuery)이 그 순서를 지킵니다.
+ */
 const enc = (v) => encodeURIComponent(String(v))
 const dec = (v) => {
   try { return decodeURIComponent(v) } catch { return v }
@@ -80,20 +86,54 @@ export function encodeQuery(query) {
 }
 
 /**
+ * 파라미터 값을 **퍼센트 해제하지 않고** 꺼냅니다.
+ *
+ * URLSearchParams.get() 은 값을 통째로 풀어버립니다. 그러면 값 안의 `%3A` 가
+ * `:` 이 되어 **구조 구분자와 구별되지 않습니다.** 쪼개기 전에 풀면
+ * `10:30` 이 `10` 으로 잘리고, `a;b` 는 조건 두 개가 됩니다. 조용히요.
+ *
+ * 그래서 순서를 지킵니다: **원본에서 꺼내고 → 쪼개고 → 조각마다 한 번 푼다.**
+ * 두 번 푸는 것도 문제입니다 — 값이 `%3A` 라는 글자를 담고 있으면 그것까지
+ * 콜론으로 바뀝니다.
+ */
+function rawParam(search, name) {
+  for (const pair of search.split('&')) {
+    const at = pair.indexOf('=')
+    if (at < 0) continue
+    if (pair.slice(0, at) === name) return pair.slice(at + 1)
+  }
+  return null
+}
+
+let warnedAboutParams = false
+
+/**
  * URL 검색 문자열을 질의로. 알 수 없는 값은 조용히 버립니다 —
  * 손으로 고친 링크나 옛 형식이 화면을 깨뜨리면 안 됩니다.
  *
- * @param {string|URLSearchParams} input
+ * **문자열을 넘기세요.** URLSearchParams 를 넘기면 값이 이미 풀린 뒤라
+ * 값 안의 `:` `;` `,` 를 구조 구분자와 구별할 수 없습니다. 그 경우
+ * 콘솔로 알려주고 최선을 다해 읽습니다.
+ *
+ * @param {string|URLSearchParams} input - `location.search` 에서 `?` 를 뗀 문자열
  * @param {Record<string, any>} [fields] - 주면 존재하지 않는 필드 조건을 걸러냅니다
  */
 export function decodeQuery(input, fields) {
-  const params = typeof input === 'string' ? new URLSearchParams(input) : input
+  if (typeof input !== 'string' && !warnedAboutParams) {
+    warnedAboutParams = true
+    console.warn(
+      '[HCT 질의] decodeQuery 에는 문자열을 넘기세요. URLSearchParams 는 값이 이미 ' +
+      '풀린 상태라, 값 안의 : ; , 가 구분자와 섞여 조건이 잘릴 수 있습니다.',
+    )
+  }
+  const search = typeof input === 'string' ? input.replace(/^\?/, '') : String(input)
+  const params = new URLSearchParams(search)
   const query = emptyQuery()
 
   query.search = params.get('q') ?? ''
   query.match = params.get('m') === 'any' ? 'any' : 'all'
 
-  const f = params.get('f')
+  const f = rawParam(search, 'f')
   if (f) {
     query.conditions = f.split(SEP_COND)
       .map((part) => {
@@ -109,7 +149,7 @@ export function decodeQuery(input, fields) {
       .filter(Boolean)
   }
 
-  const s = params.get('s')
+  const s = rawParam(search, 's')
   if (s) {
     query.sort = s.split(SEP_LIST)
       .map((part) => {
@@ -121,17 +161,41 @@ export function decodeQuery(input, fields) {
       .filter(Boolean)
   }
 
-  const g = params.get('g')
+  const g = dec(rawParam(search, 'g') ?? '') || null
   if (g && (!fields || fields[g])) query.groupBy = g
 
   return query
 }
 
+/** 이 모듈이 소유하는 파라미터. 나머지는 남의 것이므로 건드리지 않습니다. */
+const OWNED = ['q', 'f', 'm', 's', 'g']
+
+/**
+ * 기존 검색 문자열에서 **우리 것만** 갈아끼웁니다.
+ *
+ * 예전에는 검색 문자열을 통째로 갈아치웠습니다. 그러면 질의와 무관한
+ * 파라미터가 조용히 사라집니다 — 탭 상태(`?tab=activity`), 초대 토큰,
+ * 추적 파라미터 같은 것들이요. 필터를 한 번 건드리면 없어지는데, 사라진
+ * 것을 알아채기가 매우 어렵습니다.
+ *
+ * 값은 원본 그대로 옮깁니다. URLSearchParams 로 다시 만들면 남의
+ * 파라미터까지 재인코딩해서 링크 모양이 바뀝니다.
+ */
+function mergeIntoSearch(existing, encoded) {
+  const kept = existing.replace(/^\?/, '').split('&').filter((pair) => {
+    if (!pair) return false
+    const at = pair.indexOf('=')
+    const key = at < 0 ? pair : pair.slice(0, at)
+    return !OWNED.includes(key)
+  })
+  return [...kept, ...(encoded ? [encoded] : [])].join('&')
+}
+
 /** 현재 질의를 담은 공유용 절대 URL */
 export function queryToUrl(query, base = typeof location !== 'undefined' ? location.href : '') {
   const url = new URL(base)
-  const encoded = encodeQuery(query)
-  url.search = encoded
+  /* url.search 에 대입하면 남의 파라미터가 날아갑니다 */
+  url.search = mergeIntoSearch(url.search, encodeQuery(query))
   return url.toString()
 }
 
@@ -169,7 +233,8 @@ export function useQuerySync(query, setQuery, { fields, enabled = true } = {}) {
     const encoded = encodeQuery(query)
     if (encoded === lastPushed.current) return
     lastPushed.current = encoded
-    const url = encoded ? `${window.location.pathname}?${encoded}` : window.location.pathname
+    const search = mergeIntoSearch(window.location.search, encoded)
+    const url = search ? `${window.location.pathname}?${search}` : window.location.pathname
     window.history.replaceState(null, '', url)
   }, [query, enabled])
 

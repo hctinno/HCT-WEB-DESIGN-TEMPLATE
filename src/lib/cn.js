@@ -14,7 +14,10 @@ import { extendTailwindMerge } from 'tailwind-merge'
  *
  * tailwind-merge 는 표준 Tailwind 스케일만 알고 있으므로, 이 시스템이 추가한
  * 커스텀 값(h-control-md, text-metric, w-sidebar 등)을 아래에서 등록합니다.
- * tailwind.config.js 에 새 스케일을 추가하면 여기도 함께 갱신하세요.
+ * tailwind-preset.js 에 새 스케일을 추가하면 여기도 함께 갱신하세요.
+ * 빠뜨려도 **오류가 나지 않습니다** — 두 클래스가 나란히 남고 승자를 CSS
+ * 순서가 정합니다. 그래서 test/cn.test.mjs 가 프리셋의 모든 커스텀 값에
+ * 대해 실제로 충돌이 해소되는지 확인합니다.
  */
 const twMerge = extendTailwindMerge({
   extend: {

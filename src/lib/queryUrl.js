@@ -1,5 +1,5 @@
 import { useCallback, useEffect, useRef } from 'react'
-import { emptyQuery } from './query'
+import { emptyQuery } from './query.js'
 
 /**
  * 질의 ↔ URL 직렬화.

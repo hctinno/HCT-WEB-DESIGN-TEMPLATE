@@ -39,6 +39,11 @@ jobs:
       - name: 의존성 설치
         run: npm install --no-audit --no-fund
 
+      # 로직 층은 스키마 하나에서 모든 화면이 파생되는 자리입니다.
+      # applyQuery 가 조용히 틀리면 화면이 전부 함께 틀립니다.
+      - name: 단위 테스트
+        run: npm test
+
       - name: 디자인 규칙
         run: npm run lint:design
 

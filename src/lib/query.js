@@ -20,7 +20,7 @@
  *   - 그래야 저장·복원·URL 동기화·뷰 전환이 전부 공짜로 따라옵니다.
  */
 
-import { comparableValue, isEmptyValue, searchableText, formatValue, OPERATORS } from './fields'
+import { comparableValue, isEmptyValue, searchableText, formatValue, OPERATORS } from './fields.js'
 
 /** 빈 질의 */
 export function emptyQuery() {
@@ -167,8 +167,26 @@ export function applyQuery(records, query, fields) {
   return out
 }
 
-/** 정렬 토글: 없음 → 오름차순 → 내림차순 → 없음 */
+/**
+ * 정렬 토글: 없음 → 오름차순 → 내림차순 → 없음
+ *
+ * **질의 전체를 받아 질의 전체를 돌려줍니다.** `query.sort` 만 넘기지 마세요.
+ *
+ *   setQuery(toggleSort(query, key))            // 맞음
+ *   setQuery(q => ({ ...q, sort: toggleSort(q.sort, key) }))   // 틀림
+ *
+ * 틀린 쪽을 넘기면 `query.sort` 가 배열의 sort **메서드**가 되어
+ * `sort.find is not a function` 이라는, 원인을 짐작하기 어려운 오류가 납니다.
+ * 실제로 감사 로그 화면이 그 상태였고 정렬 헤더를 누르면 화면이 죽었습니다.
+ * 그래서 무엇이 잘못됐는지 직접 말해줍니다.
+ */
 export function toggleSort(query, fieldKey) {
+  if (Array.isArray(query)) {
+    throw new TypeError(
+      'toggleSort 는 질의 전체를 받습니다. query.sort 가 아니라 query 를 넘기세요: ' +
+      'setQuery(toggleSort(query, key))',
+    )
+  }
   const current = query.sort.find((s) => s.field === fieldKey)
   if (!current) return { ...query, sort: [{ field: fieldKey, direction: 'asc' }] }
   if (current.direction === 'asc') return { ...query, sort: [{ field: fieldKey, direction: 'desc' }] }

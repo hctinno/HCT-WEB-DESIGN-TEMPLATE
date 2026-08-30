@@ -141,7 +141,7 @@ export function AuditPage({ onNavigate }) {
             /* 감사 로그에는 선택도 편집도 없습니다 — 할 수 있는 일이 없으니까요 */
             selectable={false}
             sort={query.sort}
-            onToggleSort={(key) => setQuery((q) => ({ ...q, sort: toggleSort(q.sort, key) }))}
+            onToggleSort={(key) => setQuery((q) => ({ ...q, sort: toggleSort(q, key).sort }))}
             onRowClick={setDetail}
             activeKey={detail?.id}
             searchQuery={query.search}

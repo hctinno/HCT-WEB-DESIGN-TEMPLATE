@@ -1,4 +1,4 @@
-import { applyQuery, groupRecords } from './query'
+import { applyQuery, groupRecords } from './query.js'
 
 /**
  * 지표(Metric) 모델 — 대시보드가 목록과 같은 언어를 쓰게 만듭니다.

@@ -207,6 +207,13 @@ export function formatValue(field, value) {
 
 /** 상대 시간 — 관리도구는 절대 시각보다 '몇 분 전'이 유용한 경우가 많습니다 */
 export function formatRelative(value, now = Date.now()) {
+  /*
+   * 빈 값을 먼저 걸러냅니다. NaN 검사만으로는 부족합니다 —
+   * `new Date(null)` 은 NaN 이 아니라 **에포크(1970-01-01)** 입니다.
+   * 그래서 값이 없는 날짜가 "1970.01.01" 로 표시됐습니다. 한 번도 성공한
+   * 적 없는 작업의 "마지막 성공" 이 1970년으로 나오는 식입니다.
+   */
+  if (isEmptyValue(value)) return ''
   const t = value instanceof Date ? value.getTime() : new Date(value).getTime()
   if (Number.isNaN(t)) return ''
 
@@ -231,6 +238,8 @@ export function formatRelative(value, now = Date.now()) {
 }
 
 export function formatDate(value) {
+  /* new Date(null) === 에포크. formatRelative 와 같은 이유로 먼저 걸러냅니다. */
+  if (isEmptyValue(value)) return ''
   const d = value instanceof Date ? value : new Date(value)
   if (Number.isNaN(d.getTime())) return ''
   return `${d.getFullYear()}.${String(d.getMonth() + 1).padStart(2, '0')}.${String(d.getDate()).padStart(2, '0')}`

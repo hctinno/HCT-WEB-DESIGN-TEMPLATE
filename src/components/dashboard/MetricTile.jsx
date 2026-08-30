@@ -1,6 +1,7 @@
 import { cn } from '../../lib/cn'
 import { SkeletonText } from '../state/Skeleton'
 import { StatusBadge } from '../feedback/StatusBadge'
+import { foldSeries, OTHER_KEY, MAX_SERIES } from '../chart/chartTokens'
 
 /**
  * MetricTile — 지표 타일. 이전 StatCard 를 대체합니다.
@@ -170,23 +171,38 @@ export function Sparkline({ data = [], state = 'ok', height = 24, className }) {
  * "오류 412건"보다 "인증 380 / 결제 28 / 수집 4"가 훨씬 유용합니다.
  * 각 행이 자기 질의를 들고 있어 클릭하면 그 조건으로 목록에 들어갑니다.
  */
-export function BreakdownList({ items = [], onDrillDown, max, emptyMessage = '데이터 없음', className }) {
+export function BreakdownList({ items = [], onDrillDown, max, limit = MAX_SERIES,
+                               emptyMessage = '데이터 없음', className }) {
   if (items.length === 0) {
     return <p className={cn('py-4 text-center text-xs text-fg-tertiary', className)}>{emptyMessage}</p>
   }
-  const peak = max ?? Math.max(...items.map((i) => i.count), 1)
+
+  /*
+   * 항목이 많으면 접습니다. 담당자처럼 차원 값이 열 개를 넘는 경우가 실제로
+   * 있는데, 전부 늘어놓으면 위젯이 세로로 길어지기만 하고 상위 몇 개가
+   * 무엇인지는 오히려 안 보입니다.
+   *
+   * **자르는 게 아니라 접습니다.** 조각을 다 더했는데 총계와 다르면
+   * 사용자는 그때부터 이 화면의 숫자를 믿지 않습니다.
+   */
+  const shown = foldSeries(items, { limit })
+  const peak = max ?? Math.max(...shown.map((i) => i.count), 1)
 
   return (
     <ul className={cn('space-y-1.5', className)}>
-      {items.map((item) => (
+      {shown.map((item) => {
+        /* 접힌 묶음은 하나의 조건이 아니므로 드릴다운할 수 없습니다 */
+        const drill = item.key === OTHER_KEY ? undefined : onDrillDown
+        return (
         <li key={item.key}>
           <button
             type="button"
-            onClick={onDrillDown ? () => onDrillDown(item) : undefined}
-            disabled={!onDrillDown}
+            onClick={drill ? () => drill(item) : undefined}
+            disabled={!drill}
+            title={item.folded ? item.folded.map((f) => f.label).join(', ') : undefined}
             className={cn(
               'group w-full rounded-md px-1.5 py-1 text-left',
-              onDrillDown && 'hover:bg-bg-hover',
+              drill && 'hover:bg-bg-hover',
             )}
           >
             <div className="flex items-baseline justify-between gap-2">
@@ -209,7 +225,8 @@ export function BreakdownList({ items = [], onDrillDown, max, emptyMessage = '�
             </div>
           </button>
         </li>
-      ))}
+        )
+      })}
     </ul>
   )
 }

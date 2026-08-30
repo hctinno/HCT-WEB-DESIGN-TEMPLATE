@@ -14,6 +14,10 @@
 // 사람 눈으로 훑어서는 잡히지 않습니다.
 //
 // WCAG 2.1 A/AA 만 봅니다. AAA 는 이 제품의 목표가 아닙니다.
+//
+// 주의: build 와 build:lib 은 둘 다 dist/ 에 씁니다. 이 검사는 스스로 build 를
+// 돌리고 그 결과를 서빙하므로, **verify:consumer 와 동시에 돌리지 마세요** —
+// 저쪽이 npm pack → prepare → build:lib 으로 dist 를 갈아엎어서 404 가 납니다.
 import { chromium } from 'playwright'
 import { readFileSync, existsSync } from 'node:fs'
 import { createRequire } from 'node:module'
@@ -29,8 +33,24 @@ const axeSource = readFileSync(require.resolve('axe-core/axe.min.js'), 'utf8')
  * 필요한 검사는 아무도 안 돌립니다.
  */
 const GIVEN_PORT = process.argv[2]
-const PORT = GIVEN_PORT ?? '4173'
 let server = null
+
+/* 고정 포트를 쓰면 앞선 실행이 남긴 서버 때문에 "Port is already in use" 로
+   죽습니다. 실제로 계속 그랬습니다 — 검사를 돌리려고 포트를 정리하는 일이
+   생기면 안 됩니다. 커널에게 빈 포트를 물어봅니다. */
+async function freePort() {
+  const { createServer } = await import('node:net')
+  return new Promise((ok, no) => {
+    const s = createServer()
+    s.on('error', no)
+    s.listen(0, '127.0.0.1', () => {
+      const { port } = s.address()
+      s.close(() => ok(String(port)))
+    })
+  })
+}
+
+const PORT = GIVEN_PORT ?? (await freePort())
 
 if (!GIVEN_PORT) {
   server = spawn('npx', ['vite', 'preview', '--port', PORT, '--strictPort'], {

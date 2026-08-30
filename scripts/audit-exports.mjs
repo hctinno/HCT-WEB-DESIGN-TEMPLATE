@@ -22,9 +22,18 @@ function walk(dir, out = []) {
   return out
 }
 
-/** 배럴에서 내보내는 이름을 모읍니다 */
+/**
+ * 배럴에서 내보내는 이름을 모읍니다.
+ *
+ * 주석을 먼저 걷어냅니다. 배럴에 "이건 언제 쓰는 것" 을 적어두는 건 이
+ * 저장소의 방식인데, 안 걷어내면 주석 줄 전체가 이름으로 잡혀서 "쓰이지
+ * 않는 export" 로 오탐이 납니다. 실제로 그렇게 잡혔습니다 — 검사기 때문에
+ * 주석을 지우는 일이 생기면 안 됩니다.
+ */
 function barrelNames(file) {
   const src = readFileSync(file, 'utf8')
+    .replace(/\/\*[\s\S]*?\*\//g, '')
+    .replace(/\/\/[^\n]*/g, '')
   const names = []
   for (const m of src.matchAll(/export\s*\{([^}]*)\}/g)) {
     for (const part of m[1].split(',')) {

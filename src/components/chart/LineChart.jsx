@@ -1,6 +1,6 @@
 import { useMemo, useState } from 'react'
 import { cn } from '../../lib/cn'
-import { assignSeriesColors, axisPadLeft } from './chartTokens'
+import { assignSeriesColors, assignSeriesDash, axisPadLeft } from './chartTokens'
 import { useMeasuredWidth } from '../../lib/useMeasuredWidth'
 
 /**
@@ -13,6 +13,9 @@ import { useMeasuredWidth } from '../../lib/useMeasuredWidth'
  *   - 격자와 축은 물러나 있어야 합니다. 데이터가 가장 진해야 합니다.
  *   - 계열이 2개 이상이면 범례가 항상 있고, 4개 이하면 선 끝에 직접 라벨을 답니다.
  *     색만으로 정체를 전달하지 않습니다.
+ *   - **선마다 파선 패턴이 다릅니다.** 계열 색은 명도를 맞춰 놓아서 서로 구별되는
+ *     것이 색상뿐입니다. 흑백으로 인쇄하거나 색각 이상이 있으면 여섯 선이 한
+ *     덩어리가 됩니다. 파선이 그 두 번째 단서입니다 — 범례에도 같은 패턴이 나옵니다.
  *   - 값 글자는 계열 색이 아니라 텍스트 토큰을 씁니다.
  *   - 마우스를 올리면 세로 기준선과 함께 그 시점의 모든 계열 값을 보여줍니다.
  *     점마다 숫자를 찍어두면 읽을 수 없습니다.
@@ -36,6 +39,7 @@ export function LineChart({
   const [wrapRef, W] = useMeasuredWidth()
 
   const colors = useMemo(() => assignSeriesColors(series.map((s) => s.key)), [series])
+  const dashes = useMemo(() => assignSeriesDash(series.map((s) => s.key)), [series])
   const pointCount = Math.max(...series.map((s) => s.points.length), 0)
 
   const max = useMemo(() => {
@@ -105,7 +109,8 @@ export function LineChart({
                   />
                 )}
                 <path d={path} fill="none" stroke={colors[s.key]} strokeWidth="2"
-                      strokeLinecap="round" strokeLinejoin="round" />
+                      strokeDasharray={dashes[s.key] || undefined}
+                      strokeLinecap={dashes[s.key] ? 'butt' : 'round'} strokeLinejoin="round" />
                 {/* 호버 지점 표식 — 표면색 링을 둘러 겹쳐도 구분됩니다 */}
                 {hover != null && s.points[hover] != null && (
                   <circle cx={xAt(hover)} cy={yAt(s.points[hover])} r="4"
@@ -139,7 +144,12 @@ export function LineChart({
             {series.map((s) => (
               <p key={s.key} className="flex items-center justify-between gap-3 text-xs">
                 <span className="flex items-center gap-1.5 text-fg-secondary">
-                  <span className="h-2 w-2 shrink-0 rounded-sm" style={{ backgroundColor: colors[s.key] }} />
+                  {/* 툴팁도 범례와 같은 선 모양을 씁니다 — 여기만 사각형이면
+                      어느 줄이 어느 선인지 다시 추측해야 합니다 */}
+                  <svg width="14" height="8" viewBox="0 0 14 8" aria-hidden="true" className="shrink-0">
+                    <line x1="0" y1="4" x2="14" y2="4" stroke={colors[s.key]} strokeWidth="2"
+                          strokeDasharray={dashes[s.key] || undefined} />
+                  </svg>
                   {s.label}
                 </span>
                 <span className="tabular font-medium text-fg-primary">
@@ -152,7 +162,7 @@ export function LineChart({
       </div>
 
       {series.length >= 2 && (
-        <ChartLegend series={series} colors={colors} direct={directLabels} />
+        <ChartLegend series={series} colors={colors} dashes={dashes} direct={directLabels} />
       )}
     </div>
   )
@@ -161,13 +171,25 @@ export function LineChart({
 /**
  * 범례. 계열이 2개 이상이면 항상 있습니다.
  * 색만으로 정체를 전달하지 않기 위한 최소 장치입니다.
+ *
+ * dashes 를 주면 색 사각형 대신 **실제 선 모양**을 그립니다. 차트의 선이
+ * 파선인데 범례가 사각형이면 둘을 맞출 수 없습니다 — 범례는 차트에 그려진
+ * 것과 같은 것을 보여줘야 쓸모가 있습니다. 막대 차트처럼 파선이 없는
+ * 차트에서는 dashes 를 주지 않으면 되고, 그러면 사각형이 나옵니다.
  */
-export function ChartLegend({ series = [], colors = {}, values, className }) {
+export function ChartLegend({ series = [], colors = {}, dashes, values, className }) {
   return (
     <ul className={cn('mt-2 flex flex-wrap items-center gap-x-4 gap-y-1', className)}>
       {series.map((s) => (
         <li key={s.key} className="inline-flex items-center gap-1.5 text-xs text-fg-secondary">
-          <span className="h-2 w-2 shrink-0 rounded-sm" style={{ backgroundColor: colors[s.key] }} />
+          {dashes ? (
+            <svg width="18" height="8" viewBox="0 0 18 8" aria-hidden="true" className="shrink-0">
+              <line x1="0" y1="4" x2="18" y2="4" stroke={colors[s.key]} strokeWidth="2"
+                    strokeDasharray={dashes[s.key] || undefined} />
+            </svg>
+          ) : (
+            <span className="h-2 w-2 shrink-0 rounded-sm" style={{ backgroundColor: colors[s.key] }} />
+          )}
           {s.label}
           {values?.[s.key] != null && (
             <span className="tabular font-medium text-fg-primary">{values[s.key]}</span>

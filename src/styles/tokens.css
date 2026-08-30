@@ -162,13 +162,32 @@
      고정 순서로만 배정하고 순환시키지 않습니다 — 7번째 계열은 '기타'로 묶습니다.
      대비·색각 검증을 통과한 값입니다(라이트 표면 #FFFFFF 기준). */
   --chart-1: #2E5FD0;
-  --chart-2: #D4720E;
+  --chart-2: #CC6D0C;
   --chart-3: #00907A;
   --chart-4: #7A5AD8;
   --chart-5: #C94FA8;
   --chart-6: #A07B0E;
   --chart-grid: var(--color-border-subtle);
   --chart-axis: var(--color-border-default);
+
+  /* --- 순차형(히트맵) 색 ------------------------------------------------
+     "많다/적다" 를 진하기로 보여줍니다. 계열 색과 목적이 다릅니다 —
+     계열 색은 **무엇인지**, 순차형은 **얼마나인지** 를 말합니다.
+
+     칸에는 항상 숫자가 함께 찍힙니다. 그래서 이 색은 값을 전달하는 유일한
+     수단이 아니라 **읽는 속도를 높이는 보조**입니다. 따라서 검사 기준은
+     '칸 대 배경' 이 아니라 **칸 위의 글자가 4.5:1 을 넘는가** 입니다
+     (WCAG 1.4.11 은 값이 텍스트로 제공되면 적용되지 않습니다).
+
+     마지막 단계에서만 글자색이 뒤집힙니다. 그 짝은 chartTokens.js 의
+     CHART_SEQ 가 들고 있으니 화면에서 직접 고르지 마세요. */
+  --chart-seq-1: #E9F0FB;
+  --chart-seq-2: #C6D8F4;
+  --chart-seq-3: #96B4E9;
+  --chart-seq-4: #5A88D8;
+  --chart-seq-5: #2E5FD0;
+  --chart-seq-fg: #0F1419;
+  --chart-seq-fg-strong: #FFFFFF;
 
   /* --- 서체 -------------------------------------------------------------- */
   --font-sans: "Pretendard Variable", Pretendard, -apple-system, BlinkMacSystemFont,
@@ -271,6 +290,16 @@
   --chart-5: #D2519F;
   --chart-6: #9E7B0A;
 
+  /* 순차형 — 다크에서는 어두운 쪽에서 밝은 쪽으로 오릅니다.
+     글자는 1~4단계에서 밝은색, 5단계에서만 어두운색입니다. */
+  --chart-seq-1: #1B2A44;
+  --chart-seq-2: #243A62;
+  --chart-seq-3: #2F5289;
+  --chart-seq-4: #39619F;
+  --chart-seq-5: #5B8CF5;
+  --chart-seq-fg: #E6EAF0;
+  --chart-seq-fg-strong: #0F1419;
+
   }
 }
 
@@ -366,5 +395,15 @@
   --chart-4: #9478F5;
   --chart-5: #D2519F;
   --chart-6: #9E7B0A;
+
+  /* 순차형 — 다크에서는 어두운 쪽에서 밝은 쪽으로 오릅니다.
+     글자는 1~4단계에서 밝은색, 5단계에서만 어두운색입니다. */
+  --chart-seq-1: #1B2A44;
+  --chart-seq-2: #243A62;
+  --chart-seq-3: #2F5289;
+  --chart-seq-4: #39619F;
+  --chart-seq-5: #5B8CF5;
+  --chart-seq-fg: #E6EAF0;
+  --chart-seq-fg-strong: #0F1419;
 
 }

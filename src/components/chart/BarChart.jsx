@@ -1,5 +1,6 @@
 import { useMemo, useState } from 'react'
 import { cn } from '../../lib/cn'
+import { MatrixTable } from '../data/MatrixTable'
 import { assignSeriesColors, axisPadLeft } from './chartTokens'
 import { ChartLegend } from './LineChart'
 import { useMeasuredWidth } from '../../lib/useMeasuredWidth'
@@ -170,34 +171,21 @@ export function BarChart({
  *
  * 차트는 색과 모양으로 말합니다. 스크린리더 사용자, 인쇄, 정확한 값이
  * 필요한 사람에게는 표가 필요합니다. 차트 옆에 토글로 두세요.
+ *
+ * 표는 MatrixTable 이 그립니다. 예전에는 여기서 <table> 을 따로 짰는데,
+ * 같은 모양의 표가 저장소에 둘 있으면 밀도와 정렬이 반드시 어긋납니다
+ * (이 저장소가 lint 로 <table> 직접 작성을 막는 이유가 그것입니다).
+ *
+ * **열 지도를 켭니다.** 표 대체본의 목적은 "값을 정확히 읽는 것" 인데,
+ * 숫자만 나열하면 어느 칸이 큰지 보려고 전부 읽어야 합니다. 진하기가
+ * 있으면 차트에서 보던 것을 표에서도 그대로 봅니다. 숫자는 그대로 있으니
+ * 색을 못 봐도 잃는 것이 없습니다.
  */
-export function ChartTable({ series = [], data = [], formatValue = (n) => n.toLocaleString('ko-KR'), className }) {
+export function ChartTable({ series = [], data = [], formatValue, className }) {
+  const columns = series.map((s) => ({ key: s.key, label: s.label }))
+  const rows = data.map((d) => ({ key: d.label, label: d.label, values: d.values }))
   return (
-    <div className={cn('overflow-x-auto scroll-thin', className)}>
-      <table className="w-full border-collapse text-left">
-        <thead>
-          <tr>
-            <th scope="col" className="border-b border-line-default px-2 py-1 text-xs font-semibold text-fg-secondary">구분</th>
-            {series.map((s) => (
-              <th key={s.key} scope="col" className="border-b border-line-default px-2 py-1 text-right text-xs font-semibold text-fg-secondary">
-                {s.label}
-              </th>
-            ))}
-          </tr>
-        </thead>
-        <tbody>
-          {data.map((d) => (
-            <tr key={d.label}>
-              <th scope="row" className="border-b border-line-subtle px-2 py-1 text-sm font-normal text-fg-primary">{d.label}</th>
-              {series.map((s) => (
-                <td key={s.key} className="border-b border-line-subtle px-2 py-1 text-right text-sm tabular text-fg-primary">
-                  {formatValue(d.values[s.key] ?? 0)}
-                </td>
-              ))}
-            </tr>
-          ))}
-        </tbody>
-      </table>
-    </div>
+    <MatrixTable rowHeader="구분" columns={columns} rows={rows} heat
+                 formatValue={formatValue} className={className} />
   )
 }

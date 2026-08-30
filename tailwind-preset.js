@@ -137,6 +137,12 @@ export default {
         1: 'var(--chart-1)', 2: 'var(--chart-2)', 3: 'var(--chart-3)',
         4: 'var(--chart-4)', 5: 'var(--chart-5)', 6: 'var(--chart-6)',
         grid: 'var(--chart-grid)', axis: 'var(--chart-axis)',
+        /* 순차형 — 히트맵의 진하기. 배경과 그 위 글자색이 짝입니다.
+           짝을 고르는 규칙은 chartTokens.js 의 CHART_SEQ 가 들고 있습니다. */
+        'seq-1': 'var(--chart-seq-1)', 'seq-2': 'var(--chart-seq-2)',
+        'seq-3': 'var(--chart-seq-3)', 'seq-4': 'var(--chart-seq-4)',
+        'seq-5': 'var(--chart-seq-5)',
+        'seq-fg': 'var(--chart-seq-fg)', 'seq-fg-strong': 'var(--chart-seq-fg-strong)',
       },
     },
 

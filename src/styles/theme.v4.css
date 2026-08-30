@@ -125,6 +125,13 @@
   --color-chart-6: var(--chart-6);
   --color-chart-grid: var(--chart-grid);
   --color-chart-axis: var(--chart-axis);
+  --color-chart-seq-1: var(--chart-seq-1);
+  --color-chart-seq-2: var(--chart-seq-2);
+  --color-chart-seq-3: var(--chart-seq-3);
+  --color-chart-seq-4: var(--chart-seq-4);
+  --color-chart-seq-5: var(--chart-seq-5);
+  --color-chart-seq-fg: var(--chart-seq-fg);
+  --color-chart-seq-fg-strong: var(--chart-seq-fg-strong);
 
   /* 글꼴 */
   --font-sans: "Pretendard Variable", Pretendard, -apple-system, BlinkMacSystemFont,

@@ -40,7 +40,15 @@ export {
 /* 차트 */
 export { LineChart, ChartLegend } from './chart/LineChart'
 export { BarChart, ChartTable } from './chart/BarChart'
-export { CHART_SERIES, assignSeriesColors, STATUS_CHART_COLOR } from './chart/chartTokens'
+export {
+  CHART_SERIES, MAX_SERIES, assignSeriesColors, STATUS_CHART_COLOR,
+  /* 명도가 같은 팔레트를 보완하는 두 번째 단서. 선을 직접 그린다면 이것도 함께 쓰세요. */
+  SERIES_DASH, assignSeriesDash,
+  /* 계열이 색보다 많을 때 접는 도구. 자르지 않고 합쳐서 총계를 지킵니다. */
+  foldSeries, OTHER_KEY,
+  /* 순차형(히트맵) — 배경과 글자색이 짝으로 묶여 있습니다. */
+  CHART_SEQ, seqStep,
+} from './chart/chartTokens'
 
 /* 대시보드 */
 export { StatCard, StatGrid, ChartFrame } from './data/StatCard'

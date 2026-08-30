@@ -19,8 +19,18 @@ export function getStoredTheme() {
     const value = localStorage.getItem(STORAGE_KEY)
     if (value === 'light' || value === 'dark' || value === 'system') return value
   } catch {
-    /* 저장소 접근 불가 — 시스템 설정으로 처리 */
+    /* 저장소 접근 불가 — 아래 DOM 확인으로 넘어갑니다 */
   }
+
+  /* 저장된 선택이 없으면, 이미 문서에 찍혀 있는 값을 존중합니다.
+     호스트 환경(임베드·미리보기 등)이 뷰어의 테마를 data-theme 로 지정해
+     둔 경우, 여기서 'system' 을 반환하면 applyTheme 이 그 속성을 지워
+     뷰어가 고른 테마를 덮어쓰게 됩니다. */
+  const stamped = typeof document !== 'undefined'
+    ? document.documentElement.getAttribute('data-theme')
+    : null
+  if (stamped === 'light' || stamped === 'dark') return stamped
+
   return 'system'
 }
 

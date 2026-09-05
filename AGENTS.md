@@ -325,6 +325,15 @@ const accent = getComputedStyle(document.documentElement)
 원본은 **보고서 템플릿 저장소**(`hct-report-template` · `brand/hct/`)이며,
 보고서와 화면이 같은 자산을 쓰도록 옮겨 온 것입니다.
 
+**HCT 로고는 대표 로고입니다 — 화면이든 디자인 시안이든 예외 없이 씁니다.**
+실제 화면(AppShell 을 쓰는 모든 페이지)은 `SidebarBrand` 가 로고를 이미
+강제하므로 신경 쓸 일이 없지만, 사이드바가 없는 결과물 — 랜딩 페이지 시안,
+로그인/온보딩처럼 새로 짜는 화면, 디자인 리뷰용 비교 mockup(Artifact 등) —
+을 만들 때도 자체 제작 워드마크나 텍스트 로고, 플레이스홀더 로고로
+대신하지 말고 `src/assets/brand/` 의 실제 로고 파일(또는 그 파일을 담은
+`<Logo>`/`<LogoMark>`)을 그대로 씁니다. 배경 밝기에 맞는 파일을 고르는 것은
+아래 규칙과 동일합니다.
+
 ```jsx
 <Logo on="dark" height={22} />    {/* 어두운 사이드바 */}
 <Logo on="light" height={40} />   {/* 흰 로그인 카드 */}

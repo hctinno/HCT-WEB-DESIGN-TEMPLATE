@@ -5,7 +5,26 @@ import { isDarkActive } from '../../lib/theme'
    외부 파일 참조로 두면 정적 배포·임베드 환경에서 로고만 깨집니다. */
 import logoOnLight from '../../assets/brand/hct-logo-color.png'
 import logoOnDark from '../../assets/brand/hct-logo-white.png'
-import markGlyph from '../../assets/brand/hct-mark-white.png'
+import markOnLight from '../../assets/brand/hct-mark-color.png'
+import markOnDark from '../../assets/brand/hct-mark-white.png'
+
+/** `on="auto"` 일 때 현재 면의 밝기를 구독합니다. `Logo`·`LogoMark` 가 공유합니다. */
+function useSurfaceDark(on) {
+  const [autoDark, setAutoDark] = useState(false)
+
+  useEffect(() => {
+    if (on !== 'auto') return
+    const update = () => setAutoDark(isDarkActive())
+    update()
+    const mq = window.matchMedia('(prefers-color-scheme: dark)')
+    mq.addEventListener('change', update)
+    const observer = new MutationObserver(update)
+    observer.observe(document.documentElement, { attributes: true, attributeFilter: ['data-theme'] })
+    return () => { mq.removeEventListener('change', update); observer.disconnect() }
+  }, [on])
+
+  return on === 'dark' || (on === 'auto' && autoDark)
+}
 
 /**
  * Logo — HCT 회사 로고.
@@ -33,20 +52,7 @@ import markGlyph from '../../assets/brand/hct-mark-white.png'
  * @param {boolean} [props.withWordmark] - 회사명을 텍스트로 함께 표시
  */
 export function Logo({ on = 'auto', height = 24, withWordmark = false, className }) {
-  const [autoDark, setAutoDark] = useState(false)
-
-  useEffect(() => {
-    if (on !== 'auto') return
-    const update = () => setAutoDark(isDarkActive())
-    update()
-    const mq = window.matchMedia('(prefers-color-scheme: dark)')
-    mq.addEventListener('change', update)
-    const observer = new MutationObserver(update)
-    observer.observe(document.documentElement, { attributes: true, attributeFilter: ['data-theme'] })
-    return () => { mq.removeEventListener('change', update); observer.disconnect() }
-  }, [on])
-
-  const dark = on === 'dark' || (on === 'auto' && autoDark)
+  const dark = useSurfaceDark(on)
   const src = dark ? logoOnDark : logoOnLight
 
   return (
@@ -80,16 +86,31 @@ export function Logo({ on = 'auto', height = 24, withWordmark = false, className
  * 앞에서 잘라낸 것이라 "H"로 읽히지만, 벡터 원본이 아니라 래스터를 오려낸
  * 결과라 확대하면 계단현상이 보일 수 있습니다. SVG 가 확보되면 이 자산부터
  * 교체하세요.
+ *
+ * **`Logo` 와 똑같은 이유로 색상 반전 두 벌을 씁니다.** 진한 색 타일 위에
+ * 원색 글리프를 얹으면 대비가 죽습니다 — `on="dark"`(기본값)는 accent 타일
+ * 위에 흰 글리프를, `on="light"`는 옅은 accent 타일 위에 원색 글리프를
+ * 씁니다. 사이드바 레일처럼 타일 자체가 항상 어두운 자리에서는 `on="dark"`
+ * 를 명시하세요.
+ *
+ * @param {object} props
+ * @param {'light'|'dark'|'auto'} [props.on] - 마크가 놓이는 면의 밝기
+ * @param {number} [props.size] - px. 정사각형 한 변
  */
-export function LogoMark({ size = 32, className }) {
+export function LogoMark({ on = 'dark', size = 32, className }) {
+  const dark = useSurfaceDark(on)
   const padding = Math.round(size * 0.16)
   return (
     <span
       aria-label="HCT"
       style={{ width: size, height: size, padding }}
-      className={cn('inline-flex shrink-0 items-center justify-center rounded-lg bg-accent-solid', className)}
+      className={cn(
+        'inline-flex shrink-0 items-center justify-center rounded-lg',
+        dark ? 'bg-accent-solid' : 'bg-accent-subtle',
+        className,
+      )}
     >
-      <img src={markGlyph} alt="" className="block h-full w-full object-contain" />
+      <img src={dark ? markOnDark : markOnLight} alt="" className="block h-full w-full object-contain" />
     </span>
   )
 }

@@ -5,6 +5,7 @@ import { isDarkActive } from '../../lib/theme'
    외부 파일 참조로 두면 정적 배포·임베드 환경에서 로고만 깨집니다. */
 import logoOnLight from '../../assets/brand/hct-logo-color.png'
 import logoOnDark from '../../assets/brand/hct-logo-white.png'
+import markGlyph from '../../assets/brand/hct-mark-white.png'
 
 /**
  * Logo — HCT 회사 로고.
@@ -71,21 +72,24 @@ export function Logo({ on = 'auto', height = 24, withWordmark = false, className
  *
  * 워크스페이스 레일이나 접힌 사이드바처럼 폭이 없는 자리에서
  * 가로로 긴 로고를 억지로 줄이면 글자가 뭉갭니다. 이럴 때는
- * 워드마크 첫 글자를 씁니다.
+ * 워드마크 첫 글자 대신 **로고 자체에서 오려낸 "H"** 를 씁니다 — 타이핑한
+ * 글자를 넣으면 로고의 기울어진 획 스타일과 안 맞습니다.
+ *
+ * 원본 로고는 "HCT" 세 글자가 위쪽 사선 하나로 이어지는 다이내믹 슬랜트
+ * 형태라 획이 서로 맞닿아 있습니다. `hct-mark-*.png` 는 그 연결부 바로
+ * 앞에서 잘라낸 것이라 "H"로 읽히지만, 벡터 원본이 아니라 래스터를 오려낸
+ * 결과라 확대하면 계단현상이 보일 수 있습니다. SVG 가 확보되면 이 자산부터
+ * 교체하세요.
  */
 export function LogoMark({ size = 32, className }) {
+  const padding = Math.round(size * 0.16)
   return (
     <span
       aria-label="HCT"
-      style={{ width: size, height: size }}
-      className={cn(
-        'inline-flex shrink-0 items-center justify-center rounded-lg',
-        'bg-accent-solid font-bold text-fg-inverse',
-        size >= 32 ? 'text-sm' : 'text-xs',
-        className,
-      )}
+      style={{ width: size, height: size, padding }}
+      className={cn('inline-flex shrink-0 items-center justify-center rounded-lg bg-accent-solid', className)}
     >
-      H
+      <img src={markGlyph} alt="" className="block h-full w-full object-contain" />
     </span>
   )
 }

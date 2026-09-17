@@ -1,6 +1,6 @@
 {
   "_설명": "HCT 브랜드 설정. 원본은 hct-report-template 저장소의 brand/hct/brand.json 이며, 보고서와 화면이 같은 값을 쓰도록 여기에 옮겨 둡니다.",
-  "_출처": "dytc880915-commits/hct-report-template · brand/hct/",
+  "_출처": "hctinno/hct-report-template · brand/hct/",
   "company": "주식회사 에이치시티",
   "wordmark": "HCT",
   "logoColor": "#2F4A9C",

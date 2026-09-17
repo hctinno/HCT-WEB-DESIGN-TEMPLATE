@@ -339,7 +339,7 @@ npm run audit:charts
 ### 설치 방법이 태그에서 `release/` 브랜치로 바뀝니다
 
 ```bash
-npm i github:dytc880915-commits/hct-web-design-template#release/v1.1.0
+npm i github:hctinno/HCT-WEB-DESIGN-TEMPLATE#release/v1.1.0
 ```
 
 이 저장소는 에이전트가 원격 실행 환경에서 관리하는데, 그 환경은 브랜치

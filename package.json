@@ -49,14 +49,16 @@
   "license": "UNLICENSED",
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/dytc880915-commits/hct-web-design-template.git"
+    "url": "git+https://github.com/hctinno/HCT-WEB-DESIGN-TEMPLATE.git"
   },
   "sideEffects": [
     "*.css"
   ],
   "files": [
     "dist",
+    "src/pages",
     "src/styles",
+    "scripts/lint-design.mjs",
     "tailwind-preset.js",
     "tokens",
     "AGENTS.md"

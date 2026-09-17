@@ -138,13 +138,8 @@ node scripts/build-standalone.mjs        # dist-standalone/hct-console.html
 ### 1. 설치
 
 ```bash
-npm i github:hctinno/HCT-WEB-DESIGN-TEMPLATE#817e73f
+npm i github:hctinno/HCT-WEB-DESIGN-TEMPLATE#release/v1.4.0
 ```
-
-> **지금은 커밋 SHA 로 고정합니다.** 저장소를 옮기는 과정에서 `release/*`
-> 브랜치가 유실되어 아직 다시 만들지 않았습니다. 아래 설명의 `release/vX.Y.Z`
-> 방식은 그 브랜치를 복구한 뒤부터 유효합니다. SHA 는 브랜치보다 더 확실한
-> 고정이므로, 그때까지 이 명령을 그대로 쓰면 됩니다.
 
 **판을 반드시 고정하세요.** `#` 뒤를 빼면 기본 브랜치의 최신 커밋을
 가져갑니다 — 저장소에 무언가 푸시될 때마다 여러분의 다음 설치가 조용히
@@ -172,7 +167,7 @@ HTTP 403). 그래서 태그로 배포를 묶어두면, 코드는 다 준비됐�
 옮길 수 있지만 SHA 는 불가능합니다:
 
 ```bash
-npm i github:hctinno/HCT-WEB-DESIGN-TEMPLATE#4a402ab
+npm i github:hctinno/HCT-WEB-DESIGN-TEMPLATE#4f473f1
 ```
 
 보기 좋으라고 GitHub 릴리스(태그)를 따로 만드는 것은 자유입니다. 다만

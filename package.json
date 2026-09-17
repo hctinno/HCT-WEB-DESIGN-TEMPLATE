@@ -1,6 +1,6 @@
 {
   "name": "hct-web-design-template",
-  "version": "1.3.2",
+  "version": "1.4.0",
   "type": "module",
   "description": "HCT 대시보드·분석도구·관리도구용 디자인 시스템 템플릿",
   "scripts": {

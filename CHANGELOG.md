@@ -16,6 +16,60 @@
 
 ---
 
+## 미출시
+
+다음 릴리스에 함께 나갑니다. 로고 렌더 결과가 바뀌므로 **minor(v1.4.0)** 로
+판정합니다 — 눈에 보이는 변화는 patch 로 내보내지 않습니다.
+
+### 설치한 쪽에 화면 원형이 없었습니다
+
+AGENTS.md 는 패키지에 함께 배포되면서 **"`ListPage.jsx` 를 복사해서
+시작하세요"** 라고 안내합니다. 그런데 `files` 에 `src/pages` 가 없어서
+설치한 쪽에는 그 파일이 없었습니다. 문서가 가리키는 출발점이, 정작 그
+문서를 읽는 자리에는 없었습니다.
+
+같은 이유로 `scripts/lint-design.mjs` 도 빠져 있었습니다. "반드시
+통과시키세요" 라고 적어둔 검사기를 소비 프로젝트는 실행할 방법이
+없었습니다.
+
+둘 다 `files` 에 넣었습니다. 패키지는 256KB 입니다.
+
+```bash
+# 이제 설치한 쪽에서 바로 됩니다
+cp node_modules/hct-web-design-template/src/pages/ListPage.jsx src/pages/MyPage.jsx
+node node_modules/hct-web-design-template/scripts/lint-design.mjs src
+```
+
+→ 원형을 복사한 뒤 import 경로를 `hct-web-design-template` 로 바꾸세요.
+  원형은 저장소 안의 상대 경로(`../components`)를 씁니다.
+
+### 로고
+
+`LogoMark` 가 흰 글리프를 accent 타일에만 얹고 있어 밝은 면에서 대비가
+죽었습니다. `Logo` 와 같은 `on` prop 을 주어 밝은 면에는 옅은 타일 +
+원색 글리프를 쓰도록 했습니다(기본값 `dark` 로 기존 동작 유지).
+
+타이핑한 "H" 대신 **로고에서 오려낸 글리프**를 씁니다. 원본 로고는 세 글자가
+사선 하나로 이어지는 형태라, 타이핑한 글자는 획 스타일이 맞지 않았습니다.
+
+→ `LogoMark` 를 밝은 면에 쓰고 있었다면 모양이 달라집니다.
+
+### DESIGN.md
+
+색·타이포·간격·레이아웃·로고 규칙만 모은 문서를 새로 두었습니다.
+AGENTS.md 전체를 읽지 않아도 되는 사람에게 보여주기 위한 것입니다.
+
+### 저장소 이관 정리
+
+`package.json` · README · CHANGELOG · `tokens/brand.json` 이 삭제된 구 계정을
+가리키고 있었습니다. `hctinno` 로 고쳤습니다.
+
+README 의 설치 명령은 `release/v1.1.0` 을 안내했지만 그 브랜치는 이관
+과정에서 유실되어 존재하지 않습니다. 따라 하면 실패하므로 동작하는 커밋
+SHA 로 바꿨습니다. `release/` 브랜치를 복구하면 원래 방식으로 돌아갑니다.
+
+---
+
 ## v1.3.2
 
 문서가 가리키는 이름이 실제로 있는지 아무도 확인하지 않고 있었습니다.

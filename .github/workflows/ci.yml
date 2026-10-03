@@ -68,10 +68,14 @@ jobs:
       # 화면과 토큰이 어긋나므로, 생성 결과가 커밋된 것과 같은지 확인합니다.
       # v4 테마는 이 저장소의 미리보기가 쓰지 않아(미리보기는 v3), 여기서
       # 확인하지 않으면 갈라진 채로 배포됩니다.
+      #
+      # DESIGN.md 도 생성물입니다. 패키지 밖(다른 프레임워크 · 다른 에이전트)에
+      # 파일 하나로 넘기는 명세라, 토큰이 바뀌었는데 md 가 옛 값이면 그 화면들만
+      # 조용히 다른 색이 됩니다. 설명 문장은 scripts/design-md.template.md 에서 고칩니다.
       - name: 생성 파일이 최신인지
         run: |
           npm run tokens:build
-          git diff --exit-code -- src/styles/palettes.css src/styles/theme.v4.css \
+          git diff --exit-code -- src/styles/palettes.css src/styles/theme.v4.css DESIGN.md \
             || { echo "::error::원본을 고친 뒤 'npm run tokens:build' 를 실행하고 커밋하세요."; exit 1; }
 
       - name: 라이브러리 빌드
@@ -98,6 +102,12 @@ jobs:
           npm install --no-audit --no-fund
           npx playwright install --with-deps chromium
           npm run audit:a11y
+
+      # DESIGN.md 의 값은 생성기가 브라우저 없이 계산합니다. 그 계산이 브라우저와
+      # 같은지를, md 의 CSS 블록만 넣은 화면과 저장소 CSS 를 넣은 화면을 실제
+      # 크로미엄에서 비교해 확인합니다. 크로미엄이 이미 깔려 있는 이 잡에서 돌립니다.
+      - name: DESIGN.md 검산 (브라우저)
+        run: npm run audit:design-md
 
   # 다른 프로젝트에서 설치했을 때 실제로 동작하는지까지 확인합니다.
   # Tailwind v3 와 v4 양쪽으로 진짜 프로젝트를 만들어 설치하고 빌드합니다.

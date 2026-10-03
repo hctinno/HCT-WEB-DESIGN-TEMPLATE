@@ -15,8 +15,9 @@
     "audit:exports": "node scripts/audit-exports.mjs",
     "audit:charts": "node scripts/audit-chart-colors.mjs",
     "audit:docs": "node scripts/audit-docs.mjs",
+    "audit:design-md": "node scripts/audit-design-md.mjs",
     "verify:consumer": "npm pack --pack-destination /tmp && node scripts/verify-consumer.mjs /tmp/hct-web-design-template-$npm_package_version.tgz",
-    "tokens:build": "node scripts/build-palettes.mjs && node scripts/build-v4-theme.mjs && node scripts/audit-chart-colors.mjs",
+    "tokens:build": "node scripts/build-palettes.mjs && node scripts/build-v4-theme.mjs && node scripts/audit-chart-colors.mjs && node scripts/build-design-md.mjs",
     "prepare": "npm run build:lib"
   },
   "peerDependencies": {

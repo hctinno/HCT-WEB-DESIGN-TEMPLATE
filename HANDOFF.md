@@ -16,6 +16,7 @@
 | 기본 브랜치 | `main` |
 | 현재 판 | **v1.4.0** — `release/v1.4.0` |
 | 설치 | `npm i github:hctinno/HCT-WEB-DESIGN-TEMPLATE#release/v1.4.0` |
+| 파일 하나짜리 명세 | `DESIGN.md` (생성 파일) — https://raw.githubusercontent.com/hctinno/HCT-WEB-DESIGN-TEMPLATE/main/DESIGN.md |
 | CI | PR 과 `main` 푸시 양쪽에서 동작 (verify · a11y · consume) |
 
 ---
@@ -79,6 +80,20 @@
 콘솔 오류도 없이 "결과가 없습니다"만 뜹니다. `lint:design` 도 이건 잡지
 못합니다. 확신이 없으면 원형의 실제 사용례를 열어 확인하세요.
 
+### `DESIGN.md` 는 직접 고치지 마세요
+
+생성 파일입니다. 패키지를 쓰지 않는 쪽(다른 프레임워크 · 다른 에이전트)에
+파일 하나로 넘기는 명세라, 토큰과 어긋나면 그 화면들만 조용히 다른 색이 됩니다.
+
+- 값은 토큰에서 옵니다. 토큰을 고쳤으면 `npm run tokens:build` 후 커밋합니다.
+- 설명 문장은 `scripts/design-md.template.md`, 토큰별 용도 설명은
+  `scripts/build-design-md.mjs` 의 `USE` 에서 고칩니다.
+- 토큰을 새로 만들면 생성기가 "분류되지 않은 토큰" 또는 "용도 설명이 없는
+  토큰" 으로 멈춥니다 — `GROUPS` · `USE` 에 넣으면 됩니다.
+- CI 가 두 번 확인합니다: verify 잡은 다시 생성한 결과가 커밋된 것과 같은지,
+  a11y 잡(`npm run audit:design-md`)은 md 의 CSS 만으로 계산한 값이 저장소
+  CSS 와 같은지 실제 크로미엄으로 봅니다.
+
 ### `package-lock.json` 은 커밋하지 않습니다
 
 `.gitignore` 에 있습니다. CI 도 `npm install` 을 씁니다. `npm ci` 는 lock
@@ -117,9 +132,10 @@ npm run lint:design    # 디자인 규칙 — 실패하면 머지 불가
 npm run audit:charts   # 차트 색 대비
 npm run audit:docs     # 문서가 가리키는 이름이 실재하는지
 npm run audit:exports  # 아무도 안 쓰는 공개 컴포넌트
-npm run tokens:build   # 토큰을 고쳤다면 생성물 재생성 후 커밋
+npm run tokens:build   # 토큰을 고쳤다면 생성물(팔레트 CSS · v4 테마 · DESIGN.md) 재생성 후 커밋
 npm run build:lib && npm run build
 npm run audit:a11y     # 전 화면 × 2폭 × 2테마 (WCAG 2.1 A/AA)
+npm run audit:design-md  # DESIGN.md 의 CSS 를 브라우저로 검산
 npm run verify:consumer  # v3·v4 로 진짜 설치해서 빌드
 ```
 

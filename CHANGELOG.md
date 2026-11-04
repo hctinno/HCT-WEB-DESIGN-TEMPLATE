@@ -45,7 +45,7 @@
   이름("HCT 스테이징")이 어긋난다고 30개 화면에서 실패시키던 것을 고친 것입니다(`main` 에서도
   같은 실패). 모양은 같습니다.
 
-설치(릴리스 브랜치를 만든 뒤):
+설치:
 
 ```bash
 npm i github:hctinno/HCT-WEB-DESIGN-TEMPLATE#release/v2.0.0

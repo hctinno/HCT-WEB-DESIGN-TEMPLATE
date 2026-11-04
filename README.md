@@ -139,7 +139,7 @@ node scripts/build-standalone.mjs        # dist-standalone/hct-console.html
 ### 1. 설치
 
 ```bash
-npm i github:hctinno/HCT-WEB-DESIGN-TEMPLATE#release/v1.4.0
+npm i github:hctinno/HCT-WEB-DESIGN-TEMPLATE#release/v2.0.0
 ```
 
 **판을 반드시 고정하세요.** `#` 뒤를 빼면 기본 브랜치의 최신 커밋을

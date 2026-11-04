@@ -19,7 +19,7 @@ import { JobsPage } from './pages/JobsPage'
 import { IntegrationsPage } from './pages/IntegrationsPage'
 import { OnboardingPage } from './pages/OnboardingPage'
 import { BillingPage } from './pages/BillingPage'
-import { applyTheme, getStoredTheme, applyPalette, getStoredPalette, initTheme, initPalette, PALETTES } from './lib/theme'
+import { applyTheme, getStoredTheme, initTheme, initPalette } from './lib/theme'
 import { ToastProvider } from './components/feedback/Toast'
 
 /**
@@ -29,8 +29,7 @@ import { ToastProvider } from './components/feedback/Toast'
  * 이 연결이 두 화면이 **같은 데이터 모델을 공유한다**는 증거입니다.
  * 실제 앱에서는 라우터가 이 역할을 합니다(질의를 URL 에 직렬화).
  *
- * 하단 컨트롤의 팔레트 전환은 미리보기용입니다. 실제 제품은 팔레트를
- * 하나 정해 고정합니다 — theme.js 의 DEFAULT_PALETTE 를 바꾸세요.
+ * 팔레트는 hct 하나라 하단 컨트롤에는 화면 고르기와 라이트·다크·시스템만 있습니다.
  */
 /**
  * 미리보기 화면 목록.
@@ -97,12 +96,9 @@ function Preview() {
   const [pagesOpen, setPagesOpen] = useState(false)
   const [handoffQuery, setHandoffQuery] = useState(null)
   const [theme, setTheme] = useState(getStoredTheme)
-  const [palette, setPalette] = useState(getStoredPalette)
-  const [open, setOpen] = useState(false)
   const [shown, setShown] = useState(false)
 
   useEffect(() => { applyTheme(theme) }, [theme])
-  useEffect(() => { applyPalette(palette) }, [palette])
 
   const drillDown = (query) => { setHandoffQuery(query); setPage('list') }
 
@@ -116,7 +112,6 @@ function Preview() {
     const target = NAV_TO_PAGE[id] ?? id
     if (PAGE_IDS.includes(target)) { setHandoffQuery(null); setPage(target) }
   }
-  const current = PALETTES.find((p) => p.id === palette)
   const currentPage = PAGE_GROUPS.flatMap((g) => g.pages).find((p) => p.id === page)
 
   return (
@@ -176,42 +171,11 @@ function Preview() {
           </div>
         )}
 
-        {shown && open && (
-          <div className="w-[248px] rounded-lg border border-line-default bg-bg-raised p-1.5 shadow-overlay">
-            <p className="px-1.5 pb-1 pt-0.5 text-micro font-semibold uppercase tracking-[0.06em] text-fg-tertiary">
-              색 팔레트
-            </p>
-            {PALETTES.map((p) => (
-              <button
-                key={p.id}
-                type="button"
-                onClick={() => setPalette(p.id)}
-                aria-pressed={palette === p.id}
-                className={
-                  'flex w-full items-center gap-2 rounded-md px-1.5 py-1.5 text-left ' +
-                  (palette === p.id ? 'bg-accent-subtle' : 'hover:bg-bg-hover')
-                }
-              >
-                <Swatch id={p.id} />
-                <span className="min-w-0 flex-1">
-                  <span className={
-                    'block truncate text-sm ' +
-                    (palette === p.id ? 'font-semibold text-accent-text' : 'text-fg-primary')
-                  }>
-                    {p.label}
-                  </span>
-                  <span className="block truncate text-micro text-fg-tertiary">{p.tagline}</span>
-                </span>
-              </button>
-            ))}
-          </div>
-        )}
-
         {shown && (
           <div className="flex items-center gap-1 rounded-lg border border-line-default bg-bg-raised p-1 shadow-lg">
             <button
               type="button"
-              onClick={() => { setPagesOpen((v) => !v); setOpen(false) }}
+              onClick={() => setPagesOpen((v) => !v)}
               aria-expanded={pagesOpen}
               className={
                 'flex h-control-sm items-center gap-1.5 rounded-md px-2 text-xs font-medium ' +
@@ -227,25 +191,12 @@ function Preview() {
                 {mode === 'light' ? '라이트' : mode === 'dark' ? '다크' : '시스템'}
               </Chip>
             ))}
-            <span className="mx-0.5 h-4 w-px bg-line-default" />
-            <button
-              type="button"
-              onClick={() => { setOpen((v) => !v); setPagesOpen(false) }}
-              aria-expanded={open}
-              className={
-                'flex h-control-sm items-center gap-1.5 rounded-md px-2 text-xs font-medium ' +
-                (open ? 'bg-accent-subtle text-accent-text' : 'text-fg-secondary hover:bg-bg-hover')
-              }
-            >
-              <Swatch id={palette} />
-              {current?.label}
-            </button>
           </div>
         )}
 
         <button
           type="button"
-          onClick={() => { setShown((v) => !v); if (shown) { setOpen(false); setPagesOpen(false) } }}
+          onClick={() => { setShown((v) => !v); if (shown) setPagesOpen(false) }}
           aria-label={shown ? '미리보기 컨트롤 숨기기' : '미리보기 컨트롤 보기'}
           title="미리보기 컨트롤"
           className="flex h-8 w-8 items-center justify-center rounded-full border border-line-default bg-bg-raised text-fg-secondary shadow-lg hover:text-fg-primary"

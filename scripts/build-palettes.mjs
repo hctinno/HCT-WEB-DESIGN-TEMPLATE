@@ -97,7 +97,7 @@ let css = `/* ==================================================================
    원본: tokens/palettes.json
    생성: npm run tokens:build
 
-   사용법:  <html data-palette="graphite">
+   사용법:  <html data-palette="hct">
             속성이 없으면 기본 팔레트(DEFAULT)가 그대로 적용됩니다.
 
    기본 팔레트는 :root 에도 함께 걸립니다. 속성을 안 붙였을 때 어느 팔레트도

@@ -16,6 +16,43 @@
 
 ---
 
+## v2.0.0
+
+**팔레트를 `hct` 하나로 줄였습니다.** 팔레트 값이 지워졌으므로 **major** 입니다.
+
+### 깨지는 것
+
+- `data-palette="navy"` · `"arctic"` · `"graphite"` · `"plum"` · `"indigo"` 가 더는 색을
+  바꾸지 않습니다. 붙어 있으면 무시되고 `hct` 로 그려집니다.
+- `PALETTES` 가 한 항목(`hct`)만 갖습니다. 목록을 돌며 고르기 화면을 만든 쪽은
+  고르기 UI 를 지우세요.
+- 저장된 선택(`hct-palette`)은 `PALETTE_VERSION` 이 4 → 5 로 바뀌어 한 번 버려집니다.
+
+### 그대로인 것
+
+- `hct` 의 모든 색 값(라이트·다크, 사이드바, 강조)과 상태 색. 화면 모양은 바뀌지 않습니다.
+- `applyPalette` · `getStoredPalette` · `initPalette` · `DEFAULT_PALETTE` 와 `data-palette`
+  속성 — 브랜드 교체 자리로 남겼습니다.
+
+### 그 밖
+
+- 미리보기의 팔레트 전환 메뉴를 지웠습니다. 그 메뉴가 쓰던 `Swatch` 는 정의되지
+  않은 컴포넌트라 메뉴를 펼치면 오류가 났습니다.
+- `README.md` · `AGENTS.md` §13 · `DESIGN.md` 를 팔레트 하나 기준으로 고쳤고, 쓰지 않는
+  팔레트 캡처 4장을 지웠습니다.
+- 작업 공간 레일(`WorkspaceRail`) 단추의 접근 이름에 안읽음 수를 넣고, 숫자 배지를 단추
+  밖으로 옮겼습니다. axe-core 4.14 의 `label-content-name-mismatch` 가 보이는 글자("S2")와
+  이름("HCT 스테이징")이 어긋난다고 30개 화면에서 실패시키던 것을 고친 것입니다(`main` 에서도
+  같은 실패). 모양은 같습니다.
+
+설치(릴리스 브랜치를 만든 뒤):
+
+```bash
+npm i github:hctinno/HCT-WEB-DESIGN-TEMPLATE#release/v2.0.0
+```
+
+---
+
 ## v1.4.0
 
 로고 렌더 결과가 바뀌므로 **minor** 입니다 — 눈에 보이는 변화는 patch 로

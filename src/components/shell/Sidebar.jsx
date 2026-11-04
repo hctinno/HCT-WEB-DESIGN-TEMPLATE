@@ -50,29 +50,35 @@ export function WorkspaceRail({ items = [], activeId, onSelect, footer }) {
     <div className="flex w-rail shrink-0 flex-col items-center gap-1.5 border-r border-sidebar-border bg-sidebar-rail py-2">
       {items.map((item) => {
         const active = item.id === activeId
+        const unread = item.badge > 0 && !active
+        /* 이름은 aria-label 하나로 줍니다. 안읽음 수는 이름에 함께 넣습니다. */
+        const name = unread ? `${item.label}, 안읽음 ${item.badge > 99 ? '99개 이상' : `${item.badge}개`}` : item.label
         return (
-          <button
-            key={item.id}
-            type="button"
-            onClick={() => onSelect?.(item.id)}
-            title={item.label}
-            aria-label={item.label}
-            aria-current={active ? 'true' : undefined}
-            className={cn(
-              'relative flex h-8 w-8 items-center justify-center rounded-lg text-sm font-semibold',
-              'transition-colors duration-instant',
-              active
-                ? 'bg-accent-solid text-fg-inverse'
-                : 'bg-sidebar-hover text-sidebar-muted hover:text-sidebar-fg',
-            )}
-          >
-            {item.initial ?? item.label.charAt(0)}
-            {item.badge > 0 && !active && (
-              <span className="absolute -right-0.5 -top-0.5 flex h-4 min-w-4 items-center justify-center rounded-full bg-sidebar-badge-bg px-1 text-micro font-bold tabular text-sidebar-badge-fg">
+          <span key={item.id} className="relative flex">
+            <button
+              type="button"
+              onClick={() => onSelect?.(item.id)}
+              title={item.label}
+              aria-label={name}
+              aria-current={active ? 'true' : undefined}
+              className={cn(
+                'flex h-8 w-8 items-center justify-center rounded-lg text-sm font-semibold',
+                'transition-colors duration-instant',
+                active
+                  ? 'bg-accent-solid text-fg-inverse'
+                  : 'bg-sidebar-hover text-sidebar-muted hover:text-sidebar-fg',
+              )}
+            >
+              {item.initial ?? item.label.charAt(0)}
+            </button>
+            {/* 배지는 단추 밖에 둡니다 — 단추 안에 숫자가 있으면 보이는 글자("S2")가
+                접근 이름과 어긋납니다(axe label-content-name-mismatch). 수는 이름에 들어 있습니다. */}
+            {unread && (
+              <span aria-hidden="true" className="pointer-events-none absolute -right-0.5 -top-0.5 flex h-4 min-w-4 items-center justify-center rounded-full bg-sidebar-badge-bg px-1 text-micro font-bold tabular text-sidebar-badge-fg">
                 {item.badge > 99 ? '99+' : item.badge}
               </span>
             )}
-          </button>
+          </span>
         )
       })}
       {footer && <div className="mt-auto">{footer}</div>}

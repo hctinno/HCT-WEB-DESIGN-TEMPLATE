@@ -73,14 +73,15 @@ export function isDarkActive() {
 
 const PALETTE_KEY = 'hct-palette'
 
-/** 선택 가능한 팔레트. tokens/palettes.json 과 같은 순서를 유지하세요. */
+/**
+ * 팔레트 목록. tokens/palettes.json 과 같은 내용을 유지하세요.
+ *
+ * 제품 팔레트는 HCT 하나입니다(v2.0.0 에서 네이비·아크틱·그래파이트·플럼·인디고 제거).
+ * 브랜드가 바뀌면 이 항목과 palettes.json 을 함께 고칩니다. data-palette 축은
+ * 그 교체 자리로 남겨 둡니다.
+ */
 export const PALETTES = [
-  { id: 'hct',      label: 'HCT',        tagline: '로고색 강조 · 짙은 남색 사이드바' },
-  { id: 'navy',     label: '네이비',     tagline: '짙은 남색 사이드바 · 흰 콘텐츠' },
-  { id: 'arctic',   label: '아크틱',     tagline: '전체 화이트 · 파랑 강조' },
-  { id: 'graphite', label: '그래파이트', tagline: '무채색 강조 · 따뜻한 중성색' },
-  { id: 'plum',     label: '플럼',       tagline: '어두운 자두색 사이드바' },
-  { id: 'indigo',   label: '인디고',     tagline: '채도 낮춘 남보라 · 중립 회색' },
+  { id: 'hct', label: 'HCT', tagline: '로고색 강조 · 짙은 남색 사이드바' },
 ]
 
 /**
@@ -91,7 +92,7 @@ export const PALETTES = [
  * 있었습니다 — 배경이 따뜻해 보인 이유가 예전에 고른 팔레트가 저장돼
  * 있어서였습니다. 버전이 다르면 저장된 선택을 한 번 버립니다.
  */
-export const PALETTE_VERSION = '4'
+export const PALETTE_VERSION = '5'
 
 export const DEFAULT_PALETTE = 'hct'
 

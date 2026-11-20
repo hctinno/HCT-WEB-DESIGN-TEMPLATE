@@ -75,7 +75,7 @@ jobs:
       - name: 생성 파일이 최신인지
         run: |
           npm run tokens:build
-          git diff --exit-code -- src/styles/palettes.css src/styles/theme.v4.css DESIGN.md \
+          git diff --exit-code -- src/styles/palettes.css src/styles/adaptive.css src/styles/theme.v4.css DESIGN.md \
             || { echo "::error::원본을 고친 뒤 'npm run tokens:build' 를 실행하고 커밋하세요."; exit 1; }
 
       - name: 라이브러리 빌드
@@ -108,6 +108,16 @@ jobs:
       # 크로미엄에서 비교해 확인합니다. 크로미엄이 이미 깔려 있는 이 잡에서 돌립니다.
       - name: DESIGN.md 검산 (브라우저)
         run: npm run audit:design-md
+
+      # DESIGN.md §7 부품 카드의 HTML + CSS 를 실제 React 컴포넌트와 나란히 그려
+      # 크기 · 여백 · 글자 · 색이 같은지 라이트 · 다크 · 대비 증가 · 터치에서 비교합니다.
+      - name: 부품 카드 대조 (브라우저)
+        run: npm run audit:cards
+
+      # Apple HIG 에서 옮긴 기준 — 대비 증가 · 터치 44px · 글자 크기 · 움직임 줄이기.
+      # audit:a11y 가 만든 운영 빌드를 그대로 씁니다.
+      - name: HIG 기준 실측 (브라우저)
+        run: node scripts/audit-hig.mjs
 
   # 다른 프로젝트에서 설치했을 때 실제로 동작하는지까지 확인합니다.
   # Tailwind v3 와 v4 양쪽으로 진짜 프로젝트를 만들어 설치하고 빌드합니다.

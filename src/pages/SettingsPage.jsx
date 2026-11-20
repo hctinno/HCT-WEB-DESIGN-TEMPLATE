@@ -5,6 +5,7 @@ import {
   TextField, SelectField, Combobox, Button, Banner, useToast, useForm,
 } from '../components'
 import { AppFrame } from './_shell'
+import { scrollBehavior } from '../lib/motion'
 
 /**
  * 화면 원형 3: 설정
@@ -24,7 +25,7 @@ export function SettingsPage({ onNavigate }) {
      상태만 바꾸고 화면이 그대로면 눌리지 않은 것과 같습니다. */
   const goToSection = (id) => {
     setSection(id)
-    document.getElementById(`sec-${id}`)?.scrollIntoView({ behavior: 'smooth', block: 'start' })
+    document.getElementById(`sec-${id}`)?.scrollIntoView({ behavior: scrollBehavior(), block: 'start' })
   }
 
   const initialValues = useMemo(() => ({
@@ -80,7 +81,7 @@ export function SettingsPage({ onNavigate }) {
 
   const focusField = (key) => {
     document.getElementById(`f-${key}`)?.focus()
-    document.getElementById(`f-${key}`)?.scrollIntoView({ block: 'center', behavior: 'smooth' })
+    document.getElementById(`f-${key}`)?.scrollIntoView({ block: 'center', behavior: scrollBehavior() })
   }
 
   const SECTIONS = [

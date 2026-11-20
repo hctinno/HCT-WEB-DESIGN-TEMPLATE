@@ -91,11 +91,59 @@
         "badgeFg": "#FFFFFF",
         "rail": "#080D15"
       }
+    },
+    "contrastMore": {
+      "light": {
+        "--color-text-secondary": "#2E3847",
+        "--color-text-tertiary": "#445062",
+        "--color-text-disabled": "#616D7E",
+        "--color-text-link": "#263C80",
+        "--color-border-subtle": "#A7B3C4",
+        "--color-border-default": "#616D7E",
+        "--color-border-strong": "#445062",
+        "--color-border-focus": "#1F3166",
+        "--color-accent-solid": "#263C80",
+        "--color-accent-solid-hover": "#1F3166",
+        "--color-accent-text": "#1F3166",
+        "--color-accent-border": "#5D79BE",
+        "--color-success-text": "#14532D",
+        "--color-warning-text": "#78350F",
+        "--color-danger-text": "#7F1D1D",
+        "--color-info-text": "#1E3A8A",
+        "--color-review-text": "#4C1D95",
+        "--color-neutral-text": "#2E3847",
+        "--color-sidebar-fg-muted": "#D3DBEC",
+        "--color-sidebar-fg-subtle": "#AAB7D2"
+      },
+      "dark": {
+        "--color-text-primary": "#F5F7FA",
+        "--color-text-secondary": "#C9D1DC",
+        "--color-text-tertiary": "#A5B0BF",
+        "--color-text-disabled": "#7D8896",
+        "--color-text-link": "#BAC8E8",
+        "--color-border-subtle": "#45505F",
+        "--color-border-default": "#6B7685",
+        "--color-border-strong": "#8A95A4",
+        "--color-border-focus": "#BAC8E8",
+        "--color-accent-solid": "#8EA4D5",
+        "--color-accent-solid-hover": "#BAC8E8",
+        "--color-accent-text": "#BAC8E8",
+        "--color-accent-border": "#5D79BE",
+        "--color-success-text": "#86EFAC",
+        "--color-warning-text": "#FDE68A",
+        "--color-danger-text": "#FCA5A5",
+        "--color-info-text": "#BFD4FF",
+        "--color-review-text": "#DDD0FE",
+        "--color-neutral-text": "#C9D1DC",
+        "--color-sidebar-fg-muted": "#C9D1DC",
+        "--color-sidebar-fg-subtle": "#A5B0BF"
+      }
     }
   },
   "$meta": {
     "description": "교체 가능한 색 팔레트. tokens.css 의 원시 변수만 덮어쓰므로 시맨틱 레이어는 그대로입니다.",
     "howItWorks": "scripts/build-palettes.mjs 가 이 파일에서 src/styles/palettes.css 를 생성합니다. 직접 CSS 를 고치지 말고 여기를 고친 뒤 npm run tokens:build 를 실행하세요.",
-    "statusColorsArePalette Independent": "상태 색(성공·주의·위험·정보·검토)은 팔레트가 바뀌어도 그대로입니다. 의미를 나르는 색이라 제품 전체에서 고정되어야 합니다."
+    "statusColorsArePalette Independent": "상태 색(성공·주의·위험·정보·검토)은 팔레트가 바뀌어도 그대로입니다. 의미를 나르는 색이라 제품 전체에서 고정되어야 합니다.",
+    "contrastMore": "contrastMore 는 운영체제의 \"대비 증가\"(prefers-contrast: more) 설정에서만 덮어쓰는 값입니다. Apple HIG 의 \"사용자 지정 색에는 대비 증가 변형을 둔다\" 기준을 따릅니다. 기본 화면에는 영향이 없습니다. scripts/build-palettes.mjs 가 src/styles/adaptive.css 로 생성하고, 글자 7:1 · 테두리·포커스 3:1 미만이면 생성을 멈춥니다."
   }
 }

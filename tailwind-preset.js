@@ -151,17 +151,25 @@ export default {
       mono: 'var(--font-mono)',
     },
 
-    /* 고밀도 타입 스케일 — 본문 14px */
+    /*
+     * 고밀도 타입 스케일 — 본문 14px(0.875rem).
+     *
+     * 크기 · 행간을 rem 으로 둡니다. 브라우저 기본 글자 크기(16px)에서는
+     * px 로 적었을 때와 똑같이 그려지고, 사용자가 브라우저 · 운영체제에서
+     * 글자를 키우면 함께 커집니다(Apple HIG 의 Dynamic Type, WCAG 1.4.4).
+     * px 로 고정하면 그 설정이 무시됩니다. 행간도 rem 이라야 글자만 커지고
+     * 줄이 겹치는 일이 없습니다. (test/hig.test.mjs 가 px 를 막습니다)
+     */
     fontSize: {
-      micro: ['11px', { lineHeight: '14px' }],
-      xs: ['12px', { lineHeight: '16px' }],
-      sm: ['13px', { lineHeight: '18px' }],
-      base: ['14px', { lineHeight: '20px' }],
-      md: ['16px', { lineHeight: '24px' }],
-      lg: ['20px', { lineHeight: '28px' }],
-      xl: ['24px', { lineHeight: '32px' }],
-      metric: ['28px', { lineHeight: '34px', letterSpacing: '-0.01em' }],
-      'metric-lg': ['34px', { lineHeight: '40px', letterSpacing: '-0.02em' }],
+      micro: ['0.6875rem', { lineHeight: '0.875rem' }],
+      xs: ['0.75rem', { lineHeight: '1rem' }],
+      sm: ['0.8125rem', { lineHeight: '1.125rem' }],
+      base: ['0.875rem', { lineHeight: '1.25rem' }],
+      md: ['1rem', { lineHeight: '1.5rem' }],
+      lg: ['1.25rem', { lineHeight: '1.75rem' }],
+      xl: ['1.5rem', { lineHeight: '2rem' }],
+      metric: ['1.75rem', { lineHeight: '2.125rem', letterSpacing: '-0.01em' }],
+      'metric-lg': ['2.125rem', { lineHeight: '2.5rem', letterSpacing: '-0.02em' }],
     },
 
     /* 4px 기준 간격 — 임의 값(p-[13px]) 사용 금지 */

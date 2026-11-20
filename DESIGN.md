@@ -8,7 +8,7 @@ React · Vue · Svelte · 순수 HTML · 서버 템플릿 등 프레임워크와
 | 생성 | 저장소의 토큰과 컴포넌트 코드에서 자동으로 만듭니다 — 값을 손으로 고치지 마세요 |
 | 팔레트 | `hct` — 로고색 강조 · 짙은 남색 사이드바 (제품 기본값) |
 | 테마 | 라이트 · 다크 모두 포함 |
-| 패키지 | `hct-web-design-template` v2.0.0 |
+| 패키지 | `hct-web-design-template` v2.1.0 |
 | 저장소 | https://github.com/hctinno/HCT-WEB-DESIGN-TEMPLATE |
 | 이 파일 | https://raw.githubusercontent.com/hctinno/HCT-WEB-DESIGN-TEMPLATE/main/DESIGN.md |
 
@@ -16,7 +16,7 @@ React · Vue · Svelte · 순수 HTML · 서버 템플릿 등 프레임워크와
 > 표 · 필터 · 사이드바 · 차트 같은 완성된 부품과 디자인 규칙 검사기가 함께 옵니다.
 >
 > ```bash
-> npm i github:hctinno/HCT-WEB-DESIGN-TEMPLATE#release/v2.0.0
+> npm i github:hctinno/HCT-WEB-DESIGN-TEMPLATE#release/v2.1.0
 > ```
 >
 > 이 파일은 그 패키지의 **겉모습**을 다른 환경에서 똑같이 재현하기 위한 명세입니다.
@@ -26,7 +26,7 @@ React · Vue · Svelte · 순수 HTML · 서버 템플릿 등 프레임워크와
 
 ## 0. 작업 순서 (에이전트용)
 
-1. **§2-1 의 CSS 두 블록(토큰 → 기본 레이어)을 앱 전역 CSS 맨 위에 순서대로 그대로 붙입니다.** 이것으로 색 · 그림자 · 치수 · 서체 · 한글 줄바꿈 · 포커스 링이 패키지와 같아집니다.
+1. **§2-1 의 CSS 세 블록(토큰 → 접근성 적응 → 기본 레이어)을 앱 전역 CSS 맨 위에 순서대로 그대로 붙입니다.** 이것으로 색 · 그림자 · 치수 · 서체 · 한글 줄바꿈 · 포커스 링 · 대비 증가 · 터치 크기 · 움직임 줄이기가 패키지와 같아집니다.
 2. 화면 코드에서 색 · 간격 · 그림자 · 서체는 **그 변수로만** 씁니다. `#RRGGBB` 나 프레임워크 기본 팔레트(`gray-100`, `blue-500` 등)를 직접 쓰지 않습니다.
 3. 모든 화면은 **§6 앱 셸** 안에 넣습니다. 로고는 **§3 의 URL** 을 씁니다.
 4. 부품은 **§7 규격**대로 만듭니다. 같은 부품을 화면마다 새로 만들지 말고, 한 번 만들어 재사용합니다.
@@ -370,7 +370,125 @@ React · Vue · Svelte · 순수 HTML · 서버 템플릿 등 프레임워크와
 }
 ```
 
-**② 기본 레이어** — 패키지의 `src/styles/base.css` 원문입니다. 한글 줄바꿈(`keep-all`) · 포커스 링 · 고정폭 숫자(`.tabular`) · 얇은 스크롤바(`.scroll-thin`) · 동작 줄이기를 정합니다. `@layer base` 안에 있어 화면 코드의 스타일이 항상 이깁니다.
+**② 접근성 적응** — 패키지의 `src/styles/adaptive.css` 원문입니다. 사용자가 운영체제에서 켠 설정에만 반응하고, 아무것도 켜지 않은 기본 화면에서는 한 값도 바꾸지 않습니다. ① 바로 뒤에 붙입니다 — 선택자 명시도가 ① 의 다크 블록과 같아서 뒤에 와야 이깁니다.
+
+- **대비 증가**(`prefers-contrast: more` — macOS · iOS "대비 증가", Windows 대비 테마 일부): 보조 글자 · 테두리 · 강조색을 진하게 바꿔 글자 7:1 · 테두리 · 포커스 3:1 이상으로 올립니다. `<html data-contrast="normal">` 이면 끕니다.
+- **손가락 입력**(`pointer: coarse` — 휴대폰 · 태블릿): 컨트롤과 촘촘 · 기본 표 행 높이를 44px 로 올립니다 (Apple HIG 최소 44×44pt). 마우스 화면의 고밀도는 그대로입니다.
+
+```css
+/* ============================================================================
+   HCT 접근성 적응 — 자동 생성 파일 (직접 수정하지 마세요)
+   ----------------------------------------------------------------------------
+   원본: tokens/palettes.json 의 hct.contrastMore · scripts/build-adaptive.mjs
+   생성: npm run tokens:build
+
+   사용자가 운영체제에서 켠 설정에만 반응합니다. 아무것도 켜지 않은 기본
+   화면(대비 보통 · 마우스 · 움직임 허용)에서는 한 값도 바꾸지 않습니다.
+
+     ① 대비 증가   prefers-contrast: more  글자 7:1 · 테두리 · 포커스 3:1 이상
+     ② 손가락 입력 pointer: coarse         누르는 칸 44px 이상 (Apple HIG 44×44pt)
+
+   움직임 줄이기는 base.css, 사용자 글자 크기는 rem 타입 스케일이 맡습니다.
+   <html data-contrast="normal"> 을 붙이면 ① 을 끕니다 (화면 비교 · 인쇄용).
+
+   반드시 tokens.css · palettes.css 다음에 불러옵니다 — 선택자 명시도가
+   팔레트 다크 블록과 같아서, 뒤에 와야 이깁니다.
+   ============================================================================ */
+
+/* ① 대비 증가 — 라이트 테마 */
+@media (prefers-contrast: more) {
+  :root:not([data-theme="dark"]):not([data-contrast="normal"]) {
+    --color-text-secondary: #2E3847;
+    --color-text-tertiary: #445062;
+    --color-text-disabled: #616D7E;
+    --color-text-link: #263C80;
+    --color-border-subtle: #A7B3C4;
+    --color-border-default: #616D7E;
+    --color-border-strong: #445062;
+    --color-border-focus: #1F3166;
+    --color-accent-solid: #263C80;
+    --color-accent-solid-hover: #1F3166;
+    --color-accent-text: #1F3166;
+    --color-accent-border: #5D79BE;
+    --color-success-text: #14532D;
+    --color-warning-text: #78350F;
+    --color-danger-text: #7F1D1D;
+    --color-info-text: #1E3A8A;
+    --color-review-text: #4C1D95;
+    --color-neutral-text: #2E3847;
+    --color-sidebar-fg-muted: #D3DBEC;
+    --color-sidebar-fg-subtle: #AAB7D2;
+  }
+}
+
+/* ① 대비 증가 — 운영체제 다크 (data-theme="light" 로 고정한 경우 제외) */
+@media (prefers-contrast: more) and (prefers-color-scheme: dark) {
+  :root:not([data-theme="light"]):not([data-contrast="normal"]) {
+    --color-text-primary: #F5F7FA;
+    --color-text-secondary: #C9D1DC;
+    --color-text-tertiary: #A5B0BF;
+    --color-text-disabled: #7D8896;
+    --color-text-link: #BAC8E8;
+    --color-border-subtle: #45505F;
+    --color-border-default: #6B7685;
+    --color-border-strong: #8A95A4;
+    --color-border-focus: #BAC8E8;
+    --color-accent-solid: #8EA4D5;
+    --color-accent-solid-hover: #BAC8E8;
+    --color-accent-text: #BAC8E8;
+    --color-accent-border: #5D79BE;
+    --color-success-text: #86EFAC;
+    --color-warning-text: #FDE68A;
+    --color-danger-text: #FCA5A5;
+    --color-info-text: #BFD4FF;
+    --color-review-text: #DDD0FE;
+    --color-neutral-text: #C9D1DC;
+    --color-sidebar-fg-muted: #C9D1DC;
+    --color-sidebar-fg-subtle: #A5B0BF;
+  }
+}
+
+/* ① 대비 증가 — <html data-theme="dark"> 로 강제한 다크 */
+@media (prefers-contrast: more) {
+  :root[data-theme="dark"]:not([data-contrast="normal"]) {
+    --color-text-primary: #F5F7FA;
+    --color-text-secondary: #C9D1DC;
+    --color-text-tertiary: #A5B0BF;
+    --color-text-disabled: #7D8896;
+    --color-text-link: #BAC8E8;
+    --color-border-subtle: #45505F;
+    --color-border-default: #6B7685;
+    --color-border-strong: #8A95A4;
+    --color-border-focus: #BAC8E8;
+    --color-accent-solid: #8EA4D5;
+    --color-accent-solid-hover: #BAC8E8;
+    --color-accent-text: #BAC8E8;
+    --color-accent-border: #5D79BE;
+    --color-success-text: #86EFAC;
+    --color-warning-text: #FDE68A;
+    --color-danger-text: #FCA5A5;
+    --color-info-text: #BFD4FF;
+    --color-review-text: #DDD0FE;
+    --color-neutral-text: #C9D1DC;
+    --color-sidebar-fg-muted: #C9D1DC;
+    --color-sidebar-fg-subtle: #A5B0BF;
+  }
+}
+
+/* ② 손가락 입력 — 주 입력 장치가 거친 포인터(터치)일 때 */
+@media (pointer: coarse) {
+  :root {
+    --control-height-xs: 44px;
+    --control-height-sm: 44px;
+    --control-height-md: 44px;
+    --control-height-lg: 44px;
+    --row-height-compact: 44px;
+    --row-height-default: 44px;
+  }
+}
+```
+
+**③ 기본 레이어** — 패키지의 `src/styles/base.css` 원문입니다. 한글 줄바꿈(`keep-all`) · 포커스 링 · 고정폭 숫자(`.tabular`) · 얇은 스크롤바(`.scroll-thin`) · 동작 줄이기를 정합니다. `@layer base` 안에 있어 화면 코드의 스타일이 항상 이깁니다.
 
 ```css
 /*
@@ -396,8 +514,9 @@ React · Vue · Svelte · 순수 HTML · 서버 템플릿 등 프레임워크와
   body {
     margin: 0;
     font-family: var(--font-sans);
-    font-size: 14px;
-    line-height: 20px;
+    /* rem — 사용자가 키운 글자 크기를 따릅니다 (기본 16px 에서 14 / 20px) */
+    font-size: 0.875rem;
+    line-height: 1.25rem;
     background-color: var(--color-bg-canvas);
     color: var(--color-text-primary);
     font-feature-settings: 'tnum' 0;
@@ -455,6 +574,7 @@ React · Vue · Svelte · 순수 HTML · 서버 템플릿 등 프레임워크와
       animation-duration: 0.01ms !important;
       animation-iteration-count: 1 !important;
       transition-duration: 0.01ms !important;
+      scroll-behavior: auto !important;
     }
   }
 }
@@ -628,23 +748,24 @@ font-family: var(--font-mono);   /* 코드 · ID · 키 */
 
 - `--font-sans` = "Pretendard Variable", Pretendard, -apple-system, BlinkMacSystemFont, system-ui, Roboto, "Helvetica Neue", "Segoe UI", "Apple SD Gothic Neo", "Noto Sans KR", "Malgun Gothic", sans-serif
 - `--font-mono` = "JetBrains Mono", ui-monospace, SFMono-Regular, Menlo, Consolas, "Liberation Mono", monospace
-- **한글 줄바꿈은 어절 단위**(`word-break: keep-all`, ② 기본 레이어에 포함)입니다. 공백 없는 긴 URL · ID 를 담는 곳에만 `.break-token`(`break-all`)을 씁니다.
+- **한글 줄바꿈은 어절 단위**(`word-break: keep-all`, ③ 기본 레이어에 포함)입니다. 공백 없는 긴 URL · ID 를 담는 곳에만 `.break-token`(`break-all`)을 씁니다.
 - **서체 파일은 포함돼 있지 않습니다.** Pretendard 가 설치되지 않은 PC 에서는 목록의 다음 서체(운영체제 기본 한글 서체)로 표시되며, 패키지로 만든 화면도 똑같습니다. 웹폰트를 따로 불러온다면 모든 화면에 똑같이 적용하세요 — 일부 화면만 다르면 같은 제품으로 보이지 않습니다.
 
-**크기 — 본문 14px 고밀도 스케일**
+**크기 — 본문 14px 고밀도 스케일 · rem 단위**
 
-| 이름 | 크기 / 행간 | 용도 |
-|---|---|---|
-| micro | 11 / 14px | 타임스탬프 · 사이드바 그룹 라벨 · 작은 배지 |
-| xs | 12 / 16px | 배지 · 캡션 · 입력 라벨 · 표 머리행 |
-| sm | 13 / 18px | 사이드바 항목 · 설명문 · 경로 · 교차표 셀 |
-| base | 14 / 20px | **기본 본문** · 버튼 · 입력 · 표 본문 셀 |
-| md | 16 / 24px | 섹션 제목 |
-| lg | 20 / 28px | 페이지 제목 |
-| xl | 24 / 32px | 화면 제목 |
-| metric | 28 / 34px · 자간 -0.01em | KPI 수치 |
-| metric-lg | 34 / 40px · 자간 -0.02em | 강조 KPI 수치 |
+| 이름 | 크기 / 행간 (rem) | 기본 16px 에서 | 용도 |
+|---|---|---|---|
+| micro | `0.6875rem` / `0.875rem` | 11 / 14px | 타임스탬프 · 사이드바 그룹 라벨 · 작은 배지 |
+| xs | `0.75rem` / `1rem` | 12 / 16px | 배지 · 캡션 · 입력 라벨 · 표 머리행 |
+| sm | `0.8125rem` / `1.125rem` | 13 / 18px | 사이드바 항목 · 설명문 · 경로 · 교차표 셀 |
+| base | `0.875rem` / `1.25rem` | 14 / 20px | **기본 본문** · 버튼 · 입력 · 표 본문 셀 |
+| md | `1rem` / `1.5rem` | 16 / 24px | 섹션 제목 |
+| lg | `1.25rem` / `1.75rem` | 20 / 28px | 페이지 제목 |
+| xl | `1.5rem` / `2rem` | 24 / 32px | 화면 제목 |
+| metric | `1.75rem` / `2.125rem` · 자간 -0.01em | 28 / 34px | KPI 수치 |
+| metric-lg | `2.125rem` / `2.5rem` · 자간 -0.02em | 34 / 40px | 강조 KPI 수치 |
 
+- **크기 · 행간은 rem 으로 씁니다.** 브라우저 기본(16px)에서는 오른쪽 px 와 똑같이 그려지고, 사용자가 브라우저 · 운영체제에서 글자를 키우면 함께 커집니다(Apple HIG 의 Dynamic Type · WCAG 1.4.4). `font-size: 14px` 처럼 px 로 고정하면 그 설정이 무시됩니다. 행간도 rem 이라야 글자만 커지고 줄이 겹치지 않습니다.
 - 굵기: 400 본문 · 500 버튼 · 라벨 · 배지 · 600 제목 · 현재 항목 · 700 숫자 배지.
 - 크기는 위 표의 단계만 쓰고, 본문에 새 단계를 늘리지 않습니다. 위계가 많아지면 위계가 사라집니다.
 - 표 · 지표의 숫자는 자릿수가 흔들리지 않게 고정폭 숫자를 씁니다: `font-variant-numeric: tabular-nums;`
@@ -774,7 +895,98 @@ font-family: var(--font-mono);   /* 코드 · ID · 키 */
 
 패키지의 실제 컴포넌트 코드에서 뽑은 값입니다. 여기 없는 부품을 새로 만들 때도 같은 토큰 · 같은 치수 체계를 씁니다.
 
+**부품 카드 읽는 법.** 부품마다 같은 형식의 카드가 먼저 오고, 그 아래에 세부 치수가 옵니다.
+
+- 카드 형식: 구조 → 종류 · 크기(prop) → 상태 7가지(기본 · hover · focus · active · disabled · loading · error) → 토큰 → 접근성 → 할 것 / 하지 말 것 → React 예 → 순수 HTML + CSS 예.
+- **카드는 코드에서 검사됩니다.** 종류 · 크기 목록은 컴포넌트 소스의 실제 키와, 기본값은 함수 기본값과 같아야 생성되고, 토큰은 §2 에 있어야 합니다. "브라우저 대조 N건" 이 붙은 카드는 그 HTML + CSS 를 크로미엄으로 그려 실제 React 컴포넌트와 크기 · 여백 · 글자 · 색이 같은지 라이트 · 다크에서 비교합니다.
+- 순수 HTML 로 만든다면 §2-1 의 세 블록 다음에 아래 공통 CSS 를 한 번 붙이고, 각 카드의 CSS 를 붙입니다. 클래스 이름(`hct-…`)은 예시이므로 바꿔도 되지만 값은 바꾸지 않습니다.
+
+```css
+/* 부품 카드 공통 — 프레임워크 초기화 CSS 가 없어도 같은 모양이 되게 */
+.hct-btn, .hct-input, .hct-filter-btn, .hct-segmented__tab, .hct-nav-item,
+.hct-badge, .hct-tag, .hct-banner, .hct-metric, .hct-widget, .hct-modal, .hct-drawer,
+.hct-toast, .hct-listbox, .hct-skeleton, .hct-empty__icon, .hct-segmented {
+  box-sizing: border-box;
+}
+.hct-btn, .hct-input, .hct-filter-btn, .hct-segmented__tab, .hct-nav-item, button.hct-metric {
+  margin: 0;
+  font-family: inherit;
+  letter-spacing: inherit;
+  text-transform: none;
+}
+.hct-btn, .hct-filter-btn, .hct-segmented__tab, .hct-nav-item, button.hct-metric { cursor: pointer; }
+@keyframes hct-spin { to { transform: rotate(360deg); } }
+@keyframes hct-shimmer { 100% { transform: translateX(100%); } }
+```
+
 ### 버튼
+
+> **부품 카드** — `src/components/input/Button.jsx` · `Button` · `IconButton` · 브라우저 대조 9건
+
+| 항목 | 내용 |
+|---|---|
+| 구조 | `[아이콘?] 글자 [아이콘?]` 한 줄 · 아이콘 전용은 `IconButton`(정사각형, 이름 필수) |
+| `variant` | `primary` 화면의 주 행동 — 화면당 1개 · `secondary` **(기본)** 대부분의 버튼 · `ghost` 툴바 · 아이콘 · `danger` 삭제 · 해지 · `danger-subtle` 파괴적이지만 부차적인 행동 |
+| `size` | `xs` 24px · `sm` 28px · `md` **(기본)** 32px · `lg` 36px |
+| 기본 | 종류 표의 바탕 · 글자 · 테두리 |
+| hover (마우스를 올림) | 종류 표의 "마우스를 올리면" |
+| focus (키보드 포커스) | ③ 기본 레이어의 `:focus-visible` 링 — `2px solid var(--color-border-focus)` · 간격 1px |
+| active (누르는 중 · 선택됨) | 해당 없음 — 누르는 중의 별도 모양은 없습니다 |
+| disabled | 불투명도 50% · `cursor: not-allowed` · 눌리지 않음 |
+| loading | 왼쪽 아이콘 자리에 14px 회전 표시 · `aria-busy="true"` · 눌리지 않음 |
+| error | 해당 없음 |
+| 토큰 | `--color-accent-solid` `--color-accent-solid-hover` `--color-text-inverse` `--color-bg-surface` `--color-text-primary` `--color-text-secondary` `--color-border-default` `--color-bg-hover` `--color-danger-solid` `--color-danger-text` `--color-danger-border` `--color-danger-bg` `--control-height-xs` `--control-height-sm` `--control-height-md` `--control-height-lg` `--duration-instant` `--easing-standard` |
+| 접근성 | `<button type="button">` 을 씁니다. `<div onclick>` 금지 · 아이콘 전용 버튼은 `aria-label` 필수 (`IconButton` 의 `label`) · 손가락 입력 기기에서는 높이가 44px 로 올라갑니다 (§2-1 ②) |
+| 할 것 | 화면당 primary 1개 · 되돌릴 수 없는 행동에만 danger |
+| 하지 말 것 | 버튼 색을 직접 칠하기 · 같은 줄에 primary 두 개 · 포커스 링 지우기 |
+
+React (패키지):
+
+```jsx
+import { Button, IconButton } from 'hct-web-design-template'
+
+<Button variant="primary" onClick={save}>저장</Button>
+<Button loading>저장 중</Button>
+<IconButton icon={<SearchIcon />} label="검색" />
+```
+
+순수 HTML + CSS (패키지 없이 — §2-1 의 세 블록과 §7 첫머리의 공통 CSS 를 붙인 뒤):
+
+```html
+<button type="button" class="hct-btn hct-btn--primary">저장</button>
+<button type="button" class="hct-btn" disabled>취소</button>
+<button type="button" class="hct-btn hct-btn--ghost hct-btn--icon" aria-label="검색"><svg …/></button>
+```
+
+```css
+.hct-btn {
+  display: inline-flex; flex-shrink: 0; align-items: center; justify-content: center;
+  white-space: nowrap; font-weight: 500;
+  height: var(--control-height-md); padding: 0 12px; gap: 6px; border-radius: 6px;
+  font-size: 0.875rem; line-height: 1.25rem;
+  border: 1px solid var(--color-border-default);
+  background-color: var(--color-bg-surface); color: var(--color-text-primary);
+  transition-property: color, background-color, border-color, text-decoration-color, fill, stroke;
+  transition-duration: var(--duration-instant); transition-timing-function: var(--easing-standard);
+}
+.hct-btn:hover { background-color: var(--color-bg-hover); }
+.hct-btn:disabled, .hct-btn[aria-busy="true"] { cursor: not-allowed; opacity: 0.5; }
+.hct-btn--primary { background-color: var(--color-accent-solid); color: var(--color-text-inverse); border-color: transparent; }
+.hct-btn--primary:hover { background-color: var(--color-accent-solid-hover); }
+.hct-btn--ghost { background-color: transparent; color: var(--color-text-secondary); border-color: transparent; }
+.hct-btn--ghost:hover { background-color: var(--color-bg-hover); color: var(--color-text-primary); }
+.hct-btn--danger { background-color: var(--color-danger-solid); color: var(--color-text-inverse); border-color: transparent; }
+.hct-btn--danger:hover { background-color: var(--color-danger-solid); opacity: 0.9; }
+.hct-btn--danger-subtle { background-color: transparent; color: var(--color-danger-text); border-color: var(--color-danger-border); }
+.hct-btn--danger-subtle:hover { background-color: var(--color-danger-bg); }
+.hct-btn--xs { height: var(--control-height-xs); padding: 0 6px; gap: 4px; border-radius: 3px; font-size: 0.75rem; line-height: 1rem; }
+.hct-btn--sm { height: var(--control-height-sm); padding: 0 8px; gap: 4px; font-size: 0.75rem; line-height: 1rem; }
+.hct-btn--lg { height: var(--control-height-lg); padding: 0 16px; gap: 8px; }
+.hct-btn--icon { padding: 0; width: var(--control-height-md); }
+.hct-btn__spinner { width: 14px; height: 14px; animation: hct-spin 1s linear infinite; }
+```
+
+**세부 치수**
 
 | 크기 | 높이 | 좌우 여백 | 글자 | 모서리 | 아이콘 간격 |
 |---|---|---|---|---|---|
@@ -795,6 +1007,66 @@ font-family: var(--font-mono);   /* 코드 · ID · 키 */
 
 ### 입력
 
+> **부품 카드** — `src/components/input/Input.jsx` · `TextField` · 브라우저 대조 6건
+
+| 항목 | 내용 |
+|---|---|
+| 구조 | 라벨(위) → 입력 칸(왼쪽 아이콘 선택) → 도움말 또는 오류 문장(아래) |
+| `size` | `sm` 28px · 13px 글자 · `md` **(기본)** 32px · `lg` 36px |
+| 기본 | 바탕 `bg-surface` · 테두리 `border-default` · 안내문 `text-tertiary` |
+| hover (마우스를 올림) | 해당 없음 — 마우스를 올려도 바뀌지 않습니다 |
+| focus (키보드 포커스) | 테두리 `border-focus` + 같은 색 1px 링 (기본 포커스 링 대신) |
+| active (누르는 중 · 선택됨) | 해당 없음 |
+| disabled | 바탕 `bg-sunken` · 글자 `text-disabled` · `cursor: not-allowed` |
+| loading | 해당 없음 |
+| error | 테두리 `danger-border` · `aria-invalid="true"` · 4px 아래 12px `danger-text` 문장(색만으로 알리지 않음) |
+| 토큰 | `--color-bg-surface` `--color-border-default` `--color-text-primary` `--color-text-tertiary` `--color-text-secondary` `--color-border-focus` `--color-bg-sunken` `--color-text-disabled` `--color-danger-border` `--color-danger-text` `--control-height-sm` `--control-height-md` `--control-height-lg` |
+| 접근성 | 모든 입력에 `<label for>` — 숨길 때도 지우지 말고 화면에서만 숨김(`hideLabel`) · 오류 문장은 `aria-describedby` 로 입력과 잇습니다 |
+| 할 것 | 오류는 무엇이 틀렸는지 문장으로 |
+| 하지 말 것 | 빨간 테두리만으로 오류 표시 · 안내문(placeholder)을 라벨 대신 쓰기 |
+
+React (패키지):
+
+```jsx
+import { TextField } from 'hct-web-design-template'
+
+<TextField label="이름" value={name} onChange={(e) => setName(e.target.value)} />
+<TextField label="이메일" error="이메일 형식이 아닙니다" />
+```
+
+순수 HTML + CSS (패키지 없이 — §2-1 의 세 블록과 §7 첫머리의 공통 CSS 를 붙인 뒤):
+
+```html
+<div class="hct-field">
+  <label class="hct-field__label" for="name">이름</label>
+  <input class="hct-input" id="name" aria-invalid="true" aria-describedby="name-error" />
+  <p class="hct-field__error" id="name-error">이름을 입력하세요</p>
+</div>
+```
+
+```css
+.hct-field__label { display: block; margin: 0 0 4px; font-size: 0.75rem; line-height: 1rem; font-weight: 500; color: var(--color-text-secondary); }
+.hct-input {
+  width: 100%; height: var(--control-height-md); padding: 0 8px;
+  border: 1px solid var(--color-border-default); border-radius: 6px;
+  background-color: var(--color-bg-surface); color: var(--color-text-primary);
+  font-size: 0.875rem; line-height: 1.25rem;
+  transition-property: color, background-color, border-color, text-decoration-color, fill, stroke;
+  transition-duration: var(--duration-instant);
+}
+.hct-input::placeholder { color: var(--color-text-tertiary); opacity: 1; }
+.hct-input:focus { outline: none; border-color: var(--color-border-focus); box-shadow: 0 0 0 1px var(--color-border-focus); }
+.hct-input:disabled { cursor: not-allowed; background-color: var(--color-bg-sunken); color: var(--color-text-disabled); }
+.hct-input[aria-invalid="true"] { border-color: var(--color-danger-border); }
+.hct-input--sm { height: var(--control-height-sm); font-size: 0.8125rem; line-height: 1.125rem; }
+.hct-input--lg { height: var(--control-height-lg); }
+.hct-field__hint, .hct-field__error { margin: 4px 0 0; font-size: 0.75rem; line-height: 1rem; }
+.hct-field__hint { color: var(--color-text-tertiary); }
+.hct-field__error { color: var(--color-danger-text); }
+```
+
+**세부 치수**
+
 - 높이 32px (작게 28px · 글자 13px / 크게 36px), 좌우 여백 8px, 글자 14px, 모서리 6px.
 - 라벨: 입력 위 4px, 12px · 500 `text-secondary`.
 - 바탕 `bg-surface`, 테두리 `border-default`, 글자 `text-primary`, 안내문(placeholder) `text-tertiary`.
@@ -803,12 +1075,132 @@ font-family: var(--font-mono);   /* 코드 · ID · 키 */
 
 ### 상태 배지
 
+> **부품 카드** — `src/components/feedback/StatusBadge.jsx` · `StatusBadge` · `Tag` · 브라우저 대조 9건
+
+| 항목 | 내용 |
+|---|---|
+| 구조 | `[점?] 라벨` — 색조의 바탕 · 글자 · 테두리. 상태 이름(`status`)을 주면 색조와 라벨이 §2-3 표대로 정해집니다 |
+| `tone` | `neutral` 대기 · 보관 · `info` 진행 · `review` 검토 · `success` 완료 · `warning` 보류 · 주의 · `danger` 실패 · 차단 |
+| `size` | `sm` 16px · 촘촘한 표 · `md` **(기본)** 20px |
+| 기본 | §2-3 색조의 `bg` · `text` · `border` |
+| hover (마우스를 올림) | 해당 없음 — 누를 수 없는 표시입니다 |
+| focus (키보드 포커스) | 해당 없음 |
+| active (누르는 중 · 선택됨) | 해당 없음 |
+| disabled | 해당 없음 |
+| loading | 해당 없음 |
+| error | `danger` 색조 (상태의 하나일 뿐 별도 모양 없음) |
+| 토큰 | `--color-neutral-bg` `--color-neutral-text` `--color-neutral-border` `--color-neutral-solid` `--color-info-bg` `--color-info-text` `--color-info-border` `--color-success-bg` `--color-success-text` `--color-warning-bg` `--color-warning-text` `--color-danger-bg` `--color-danger-text` `--color-review-bg` `--color-review-text` `--color-bg-sunken` `--color-border-subtle` |
+| 접근성 | 상태는 글자로 읽힙니다 — 점만 단독으로 쓰지 않습니다 · 배지는 문장 안 정보라 `role` 을 달지 않습니다 |
+| 할 것 | 상태 이름 → 색조는 §2-3 표로만 · 분류(라벨 · 카테고리)는 중립 태그 `Tag` |
+| 하지 말 것 | 화면마다 상태 색을 새로 고르기 · 분류에 상태 색 쓰기 |
+
+React (패키지):
+
+```jsx
+import { StatusBadge, Tag } from 'hct-web-design-template'
+
+<StatusBadge status="in_progress" />
+<StatusBadge tone="danger" size="sm" dot>차단</StatusBadge>
+<Tag>백엔드</Tag>
+```
+
+순수 HTML + CSS (패키지 없이 — §2-1 의 세 블록과 §7 첫머리의 공통 CSS 를 붙인 뒤):
+
+```html
+<span class="hct-badge hct-badge--info">진행중</span>
+<span class="hct-badge hct-badge--danger hct-badge--sm"><span class="hct-badge__dot"></span>차단</span>
+<span class="hct-tag">백엔드</span>
+```
+
+```css
+.hct-badge {
+  display: inline-flex; align-items: center; gap: 4px; white-space: nowrap;
+  height: 20px; padding: 0 6px; border: 1px solid; border-radius: 3px;
+  font-size: 0.75rem; line-height: 1rem; font-weight: 500;
+  background-color: var(--color-neutral-bg); color: var(--color-neutral-text); border-color: var(--color-neutral-border);
+}
+.hct-badge--sm { height: 16px; padding: 0 4px; font-size: 0.6875rem; line-height: 0.875rem; }
+.hct-badge__dot { width: 6px; height: 6px; flex-shrink: 0; border-radius: 9999px; background-color: var(--color-neutral-solid); }
+.hct-badge--info { background-color: var(--color-info-bg); color: var(--color-info-text); border-color: var(--color-info-border); }
+.hct-badge--info .hct-badge__dot { background-color: var(--color-info-solid); }
+.hct-badge--success { background-color: var(--color-success-bg); color: var(--color-success-text); border-color: var(--color-success-border); }
+.hct-badge--success .hct-badge__dot { background-color: var(--color-success-solid); }
+.hct-badge--warning { background-color: var(--color-warning-bg); color: var(--color-warning-text); border-color: var(--color-warning-border); }
+.hct-badge--warning .hct-badge__dot { background-color: var(--color-warning-solid); }
+.hct-badge--danger { background-color: var(--color-danger-bg); color: var(--color-danger-text); border-color: var(--color-danger-border); }
+.hct-badge--danger .hct-badge__dot { background-color: var(--color-danger-solid); }
+.hct-badge--review { background-color: var(--color-review-bg); color: var(--color-review-text); border-color: var(--color-review-border); }
+.hct-badge--review .hct-badge__dot { background-color: var(--color-review-solid); }
+.hct-tag {
+  display: inline-flex; align-items: center; gap: 4px; height: 20px; padding: 0 6px;
+  border: 1px solid var(--color-border-subtle); border-radius: 3px; background-color: var(--color-bg-sunken);
+  font-size: 0.75rem; line-height: 1rem; color: var(--color-text-secondary);
+}
+```
+
+**세부 치수**
+
 - 높이 20px, 좌우 여백 6px, 글자 12px · 굵기 500, 모서리 3px, 1px 테두리. 작은 크기: 높이 16px · 여백 4px · 글자 11px.
 - 색은 §2-3 색조의 `bg` · `text` · `border` 조합.
 - 표 안의 상태 배지는 글자 앞에 6px 원형 점(색조의 `solid`)을 붙이고, 촘촘한 표(행 32px)에서는 작은 배지(16px)를 씁니다. 점과 글자 사이 4px. **점만 단독으로 쓰지 않습니다.**
 - 상태가 아닌 분류(라벨 · 카테고리)는 **중립 태그**로 씁니다: 높이 20px · 좌우 6px · 12px `text-secondary` · 바탕 `bg-sunken` · 1px `border-subtle` · 모서리 3px. 분류에 상태 색을 쓰지 않습니다.
 
 ### 사이드바
+
+> **부품 카드** — `src/components/shell/Sidebar.jsx` · `Sidebar` · `SidebarGroup` · `SidebarItem` · `SidebarUser` · `WorkspaceRail` · 브라우저 대조 2건
+
+| 항목 | 내용 |
+|---|---|
+| 구조 | 머리(로고 · 환경) → 그룹 라벨 → 항목 `[아이콘 16px] 이름 [멘션 배지 \| 건수]` → 바닥(현재 사용자) |
+| 기본 | 글자 `sidebar-fg-muted` · 굵기 400 |
+| hover (마우스를 올림) | 바탕 `sidebar-hover` · 글자 `sidebar-fg` |
+| focus (키보드 포커스) | 포커스 링 색을 `sidebar-fg` 로 (기본 링은 어두운 사이드바에서 안 보임) |
+| active (누르는 중 · 선택됨) | 현재 화면 — 바탕 `sidebar-active-bg` · 글자 `sidebar-active-fg` · 600 · `aria-current="page"` |
+| disabled | 해당 없음 |
+| loading | 해당 없음 |
+| error | 해당 없음 |
+| 토큰 | `--color-sidebar-bg` `--color-sidebar-fg` `--color-sidebar-fg-muted` `--color-sidebar-fg-subtle` `--color-sidebar-hover` `--color-sidebar-active-bg` `--color-sidebar-active-fg` `--color-sidebar-border` `--color-sidebar-badge-bg` `--color-sidebar-badge-fg` `--control-height-lg` |
+| 접근성 | `<nav>` 안의 `<ul>` · 현재 화면은 `aria-current="page"` · 접힌 상태 · 레일 타일은 이름(`title` · `aria-label`) 필수 |
+| 할 것 | 숫자는 멘션 · 건수 · 안 읽음(굵게) 세 가지로 구분 |
+| 하지 말 것 | 모든 숫자를 빨간 배지로 · 항목 높이를 줄이기 |
+
+React (패키지):
+
+```jsx
+import { Sidebar, SidebarGroup, SidebarItem } from 'hct-web-design-template'
+
+<Sidebar>
+  <SidebarGroup label="업무">
+    <SidebarItem icon={<InboxIcon />} label="받은 일" active mentions={3} href="/inbox" />
+    <SidebarItem icon={<ListIcon />} label="전체" badge={128} href="/all" />
+  </SidebarGroup>
+</Sidebar>
+```
+
+순수 HTML + CSS (패키지 없이 — §2-1 의 세 블록과 §7 첫머리의 공통 CSS 를 붙인 뒤):
+
+```html
+<nav class="hct-sidebar"><ul>
+  <li><a class="hct-nav-item" href="/inbox" aria-current="page">받은 일</a></li>
+  <li><a class="hct-nav-item" href="/all">전체</a></li>
+</ul></nav>
+```
+
+```css
+.hct-nav-item {
+  display: flex; width: 100%; align-items: center; gap: 8px; height: var(--control-height-lg);
+  padding: 0 8px; border: 0; border-radius: 6px; background-color: transparent;
+  font-size: 0.8125rem; line-height: 1.125rem; font-weight: 400; color: var(--color-sidebar-fg-muted);
+  text-decoration: none;
+  transition-property: color, background-color, border-color, text-decoration-color, fill, stroke;
+  transition-duration: var(--duration-instant);
+}
+.hct-nav-item:hover { background-color: var(--color-sidebar-hover); color: var(--color-sidebar-fg); }
+.hct-nav-item[aria-current="page"] { background-color: var(--color-sidebar-active-bg); color: var(--color-sidebar-active-fg); font-weight: 600; }
+.hct-sidebar :focus-visible { outline-color: var(--color-sidebar-fg); }
+```
+
+**세부 치수**
 
 - 구조: 머리 높이 48px — 상단바와 같은 높이, 아래 1px `sidebar-border`, 좌우 12px. 왼쪽에 로고(흰색판 22px), 오른쪽 끝에 현재 환경 표시(예: "프로덕션" — 11px · 500 `sidebar-fg-muted` · 1px `sidebar-border` · 모서리 3px · 좌우 6px · 위아래 2px). 목록 영역 좌우 8px · 위아래 12px, 항목 사이 1px. 바닥(현재 사용자)은 위 1px `sidebar-border`, 여백 8px.
 - 그룹 라벨: 11px · 굵기 600 · 대문자 · 자간 0.06em · `sidebar-fg-subtle`, 좌우 여백 8px · 아래 4px. 그룹 사이 16px.
@@ -835,6 +1227,59 @@ font-family: var(--font-mono);   /* 코드 · ID · 키 */
 
 ### 표
 
+> **부품 카드** — `src/components/grid/DataGrid.jsx` · `DataGrid`
+
+| 항목 | 내용 |
+|---|---|
+| 구조 | 머리행(고정) → 행 `[체크박스] 셀… [행 동작]` → 바닥(쪽 넘김) |
+| `density` | `compact` 행 32px · `default` **(기본)** 행 40px · `relaxed` 행 48px |
+| 기본 | 행 바탕 `bg-surface` · 행 사이 `border-subtle` |
+| hover (마우스를 올림) | 행 바탕 `bg-hover` |
+| focus (키보드 포커스) | ③ 기본 레이어의 `:focus-visible` 링 — `2px solid var(--color-border-focus)` · 간격 1px (셀 단위 키보드 이동) |
+| active (누르는 중 · 선택됨) | 상세가 열린 행 `bg-active` · 선택한 행 `accent-subtle` |
+| disabled | 해당 없음 |
+| loading | 같은 행 높이의 스켈레톤 6행 (`SkeletonTable`) |
+| error | 표 자리에 오류 블록 (§7 빈 상태) |
+| 토큰 | `--color-bg-sunken` `--color-text-secondary` `--color-border-default` `--color-border-subtle` `--color-bg-surface` `--color-bg-hover` `--color-bg-active` `--color-accent-subtle` `--row-height-compact` `--row-height-default` `--row-height-relaxed` |
+| 접근성 | 실제 `<table>` · `<th scope="col">` 을 씁니다 — `<div>` 로 흉내 내지 않음 · 체크박스마다 이름(`aria-label`) |
+| 할 것 | 숫자 · 날짜 열은 머리행까지 오른쪽 정렬 + 고정폭 숫자 |
+| 하지 말 것 | 상태 열에 색 글자만 — 상태 배지를 씁니다 |
+
+React (패키지):
+
+```jsx
+import { DataGrid } from 'hct-web-design-template'
+
+<DataGrid fields={fields} records={rows} density="default" onRowClick={open} />
+```
+
+순수 HTML + CSS (패키지 없이 — §2-1 의 세 블록과 §7 첫머리의 공통 CSS 를 붙인 뒤):
+
+```html
+<table class="hct-table">
+  <thead><tr><th scope="col">이름</th><th scope="col" class="hct-num">금액</th></tr></thead>
+  <tbody><tr><td>계약 A</td><td class="hct-num">1,200</td></tr></tbody>
+</table>
+```
+
+```css
+.hct-table { width: 100%; border-collapse: collapse; text-align: left; }
+.hct-table th {
+  position: sticky; top: 0; height: 32px; padding: 0 8px; background-color: var(--color-bg-sunken);
+  border-bottom: 1px solid var(--color-border-default);
+  font-size: 0.75rem; line-height: 1rem; font-weight: 600; color: var(--color-text-secondary);
+}
+.hct-table td {
+  height: var(--row-height-default); padding: 0 12px; background-color: var(--color-bg-surface);
+  border-bottom: 1px solid var(--color-border-subtle); font-size: 0.875rem; line-height: 1.25rem;
+}
+.hct-table tbody tr:hover td { background-color: var(--color-bg-hover); }
+.hct-table tr[aria-selected="true"] td { background-color: var(--color-accent-subtle); }
+.hct-table .hct-num { text-align: right; font-variant-numeric: tabular-nums; }
+```
+
+**세부 치수**
+
 - 머리행: 높이 32px · 좌우 8px, 스크롤해도 위에 고정, 바탕 `bg-sunken`, 글자 12px · 굵기 600 · `text-secondary`, 아래 테두리 `border-default`.
 - 본문 셀: 글자 14px(본문과 같음) · 좌우 12px. 행 높이: 촘촘 32px · **기본 40px** · 여유 48px. 행 사이 `border-subtle`.
 
@@ -852,6 +1297,62 @@ font-family: var(--font-mono);   /* 코드 · ID · 키 */
 
 ### 지표 타일 (대시보드 KPI)
 
+> **부품 카드** — `src/components/dashboard/MetricTile.jsx` · `MetricTile` · 브라우저 대조 4건
+
+| 항목 | 내용 |
+|---|---|
+| 구조 | 라벨 [상태 배지] → 값 + 단위 → 증감(비교 대상 함께) → 추이선 → [임계값] |
+| `state` | `ok` **(기본)** 정상 · `warn` 주의 · `danger` 위험 — 값 글자도 `danger-text` |
+| 기본 | 테두리 `border-subtle` |
+| hover (마우스를 올림) | 누를 수 있는 타일만 — 테두리 `border-strong` · 바탕 `bg-hover` · "N건 보기" |
+| focus (키보드 포커스) | ③ 기본 레이어의 `:focus-visible` 링 — `2px solid var(--color-border-focus)` · 간격 1px |
+| active (누르는 중 · 선택됨) | 해당 없음 |
+| disabled | 해당 없음 |
+| loading | 같은 크기의 스켈레톤 (`SkeletonStatCard`) |
+| error | `state="danger"` 는 임계 초과 표시일 뿐 — 불러오기 실패는 오류 블록 |
+| 토큰 | `--color-bg-surface` `--color-border-subtle` `--color-border-strong` `--color-bg-hover` `--color-warning-border` `--color-danger-border` `--color-danger-text` `--color-text-tertiary` `--color-text-link` |
+| 접근성 | 누를 수 있으면 `<button>` — 숫자를 누르면 그 조건의 목록으로 · 증감은 화살표 모양 + 글자(색만으로 좋고 나쁨을 알리지 않음) |
+| 할 것 | 증감에는 비교 대상 값을 함께 |
+| 하지 말 것 | 보기만 하는 숫자판 — 목록으로 이어지게 |
+
+React (패키지):
+
+```jsx
+import { MetricTile } from 'hct-web-design-template'
+
+<MetricTile label="미처리 건" value={42} unit="건" delta={12} previous={37} state="warn" onDrillDown={go} />
+```
+
+순수 HTML + CSS (패키지 없이 — §2-1 의 세 블록과 §7 첫머리의 공통 CSS 를 붙인 뒤):
+
+```html
+<button type="button" class="hct-metric hct-metric--warn">
+  <div class="hct-metric__head"><span class="hct-metric__label">미처리 건</span></div>
+  <div class="hct-metric__main"><span class="hct-metric__value">42</span><span class="hct-metric__unit">건</span></div>
+</button>
+```
+
+```css
+.hct-metric {
+  position: relative; width: 100%; overflow: hidden; padding: 12px; text-align: left;
+  border: 1px solid var(--color-border-subtle); border-radius: 8px; background-color: var(--color-bg-surface);
+  font-size: 0.875rem; line-height: 1.25rem; color: inherit;
+  transition-property: color, background-color, border-color, text-decoration-color, fill, stroke;
+  transition-duration: var(--duration-instant);
+}
+button.hct-metric:hover { border-color: var(--color-border-strong); background-color: var(--color-bg-hover); }
+.hct-metric--warn { border-color: var(--color-warning-border); }
+.hct-metric--danger { border-color: var(--color-danger-border); }
+.hct-metric__head { display: flex; align-items: flex-start; justify-content: space-between; gap: 8px; }
+.hct-metric__main { display: flex; align-items: baseline; gap: 6px; margin-top: 6px; }
+.hct-metric__label { font-size: 0.75rem; line-height: 1rem; font-weight: 500; color: var(--color-text-tertiary); }
+.hct-metric__value { font-size: 1.75rem; line-height: 2.125rem; letter-spacing: -0.01em; font-weight: 600; font-variant-numeric: tabular-nums; }
+.hct-metric--danger .hct-metric__value { color: var(--color-danger-text); }
+.hct-metric__unit { font-size: 0.8125rem; line-height: 1.125rem; color: var(--color-text-tertiary); }
+```
+
+**세부 치수**
+
 - 모서리 8px, 1px 테두리, 바탕 `bg-surface`, 안쪽 여백 12px.
 - 라벨 12px · 굵기 500 · `text-tertiary` → 6px 아래 → 값 `metric`(28/34px) · 굵기 600 · 고정폭 숫자, 단위 13px `text-tertiary` → 증감 12px → 작은 추이선.
 - 상태별 테두리: 정상 `border-subtle` · 주의 `warning-border` · 위험 `danger-border` (위험이면 값 글자도 `danger-text`).
@@ -859,15 +1360,156 @@ font-family: var(--font-mono);   /* 코드 · ID · 키 */
 
 ### 위젯 (카드)
 
+> **부품 카드** — `src/components/dashboard/MetricTile.jsx` · `Widget` · `WidgetGrid` · 브라우저 대조 3건
+
+| 항목 | 내용 |
+|---|---|
+| 구조 | 머리 `제목 [설명] … [행동]` → 본문 → [바닥] |
+| 기본 | 테두리 `border-subtle` · 바탕 `bg-surface` · 그림자 없음 |
+| hover (마우스를 올림) | 해당 없음 |
+| focus (키보드 포커스) | 해당 없음 |
+| active (누르는 중 · 선택됨) | 해당 없음 |
+| disabled | 해당 없음 |
+| loading | 본문 자리에 글 줄 스켈레톤 5줄 · `role="status"` |
+| error | 본문 자리에 오류 블록 |
+| 토큰 | `--color-bg-surface` `--color-border-subtle` `--color-text-primary` `--color-text-tertiary` |
+| 접근성 | `<section>` + 제목 `<h3>` |
+| 할 것 | 넓은 위젯은 `WidgetGrid columns={3}` + `lg:col-span-2` |
+| 하지 말 것 | 카드마다 그림자 · 다른 모서리 |
+
+React (패키지):
+
+```jsx
+import { Widget } from 'hct-web-design-template'
+
+<Widget title="처리량" description="최근 7일" actions={<Button size="sm">내보내기</Button>} loading={isLoading}>
+  <LineChart … />
+</Widget>
+```
+
+순수 HTML + CSS (패키지 없이 — §2-1 의 세 블록과 §7 첫머리의 공통 CSS 를 붙인 뒤):
+
+```html
+<section class="hct-widget">
+  <div class="hct-widget__head"><div><h3 class="hct-widget__title">처리량</h3><p class="hct-widget__desc">최근 7일</p></div></div>
+  <div class="hct-widget__body">…</div>
+</section>
+```
+
+```css
+.hct-widget { display: flex; flex-direction: column; border: 1px solid var(--color-border-subtle); border-radius: 8px; background-color: var(--color-bg-surface); }
+.hct-widget__head { display: flex; align-items: flex-start; justify-content: space-between; gap: 8px; padding: 10px 12px 8px; }
+.hct-widget__title { margin: 0; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; font-size: 0.875rem; line-height: 1.25rem; font-weight: 600; color: var(--color-text-primary); }
+.hct-widget__desc { margin: 2px 0 0; font-size: 0.75rem; line-height: 1rem; color: var(--color-text-tertiary); }
+.hct-widget__body { flex: 1; min-height: 0; padding: 0 12px 12px; }
+.hct-widget__foot { border-top: 1px solid var(--color-border-subtle); padding: 8px 12px; }
+```
+
+**세부 치수**
+
 - 모서리 8px, 테두리 `border-subtle`, 바탕 `bg-surface`.
 - 머리: 위 10px · 아래 8px · 좌우 12px 여백, 제목 + 오른쪽 행동.
 
 ### 페이지 머리
 
+> **부품 카드** — `src/components/shell/AppShell.jsx` · `PageHeader` · 브라우저 대조 2건
+
+| 항목 | 내용 |
+|---|---|
+| 구조 | [경로] → 제목 + 설명 · 오른쪽 행동 버튼 (640px 미만이면 제목 아래로) |
+| 기본 | 제목 20/28px 600 · 설명 13px `text-tertiary` |
+| hover (마우스를 올림) | 해당 없음 |
+| focus (키보드 포커스) | 해당 없음 |
+| active (누르는 중 · 선택됨) | 해당 없음 |
+| disabled | 해당 없음 |
+| loading | 해당 없음 |
+| error | 해당 없음 |
+| 토큰 | `--color-text-primary` `--color-text-tertiary` |
+| 접근성 | 화면 제목은 `<h1>` 하나 |
+| 할 것 | 행동 버튼은 오른쪽, primary 는 1개 |
+| 하지 말 것 | 좁은 화면에서 제목을 한 줄로 자르기 |
+
+React (패키지):
+
+```jsx
+import { PageHeader, Button } from 'hct-web-design-template'
+
+<PageHeader title="계약 목록" description="이번 분기 계약" actions={<Button variant="primary">새 계약</Button>} />
+```
+
+순수 HTML + CSS (패키지 없이 — §2-1 의 세 블록과 §7 첫머리의 공통 CSS 를 붙인 뒤):
+
+```html
+<header class="hct-page-head">
+  <div><h1 class="hct-page-head__title">계약 목록</h1><p class="hct-page-head__desc">이번 분기 계약</p></div>
+  <div class="hct-page-head__actions">…</div>
+</header>
+```
+
+```css
+.hct-page-head { display: flex; flex-direction: column; gap: 12px; margin-bottom: 20px; }
+@media (min-width: 640px) { .hct-page-head { flex-direction: row; align-items: flex-start; justify-content: space-between; gap: 16px; } }
+.hct-page-head__title { margin: 0; font-size: 1.25rem; line-height: 1.75rem; font-weight: 600; color: var(--color-text-primary); }
+@media (min-width: 640px) { .hct-page-head__title { overflow: hidden; text-overflow: ellipsis; white-space: nowrap; } }
+.hct-page-head__desc { margin: 4px 0 0; font-size: 0.8125rem; line-height: 1.125rem; color: var(--color-text-tertiary); }
+.hct-page-head__actions { display: flex; flex-wrap: wrap; align-items: center; gap: 8px; }
+```
+
+**세부 치수**
+
 - 제목 20/28px · 굵기 600 · `text-primary` (640px 이상에서 한 줄 말줄임), 설명 13px · `text-tertiary` · 제목 4px 아래.
 - 행동 버튼은 오른쪽, 좁은 화면에서는 제목 아래로 내려가며 간격 12px. 머리 아래 20px 뒤에 내용 시작.
 
 ### 빈 상태
+
+> **부품 카드** — `src/components/state/EmptyState.jsx` · `EmptyState` · `NoResults` · `ErrorState` · 브라우저 대조 4건
+
+| 항목 | 내용 |
+|---|---|
+| 구조 | [아이콘 상자 40px] → 제목 → 설명(최대 380px) → [행동 버튼] |
+| `size` | `sm` 위아래 32px · `md` **(기본)** 위아래 64px |
+| 기본 | 빈 목록 — 무엇을 하면 채워지는지 행동 버튼 |
+| hover (마우스를 올림) | 해당 없음 |
+| focus (키보드 포커스) | 해당 없음 |
+| active (누르는 중 · 선택됨) | 해당 없음 |
+| disabled | 해당 없음 |
+| loading | 해당 없음 |
+| error | `ErrorState` — 아이콘 상자 `danger-bg` · `danger-text`, "다시 시도" |
+| 토큰 | `--color-bg-sunken` `--color-text-tertiary` `--color-text-primary` `--color-danger-bg` `--color-danger-text` |
+| 접근성 | 제목은 실제 제목 요소 · 검색 결과 0건(`NoResults`)은 "필터 초기화" 버튼을 함께 |
+| 할 것 | 빈 상태 · 결과 없음 · 오류를 다른 문장으로 |
+| 하지 말 것 | 빈 표 머리행만 남기기 |
+
+React (패키지):
+
+```jsx
+import { EmptyState, ErrorState, Button } from 'hct-web-design-template'
+
+<EmptyState icon={<InboxIcon />} title="받은 일이 없습니다" description="새 요청이 오면 여기에 표시됩니다" action={<Button>요청 만들기</Button>} />
+<ErrorState onRetry={reload} />
+```
+
+순수 HTML + CSS (패키지 없이 — §2-1 의 세 블록과 §7 첫머리의 공통 CSS 를 붙인 뒤):
+
+```html
+<div class="hct-empty">
+  <div class="hct-empty__icon">…</div>
+  <h3 class="hct-empty__title">받은 일이 없습니다</h3>
+  <p class="hct-empty__desc">새 요청이 오면 여기에 표시됩니다</p>
+</div>
+```
+
+```css
+.hct-empty { display: flex; flex-direction: column; align-items: center; justify-content: center; text-align: center; padding: 64px 24px; }
+.hct-empty--sm { padding: 32px 16px; }
+.hct-empty__icon { display: flex; width: 40px; height: 40px; align-items: center; justify-content: center; margin-bottom: 12px; border-radius: 8px; background-color: var(--color-bg-sunken); color: var(--color-text-tertiary); }
+.hct-empty--error .hct-empty__icon { background-color: var(--color-danger-bg); color: var(--color-danger-text); }
+.hct-empty__title { margin: 0; font-size: 0.875rem; line-height: 1.25rem; font-weight: 600; color: var(--color-text-primary); }
+.hct-empty__desc { margin: 4px 0 0; max-width: 380px; font-size: 0.8125rem; line-height: 1.125rem; color: var(--color-text-tertiary); }
+.hct-empty__action { margin-top: 16px; }
+```
+
+**세부 치수**
 
 - 가운데 정렬, 위아래 64px · 좌우 24px 여백 (작게: 32px · 16px). 아이콘 상자 40×40px · 모서리 8px · 바탕 `bg-sunken` · 아이콘 `text-tertiary`.
 - 아이콘 상자 → 12px → 제목 14px · 굵기 600 → 4px → 설명 13px `text-tertiary` · 최대 폭 380px → 16px 아래 행동 버튼.
@@ -876,6 +1518,71 @@ font-family: var(--font-mono);   /* 코드 · ID · 키 */
 
 ### 필터 줄 · 세그먼트 전환
 
+> **부품 카드** — `src/components/input/FilterBar.jsx` · `FilterBar` · `FilterButton` · `SegmentedControl` · 브라우저 대조 6건
+
+| 항목 | 내용 |
+|---|---|
+| 구조 | 필터 단추 `라벨 [값] ▾` 줄 → 적용된 필터 태그 줄 · 세그먼트 `[칸 [건수]]…` |
+| `size` | `sm` 세그먼트 28px · 12px · `md` **(기본)** 세그먼트 32px |
+| 기본 | 필터 단추 `bg-surface` · `border-default` · `text-secondary` / 세그먼트 칸 `text-tertiary` |
+| hover (마우스를 올림) | 필터 단추 `bg-hover` / 세그먼트 칸 글자 `text-primary` |
+| focus (키보드 포커스) | ③ 기본 레이어의 `:focus-visible` 링 — `2px solid var(--color-border-focus)` · 간격 1px |
+| active (누르는 중 · 선택됨) | 값이 걸린 필터 — `accent-subtle` · `accent-border` · `accent-text` 500 / 고른 칸 — `bg-surface` · `text-primary` · `--shadow-sm` · `aria-selected="true"` |
+| disabled | 해당 없음 |
+| loading | 해당 없음 |
+| error | 해당 없음 |
+| 토큰 | `--color-bg-surface` `--color-border-default` `--color-text-secondary` `--color-bg-hover` `--color-accent-subtle` `--color-accent-border` `--color-accent-text` `--color-bg-sunken` `--color-text-primary` `--color-text-tertiary` `--shadow-sm` `--control-height-sm` `--control-height-md` |
+| 접근성 | 세그먼트는 `role="tablist"` · 칸마다 `role="tab"` + `aria-selected` · 적용된 필터의 지움 단추에 이름 |
+| 할 것 | 적용된 필터를 줄로 보여주고 "전체 초기화" |
+| 하지 말 것 | 둘 이상 중 하나 고르기에 체크박스 |
+
+React (패키지):
+
+```jsx
+import { FilterBar, FilterButton, SegmentedControl } from 'hct-web-design-template'
+
+<SegmentedControl value={view} onChange={setView} options={[{ value: 'all', label: '전체', count: 42 }, { value: 'mine', label: '내 것' }]} />
+<FilterBar><FilterButton label="상태" value="진행중" active onClick={openStatus} /></FilterBar>
+```
+
+순수 HTML + CSS (패키지 없이 — §2-1 의 세 블록과 §7 첫머리의 공통 CSS 를 붙인 뒤):
+
+```html
+<div class="hct-segmented" role="tablist">
+  <button type="button" role="tab" aria-selected="true" class="hct-segmented__tab">전체</button>
+  <button type="button" role="tab" aria-selected="false" class="hct-segmented__tab">내 것</button>
+</div>
+<button type="button" class="hct-filter-btn hct-filter-btn--active"><span>상태</span><span class="hct-filter-btn__value">진행중</span><svg class="hct-filter-btn__caret" width="10" height="10" …/></button>
+```
+
+```css
+.hct-filter-btn {
+  display: inline-flex; height: var(--control-height-md); align-items: center; gap: 6px; padding: 0 8px;
+  border: 1px solid var(--color-border-default); border-radius: 6px; background-color: var(--color-bg-surface);
+  font-size: 0.875rem; line-height: 1.25rem; font-weight: 400; color: var(--color-text-secondary);
+  transition-property: color, background-color, border-color, text-decoration-color, fill, stroke;
+  transition-duration: var(--duration-instant);
+}
+.hct-filter-btn:hover { background-color: var(--color-bg-hover); }
+.hct-filter-btn__caret { flex-shrink: 0; opacity: 0.6; }
+.hct-filter-btn__value { font-weight: 500; }
+.hct-filter-btn--active, .hct-filter-btn--active:hover {
+  border-color: var(--color-accent-border); background-color: var(--color-accent-subtle); color: var(--color-accent-text); font-weight: 500;
+}
+.hct-segmented { display: inline-flex; align-items: center; gap: 2px; padding: 2px; border-radius: 6px; background-color: var(--color-bg-sunken); }
+.hct-segmented__tab {
+  height: var(--control-height-md); padding: 0 10px; border: 0; border-radius: 3px; background-color: transparent;
+  font-size: 0.875rem; line-height: 1.25rem; font-weight: 500; color: var(--color-text-tertiary);
+  transition-property: color, background-color, border-color, text-decoration-color, fill, stroke;
+  transition-duration: var(--duration-instant);
+}
+.hct-segmented__tab:hover { color: var(--color-text-primary); }
+.hct-segmented__tab[aria-selected="true"] { background-color: var(--color-bg-surface); color: var(--color-text-primary); box-shadow: var(--shadow-sm); }
+.hct-segmented--sm .hct-segmented__tab { height: var(--control-height-sm); font-size: 0.75rem; line-height: 1rem; }
+```
+
+**세부 치수**
+
 - 필터 줄: 요소 사이 8px, 넘치면 줄바꿈. 적용된 필터 줄은 8px 아래.
 - 필터 단추: 높이 32px · 좌우 8px · 14px · 모서리 6px · 1px 테두리, 라벨과 값 사이 6px(값은 500), 오른쪽 10px 화살표(불투명도 60%). 기본 = 바탕 `bg-surface` · 테두리 `border-default` · 글자 `text-secondary`(마우스를 올리면 `bg-hover`). 값이 걸리면 바탕 `accent-subtle` · 테두리 `accent-border` · 글자 `accent-text` · 500.
 - 적용된 필터 줄: "적용됨:" 12px `text-tertiary` → 중립 태그마다 이름 `text-tertiary` + 값 500 `text-primary` + 지움 단추, 태그 사이 6px → 끝에 "전체 초기화" 12px · 500 `text-link`(마우스를 올리면 밑줄).
@@ -883,17 +1590,166 @@ font-family: var(--font-mono);   /* 코드 · ID · 키 */
 
 ### 드롭다운 · 선택 목록
 
+> **부품 카드** — `src/components/input/Combobox.jsx` · `Combobox`
+
+| 항목 | 내용 |
+|---|---|
+| 구조 | 입력 칸(트리거) → 4px 아래 목록 상자 `항목 [보조 글자]…` · 결과 없음 안내 |
+| 기본 | 목록 `bg-raised` · `border-default` · `--shadow-lg` |
+| hover (마우스를 올림) | 가리킨 항목 `accent-subtle` · `accent-text` |
+| focus (키보드 포커스) | 키보드로 가리킨 항목도 hover 와 같은 모양 · 입력에 `aria-activedescendant` |
+| active (누르는 중 · 선택됨) | 고른 값은 입력 칸 · 태그로 표시 |
+| disabled | 입력 칸과 같음 |
+| loading | 해당 없음 |
+| error | 입력 칸과 같음 (`error`) |
+| 토큰 | `--color-bg-raised` `--color-border-default` `--shadow-lg` `--color-text-primary` `--color-text-tertiary` `--color-accent-subtle` `--color-accent-text` |
+| 접근성 | `role="combobox"` + `role="listbox"` · 항목마다 `role="option"` · ↑↓ 이동 · Enter 선택 · Esc 닫기 |
+| 할 것 | 항목이 많으면 검색 입력을 겸하는 콤보박스 |
+| 하지 말 것 | 목록 높이 제한 없이 화면 밖으로 |
+
+React (패키지):
+
+```jsx
+import { Combobox } from 'hct-web-design-template'
+
+<Combobox label="담당자" options={people} value={owner} onChange={setOwner} />
+```
+
+순수 HTML + CSS (패키지 없이 — §2-1 의 세 블록과 §7 첫머리의 공통 CSS 를 붙인 뒤):
+
+```html
+<ul class="hct-listbox" role="listbox">
+  <li role="option" aria-selected="true" class="hct-option">김하늘</li>
+  <li role="option" aria-selected="false" class="hct-option">이바다</li>
+</ul>
+```
+
+```css
+.hct-listbox {
+  margin: 4px 0 0; padding: 4px 0; list-style: none; max-height: 220px; overflow-y: auto;
+  border: 1px solid var(--color-border-default); border-radius: 6px; background-color: var(--color-bg-raised); box-shadow: var(--shadow-lg);
+}
+.hct-option { display: flex; align-items: center; gap: 8px; padding: 4px 8px; font-size: 0.875rem; line-height: 1.25rem; color: var(--color-text-primary); cursor: pointer; }
+.hct-option[aria-selected="true"], .hct-option:hover { background-color: var(--color-accent-subtle); color: var(--color-accent-text); }
+```
+
+**세부 치수**
+
 - 목록 상자: 트리거 4px 아래 · 최대 높이 220px(넘치면 스크롤) · 위아래 여백 4px · 바탕 `bg-raised` · 1px `border-default` · 모서리 6px · `--shadow-lg`.
 - 항목: 좌우 8px · 위아래 4px · 14px `text-primary`, 아이콘 · 아바타와 글자 사이 8px, 오른쪽 보조 글자 12px `text-tertiary`. 키보드 · 마우스로 가리킨 항목은 바탕 `accent-subtle` + 글자 `accent-text`. 검색어와 맞는 부분은 600 `accent-text`.
 - 결과가 없으면 가운데 13px `text-tertiary` 안내 한 줄. `role="listbox"` · 항목마다 `role="option"`.
 
 ### 알림 띠 (페이지 위쪽 경고 · 안내)
 
+> **부품 카드** — `src/components/feedback/StatusBadge.jsx` · `Banner` · 브라우저 대조 6건
+
+| 항목 | 내용 |
+|---|---|
+| 구조 | [아이콘] 제목 / 본문 / [행동] … [닫기] |
+| `tone` | `neutral` 일반 · `info` **(기본)** 안내 · `review` 검토 · `success` 완료 · `warning` 주의 · `danger` 위험 — `role="alert"` |
+| 기본 | §2-3 색조의 `bg` · `text` · `border` |
+| hover (마우스를 올림) | 닫기 단추 불투명도 70% → 100% |
+| focus (키보드 포커스) | ③ 기본 레이어의 `:focus-visible` 링 — `2px solid var(--color-border-focus)` · 간격 1px |
+| active (누르는 중 · 선택됨) | 해당 없음 |
+| disabled | 해당 없음 |
+| loading | 해당 없음 |
+| error | `danger` 색조 + `role="alert"` |
+| 토큰 | `--color-info-bg` `--color-info-text` `--color-info-border` `--color-danger-bg` `--color-danger-text` `--color-danger-border` |
+| 접근성 | 위험은 `role="alert"`, 나머지는 `role="status"` · 닫기 단추 이름 "닫기" |
+| 할 것 | 무엇을 하면 되는지 행동 단추를 함께 |
+| 하지 말 것 | 같은 화면에 띠 여러 개 |
+
+React (패키지):
+
+```jsx
+import { Banner, Button } from 'hct-web-design-template'
+
+<Banner tone="warning" title="동기화 지연" action={<Button size="sm">다시 시도</Button>}>최근 10분 데이터가 늦습니다</Banner>
+```
+
+순수 HTML + CSS (패키지 없이 — §2-1 의 세 블록과 §7 첫머리의 공통 CSS 를 붙인 뒤):
+
+```html
+<div class="hct-banner hct-banner--warning" role="status">
+  <span class="hct-banner__icon" aria-hidden="true">!</span>
+  <div><div class="hct-banner__title">동기화 지연</div><div class="hct-banner__body">최근 10분 데이터가 늦습니다</div></div>
+</div>
+```
+
+```css
+.hct-banner { display: flex; gap: 10px; padding: 10px 12px; border: 1px solid; border-radius: 6px; }
+.hct-banner__icon { flex-shrink: 0; margin-top: 1px; font-size: 0.8125rem; line-height: 1.125rem; font-weight: 700; }
+.hct-banner__title { font-size: 0.875rem; line-height: 1.25rem; font-weight: 600; }
+.hct-banner__body { font-size: 0.8125rem; line-height: 1.125rem; }
+.hct-banner__title + .hct-banner__body { margin-top: 2px; }
+.hct-banner--neutral { background-color: var(--color-neutral-bg); color: var(--color-neutral-text); border-color: var(--color-neutral-border); }
+.hct-banner--info { background-color: var(--color-info-bg); color: var(--color-info-text); border-color: var(--color-info-border); }
+.hct-banner--success { background-color: var(--color-success-bg); color: var(--color-success-text); border-color: var(--color-success-border); }
+.hct-banner--warning { background-color: var(--color-warning-bg); color: var(--color-warning-text); border-color: var(--color-warning-border); }
+.hct-banner--danger { background-color: var(--color-danger-bg); color: var(--color-danger-text); border-color: var(--color-danger-border); }
+.hct-banner--review { background-color: var(--color-review-bg); color: var(--color-review-text); border-color: var(--color-review-border); }
+```
+
+**세부 치수**
+
 - 모서리 6px · 1px 테두리 · 좌우 12px · 위아래 10px. 색은 §2-3 색조의 `bg` · `text` · `border`.
 - 왼쪽 아이콘(13px · 굵게) → 10px → 제목 14px · 600 / 본문 13px(제목 2px 아래) / 행동 단추는 8px 아래. 닫기 단추(이름 "닫기" · 12px 아이콘 · 불투명도 70% → 마우스를 올리면 100%)는 오른쪽 끝.
 - 위험 색조는 `role="alert"`, 나머지는 `role="status"`.
 
 ### 모달 · 확인 창
+
+> **부품 카드** — `src/components/overlay/Modal.jsx` · `Modal` · `ConfirmDialog` · 브라우저 대조 3건
+
+| 항목 | 내용 |
+|---|---|
+| 구조 | 덮는 막 → 창 `머리(제목 · 설명 · 닫기) → 본문 → 바닥(취소 · 실행)` |
+| `size` | `sm` 400px · 확인 창 · `md` **(기본)** 560px · `lg` 760px · `xl` 1000px |
+| 기본 | 창 `bg-raised` · `border-subtle` · `--shadow-overlay` · 뒤 `bg-overlay` |
+| hover (마우스를 올림) | 해당 없음 |
+| focus (키보드 포커스) | 열리면 창 안으로 · 닫히면 연 단추로 되돌림 |
+| active (누르는 중 · 선택됨) | 해당 없음 |
+| disabled | 해당 없음 |
+| loading | 실행 단추 `loading` |
+| error | 창 안 오류 문장 · 위험 실행은 `danger` 단추 |
+| 토큰 | `--color-bg-raised` `--color-border-subtle` `--shadow-overlay` `--color-bg-overlay` `--color-text-primary` `--color-text-tertiary` |
+| 접근성 | `role="dialog"` · `aria-modal="true"` · `aria-labelledby` 제목 · Esc 로 닫힘 · 열린 동안 뒤 스크롤 잠금 |
+| 할 것 | 확인 창은 취소 왼쪽 · 실행 오른쪽 |
+| 하지 말 것 | 모달 안에 모달 |
+
+React (패키지):
+
+```jsx
+import { Modal, ConfirmDialog, Button } from 'hct-web-design-template'
+
+<Modal open={open} onClose={close} title="계약 수정" footer={<><Button onClick={close}>취소</Button><Button variant="primary">저장</Button></>}>…</Modal>
+<ConfirmDialog open={ask} tone="danger" title="삭제할까요?" confirmLabel="삭제" onConfirm={remove} onCancel={cancel} />
+```
+
+순수 HTML + CSS (패키지 없이 — §2-1 의 세 블록과 §7 첫머리의 공통 CSS 를 붙인 뒤):
+
+```html
+<div class="hct-scrim"></div>
+<div class="hct-modal" role="dialog" aria-modal="true" aria-labelledby="m-title">
+  <div class="hct-modal__head"><h2 id="m-title" class="hct-modal__title">계약 수정</h2></div>
+  <div class="hct-modal__body">…</div>
+  <div class="hct-modal__foot">…</div>
+</div>
+```
+
+```css
+.hct-scrim { position: fixed; inset: 0; background-color: var(--color-bg-overlay); }
+.hct-modal {
+  position: relative; width: 100%; max-width: 560px; border: 1px solid var(--color-border-subtle); border-radius: 8px;
+  background-color: var(--color-bg-raised); box-shadow: var(--shadow-overlay);
+}
+.hct-modal--sm { max-width: 400px; } .hct-modal--lg { max-width: 760px; } .hct-modal--xl { max-width: 1000px; }
+.hct-modal__head { display: flex; align-items: flex-start; justify-content: space-between; gap: 12px; padding: 12px 16px; border-bottom: 1px solid var(--color-border-subtle); }
+.hct-modal__title { margin: 0; font-size: 1rem; line-height: 1.5rem; font-weight: 600; color: var(--color-text-primary); }
+.hct-modal__body { padding: 16px; }
+.hct-modal__foot { display: flex; align-items: center; justify-content: flex-end; gap: 8px; padding: 12px 16px; border-top: 1px solid var(--color-border-subtle); }
+```
+
+**세부 치수**
 
 - 뒤를 `bg-overlay` 로 덮고, 창은 위쪽에 붙여 가운데 정렬(화면 가장자리 16px, 640px 이상 32px).
 - 창: 모서리 8px · 1px `border-subtle` · 바탕 `bg-raised` · `--shadow-overlay`. 폭: 작게 400 · 기본 560 · 크게 760 · 아주 크게 1000px.
@@ -903,12 +1759,114 @@ font-family: var(--font-mono);   /* 코드 · ID · 키 */
 
 ### 서랍 (옆에서 열리는 상세 · 편집)
 
+> **부품 카드** — `src/components/overlay/Modal.jsx` · `Drawer` · 브라우저 대조 3건
+
+| 항목 | 내용 |
+|---|---|
+| 구조 | 덮는 막 → 오른쪽 판 `머리 48px(제목 · 보조 · 닫기) → 본문(스크롤) → 바닥` |
+| `size` | `md` **(기본)** 360px · `lg` 480px · `xl` 640px |
+| 기본 | 판 `bg-surface` · 왼쪽 `border-subtle` · `--shadow-overlay` |
+| hover (마우스를 올림) | 해당 없음 |
+| focus (키보드 포커스) | 모달과 같음 |
+| active (누르는 중 · 선택됨) | 해당 없음 |
+| disabled | 해당 없음 |
+| loading | 본문 스켈레톤 |
+| error | 본문 오류 블록 |
+| 토큰 | `--color-bg-surface` `--color-border-subtle` `--shadow-overlay` `--color-bg-overlay` `--layout-right-panel-width` `--layout-right-panel-wide-width` `--layout-topbar-height` |
+| 접근성 | 모달과 같음 (`role="dialog"` · Esc · 포커스 이동 · 스크롤 잠금) |
+| 할 것 | 목록을 떠나지 않고 한 건을 보거나 고칠 때 |
+| 하지 말 것 | 640px 미만에서 고정 폭 — 전체 폭으로 |
+
+React (패키지):
+
+```jsx
+import { Drawer } from 'hct-web-design-template'
+
+<Drawer open={!!selected} onClose={close} title={selected?.name} subtitle="계약" size="lg">…</Drawer>
+```
+
+순수 HTML + CSS (패키지 없이 — §2-1 의 세 블록과 §7 첫머리의 공통 CSS 를 붙인 뒤):
+
+```html
+<div class="hct-scrim"></div>
+<aside class="hct-drawer" role="dialog" aria-modal="true" aria-labelledby="d-title">
+  <div class="hct-drawer__head"><h2 id="d-title" class="hct-drawer__title">계약 A</h2></div>
+  <div class="hct-drawer__body">…</div>
+</aside>
+```
+
+```css
+.hct-drawer {
+  position: fixed; top: 0; bottom: 0; right: 0; display: flex; flex-direction: column; width: 100%;
+  border-left: 1px solid var(--color-border-subtle); background-color: var(--color-bg-surface); box-shadow: var(--shadow-overlay);
+}
+@media (min-width: 640px) {
+  .hct-drawer { width: var(--layout-right-panel-width); }
+  .hct-drawer--lg { width: var(--layout-right-panel-wide-width); }
+  .hct-drawer--xl { width: 640px; }
+}
+.hct-drawer__head { display: flex; flex-shrink: 0; align-items: center; gap: 8px; height: var(--layout-topbar-height); padding: 0 16px; border-bottom: 1px solid var(--color-border-subtle); }
+.hct-drawer__title { margin: 0; font-size: 0.8125rem; line-height: 1.125rem; font-weight: 600; color: var(--color-text-primary); }
+.hct-drawer__body { flex: 1; min-height: 0; overflow-y: auto; padding: 16px; }
+```
+
+**세부 치수**
+
 - 오른쪽에서 열리고 뒤를 `bg-overlay` 로 덮습니다. 바탕 `bg-surface` · 왼쪽 1px `border-subtle` · `--shadow-overlay`.
 - 폭: 기본 360 · 넓게 480 · 아주 넓게 640px. 640px 미만 화면에서는 전체 폭.
 - 머리 48px(아래 1px `border-subtle`, 좌우 16px): 제목 13px · 600 + 보조 11px `text-tertiary` + 닫기 단추 28×28px. 본문 여백 16px, 바닥은 모달과 같음.
 - 포커스 이동 · Esc · 스크롤 잠금은 모달과 같습니다.
 
 ### 토스트
+
+> **부품 카드** — `src/components/feedback/Toast.jsx` · `ToastProvider` · `useToast`
+
+| 항목 | 내용 |
+|---|---|
+| 구조 | 글자 [│ 행동] [닫기] — 화면 아래 가운데에 쌓임 |
+| `tone` | `neutral` 기본 · `success` 성공 · `warning` 주의 · `danger` 위험 |
+| 기본 | `bg-raised` · `border-default` · `text-primary` · `--shadow-overlay` |
+| hover (마우스를 올림) | 행동 · 닫기 단추 불투명도 변화 |
+| focus (키보드 포커스) | ③ 기본 레이어의 `:focus-visible` 링 — `2px solid var(--color-border-focus)` · 간격 1px |
+| active (누르는 중 · 선택됨) | 해당 없음 |
+| disabled | 해당 없음 |
+| loading | 해당 없음 |
+| error | `danger` 색조 |
+| 토큰 | `--color-bg-raised` `--color-border-default` `--color-text-primary` `--shadow-overlay` `--color-success-bg` `--color-success-text` `--color-danger-bg` `--color-danger-text` |
+| 접근성 | `aria-live="polite"` 영역 안 · 6초 뒤 사라짐 — 꼭 알아야 할 내용은 토스트가 아니라 알림 띠 |
+| 할 것 | 되돌리기 행동은 토스트의 행동 단추로 |
+| 하지 말 것 | 뒤를 덮기 · 오류를 토스트로만 알리기 |
+
+React (패키지):
+
+```jsx
+import { ToastProvider, useToast } from 'hct-web-design-template'
+
+const toast = useToast()
+toast({ message: '저장했습니다', tone: 'success', action: { label: '되돌리기', onClick: undo } })
+```
+
+순수 HTML + CSS (패키지 없이 — §2-1 의 세 블록과 §7 첫머리의 공통 CSS 를 붙인 뒤):
+
+```html
+<div class="hct-toast-region" role="region" aria-label="알림" aria-live="polite">
+  <div class="hct-toast hct-toast--success"><span>저장했습니다</span></div>
+</div>
+```
+
+```css
+.hct-toast-region { position: fixed; left: 50%; bottom: 16px; transform: translateX(-50%); display: flex; flex-direction: column; align-items: center; gap: 8px; pointer-events: none; }
+.hct-toast {
+  pointer-events: auto; display: flex; align-items: center; gap: 12px; padding: 8px 12px; border: 1px solid var(--color-border-default);
+  border-radius: 8px; background-color: var(--color-bg-raised); color: var(--color-text-primary); box-shadow: var(--shadow-overlay);
+  font-size: 0.875rem; line-height: 1.25rem;
+}
+.hct-toast--success { background-color: var(--color-success-bg); color: var(--color-success-text); border-color: var(--color-success-border); }
+.hct-toast--warning { background-color: var(--color-warning-bg); color: var(--color-warning-text); border-color: var(--color-warning-border); }
+.hct-toast--danger { background-color: var(--color-danger-bg); color: var(--color-danger-text); border-color: var(--color-danger-border); }
+```
+
+**세부 치수**
 
 - 화면 아래 가운데(바닥에서 16px). 여러 개면 8px 간격으로 쌓습니다. 뒤를 덮지 않습니다.
 - 모서리 8px · 1px 테두리 · 좌우 12px · 위아래 8px · `--shadow-overlay`, 내용 사이 12px, 글자 14px.
@@ -918,6 +1876,54 @@ font-family: var(--font-mono);   /* 코드 · ID · 키 */
 
 ### 스켈레톤 (로딩)
 
+> **부품 카드** — `src/components/state/Skeleton.jsx` · `Skeleton` · `SkeletonText` · `SkeletonTable` · `SkeletonStatCard` · 브라우저 대조 1건
+
+| 항목 | 내용 |
+|---|---|
+| 구조 | 실제 내용과 같은 모양의 회색 막대 — 글 줄 · 표 · 지표 카드 |
+| `density` | `compact` 32px · `default` **(기본)** 40px · `relaxed` 48px |
+| 기본 | 막대 `bg-sunken` + 1.6초 반짝임 |
+| hover (마우스를 올림) | 해당 없음 |
+| focus (키보드 포커스) | 해당 없음 |
+| active (누르는 중 · 선택됨) | 해당 없음 |
+| disabled | 해당 없음 |
+| loading | 이 부품 자체가 로딩 상태 — 묶음에 `role="status"` · 이름 "불러오는 중" |
+| error | 해당 없음 |
+| 토큰 | `--color-bg-sunken` `--color-bg-hover` `--color-border-subtle` `--row-height-compact` `--row-height-default` `--row-height-relaxed` |
+| 접근성 | 막대 하나하나는 `aria-hidden`, 묶음 하나만 `role="status"` · 움직임 줄이기에서는 반짝임이 멈춥니다 (③) |
+| 할 것 | 200ms 안에 끝나는 로딩에는 표시하지 않기 |
+| 하지 말 것 | 돌아가는 원 하나로 화면 전체 대신 |
+
+React (패키지):
+
+```jsx
+import { SkeletonTable, SkeletonText } from 'hct-web-design-template'
+
+{loading ? <SkeletonTable rows={6} columns={4} density="default" /> : <DataGrid … />}
+```
+
+순수 HTML + CSS (패키지 없이 — §2-1 의 세 블록과 §7 첫머리의 공통 CSS 를 붙인 뒤):
+
+```html
+<div role="status" aria-label="불러오는 중">
+  <div class="hct-skeleton hct-skeleton--line" aria-hidden="true"></div>
+  <div class="hct-skeleton hct-skeleton--line hct-skeleton--last" aria-hidden="true"></div>
+</div>
+```
+
+```css
+.hct-skeleton { position: relative; overflow: hidden; border-radius: 3px; background-color: var(--color-bg-sunken); }
+.hct-skeleton::after {
+  content: ''; position: absolute; inset: 0; transform: translateX(-100%); animation: hct-shimmer 1.6s infinite;
+  background-image: linear-gradient(to right, transparent, var(--color-bg-hover), transparent);
+}
+.hct-skeleton--line { height: 12px; width: 100%; }
+.hct-skeleton--line + .hct-skeleton--line { margin-top: 6px; }
+.hct-skeleton--last { width: 66.666667%; }
+```
+
+**세부 치수**
+
 - 막대: 모서리 3px · 바탕 `bg-sunken` + 1.6초 반복 반짝임(투명 → `bg-hover` → 투명이 왼쪽에서 오른쪽으로 지나감). 라이트 테마에서는 `bg-hover` 와 `bg-sunken` 이 같은 색이라 반짝임이 보이지 않습니다 — 패키지도 같으며, 회색 막대만 보이는 것이 정상입니다.
 - 글 줄: 높이 12px · 줄 사이 6px · 마지막 줄 폭 2/3.
 - 표: 머리행 32px `bg-sunken` + 그 표의 행 높이로 6행, 행 아래 1px `border-subtle`, 좌우 12px · 칸 사이 16px, 첫 열을 1.6배 넓게. `role="status"` · 이름 "불러오는 중".
@@ -925,10 +1931,45 @@ font-family: var(--font-mono);   /* 코드 · ID · 키 */
 
 ### 떠 있는 것 · 포커스
 
+> **부품 카드** — 부품 없음 — 규칙
+
+| 항목 | 내용 |
+|---|---|
+| 구조 | 부품이 아니라 규칙 — 드롭다운 · 팝오버 · 툴팁 · 모달 · 서랍 · 토스트가 함께 따릅니다 |
+| 기본 | 드롭다운 · 툴팁 `bg-raised` + `--shadow-lg` · 모달 `bg-raised` + `--shadow-overlay` |
+| hover (마우스를 올림) | 해당 없음 |
+| focus (키보드 포커스) | ③ 기본 레이어의 `:focus-visible` 링 — `2px solid var(--color-border-focus)` · 간격 1px |
+| active (누르는 중 · 선택됨) | 해당 없음 |
+| disabled | 해당 없음 |
+| loading | 해당 없음 |
+| error | 해당 없음 |
+| 토큰 | `--color-bg-raised` `--color-border-default` `--shadow-lg` `--shadow-overlay` `--color-bg-overlay` `--color-border-focus` |
+| 접근성 | 포커스 링은 절대 지우지 않음 — 지우려면 그 자리에 같은 대비의 다른 표시 |
+| 할 것 | 뒤를 덮는 것은 모달 · 명령 팔레트 · 서랍 · 좁은 화면 사이드바뿐 |
+| 하지 말 것 | `outline: none` 만 쓰기 |
+
+React (패키지):
+
+```jsx
+/* 별도 부품 없음 — 각 부품이 이 규칙을 따릅니다 */
+```
+
+순수 HTML + CSS (패키지 없이 — §2-1 의 세 블록과 §7 첫머리의 공통 CSS 를 붙인 뒤):
+
+```html
+<div class="hct-popover" role="dialog">…</div>
+```
+
+```css
+.hct-popover { border: 1px solid var(--color-border-default); border-radius: 6px; background-color: var(--color-bg-raised); box-shadow: var(--shadow-lg); }
+```
+
+**세부 치수**
+
 - 드롭다운 · 팝오버 · 차트 툴팁: 바탕 `bg-raised` · 1px `border-default` · 모서리 6px · `--shadow-lg`. 뒤를 덮지 않습니다.
 - 모달 · 명령 팔레트: 바탕 `bg-raised` + `--shadow-overlay`. 서랍: 바탕 `bg-surface` + `--shadow-overlay`.
 - **뒤를 `bg-overlay` 로 덮는 것은 모달 · 명령 팔레트 · 서랍 · 1024px 미만의 사이드바 서랍뿐**입니다. 토스트 · 하단 선택 바 · 저장 바는 `--shadow-overlay` 를 쓰지만 덮지 않습니다.
-- **포커스 링**: `outline: 2px solid var(--color-border-focus); outline-offset: 1px;` 모서리 3px(② 기본 레이어에 포함) — 절대 지우지 않습니다.
+- **포커스 링**: `outline: 2px solid var(--color-border-focus); outline-offset: 1px;` 모서리 3px(③ 기본 레이어에 포함) — 절대 지우지 않습니다.
 
 ---
 

@@ -26,7 +26,7 @@ React · Vue · Svelte · 순수 HTML · 서버 템플릿 등 프레임워크와
 
 ## 0. 작업 순서 (에이전트용)
 
-1. **§2-1 의 CSS 두 블록(토큰 → 기본 레이어)을 앱 전역 CSS 맨 위에 순서대로 그대로 붙입니다.** 이것으로 색 · 그림자 · 치수 · 서체 · 한글 줄바꿈 · 포커스 링이 패키지와 같아집니다.
+1. **§2-1 의 CSS 세 블록(토큰 → 접근성 적응 → 기본 레이어)을 앱 전역 CSS 맨 위에 순서대로 그대로 붙입니다.** 이것으로 색 · 그림자 · 치수 · 서체 · 한글 줄바꿈 · 포커스 링 · 대비 증가 · 터치 크기 · 움직임 줄이기가 패키지와 같아집니다.
 2. 화면 코드에서 색 · 간격 · 그림자 · 서체는 **그 변수로만** 씁니다. `#RRGGBB` 나 프레임워크 기본 팔레트(`gray-100`, `blue-500` 등)를 직접 쓰지 않습니다.
 3. 모든 화면은 **§6 앱 셸** 안에 넣습니다. 로고는 **§3 의 URL** 을 씁니다.
 4. 부품은 **§7 규격**대로 만듭니다. 같은 부품을 화면마다 새로 만들지 말고, 한 번 만들어 재사용합니다.
@@ -54,7 +54,16 @@ React · Vue · Svelte · 순수 HTML · 서버 템플릿 등 프레임워크와
 {{CSS}}
 ```
 
-**② 기본 레이어** — 패키지의 `src/styles/base.css` 원문입니다. 한글 줄바꿈(`keep-all`) · 포커스 링 · 고정폭 숫자(`.tabular`) · 얇은 스크롤바(`.scroll-thin`) · 동작 줄이기를 정합니다. `@layer base` 안에 있어 화면 코드의 스타일이 항상 이깁니다.
+**② 접근성 적응** — 패키지의 `src/styles/adaptive.css` 원문입니다. 사용자가 운영체제에서 켠 설정에만 반응하고, 아무것도 켜지 않은 기본 화면에서는 한 값도 바꾸지 않습니다. ① 바로 뒤에 붙입니다 — 선택자 명시도가 ① 의 다크 블록과 같아서 뒤에 와야 이깁니다.
+
+- **대비 증가**(`prefers-contrast: more` — macOS · iOS "대비 증가", Windows 대비 테마 일부): 보조 글자 · 테두리 · 강조색을 진하게 바꿔 글자 7:1 · 테두리 · 포커스 3:1 이상으로 올립니다. `<html data-contrast="normal">` 이면 끕니다.
+- **손가락 입력**(`pointer: coarse` — 휴대폰 · 태블릿): 컨트롤과 촘촘 · 기본 표 행 높이를 44px 로 올립니다 (Apple HIG 최소 44×44pt). 마우스 화면의 고밀도는 그대로입니다.
+
+```css
+{{ADAPTIVE_CSS}}
+```
+
+**③ 기본 레이어** — 패키지의 `src/styles/base.css` 원문입니다. 한글 줄바꿈(`keep-all`) · 포커스 링 · 고정폭 숫자(`.tabular`) · 얇은 스크롤바(`.scroll-thin`) · 동작 줄이기를 정합니다. `@layer base` 안에 있어 화면 코드의 스타일이 항상 이깁니다.
 
 ```css
 {{BASE_CSS}}
@@ -136,23 +145,14 @@ font-family: var(--font-mono);   /* 코드 · ID · 키 */
 
 - `--font-sans` = {{L:--font-sans}}
 - `--font-mono` = {{L:--font-mono}}
-- **한글 줄바꿈은 어절 단위**(`word-break: keep-all`, ② 기본 레이어에 포함)입니다. 공백 없는 긴 URL · ID 를 담는 곳에만 `.break-token`(`break-all`)을 씁니다.
+- **한글 줄바꿈은 어절 단위**(`word-break: keep-all`, ③ 기본 레이어에 포함)입니다. 공백 없는 긴 URL · ID 를 담는 곳에만 `.break-token`(`break-all`)을 씁니다.
 - **서체 파일은 포함돼 있지 않습니다.** Pretendard 가 설치되지 않은 PC 에서는 목록의 다음 서체(운영체제 기본 한글 서체)로 표시되며, 패키지로 만든 화면도 똑같습니다. 웹폰트를 따로 불러온다면 모든 화면에 똑같이 적용하세요 — 일부 화면만 다르면 같은 제품으로 보이지 않습니다.
 
-**크기 — 본문 14px 고밀도 스케일**
+**크기 — 본문 14px 고밀도 스케일 · rem 단위**
 
-| 이름 | 크기 / 행간 | 용도 |
-|---|---|---|
-| micro | 11 / 14px | 타임스탬프 · 사이드바 그룹 라벨 · 작은 배지 |
-| xs | 12 / 16px | 배지 · 캡션 · 입력 라벨 · 표 머리행 |
-| sm | 13 / 18px | 사이드바 항목 · 설명문 · 경로 · 교차표 셀 |
-| base | 14 / 20px | **기본 본문** · 버튼 · 입력 · 표 본문 셀 |
-| md | 16 / 24px | 섹션 제목 |
-| lg | 20 / 28px | 페이지 제목 |
-| xl | 24 / 32px | 화면 제목 |
-| metric | 28 / 34px · 자간 -0.01em | KPI 수치 |
-| metric-lg | 34 / 40px · 자간 -0.02em | 강조 KPI 수치 |
+{{TYPE_SCALE}}
 
+- **크기 · 행간은 rem 으로 씁니다.** 브라우저 기본(16px)에서는 오른쪽 px 와 똑같이 그려지고, 사용자가 브라우저 · 운영체제에서 글자를 키우면 함께 커집니다(Apple HIG 의 Dynamic Type · WCAG 1.4.4). `font-size: 14px` 처럼 px 로 고정하면 그 설정이 무시됩니다. 행간도 rem 이라야 글자만 커지고 줄이 겹치지 않습니다.
 - 굵기: 400 본문 · 500 버튼 · 라벨 · 배지 · 600 제목 · 현재 항목 · 700 숫자 배지.
 - 크기는 위 표의 단계만 쓰고, 본문에 새 단계를 늘리지 않습니다. 위계가 많아지면 위계가 사라집니다.
 - 표 · 지표의 숫자는 자릿수가 흔들리지 않게 고정폭 숫자를 씁니다: `font-variant-numeric: tabular-nums;`
@@ -251,7 +251,21 @@ font-family: var(--font-mono);   /* 코드 · ID · 키 */
 
 패키지의 실제 컴포넌트 코드에서 뽑은 값입니다. 여기 없는 부품을 새로 만들 때도 같은 토큰 · 같은 치수 체계를 씁니다.
 
+**부품 카드 읽는 법.** 부품마다 같은 형식의 카드가 먼저 오고, 그 아래에 세부 치수가 옵니다.
+
+- 카드 형식: 구조 → 종류 · 크기(prop) → 상태 7가지(기본 · hover · focus · active · disabled · loading · error) → 토큰 → 접근성 → 할 것 / 하지 말 것 → React 예 → 순수 HTML + CSS 예.
+- **카드는 코드에서 검사됩니다.** 종류 · 크기 목록은 컴포넌트 소스의 실제 키와, 기본값은 함수 기본값과 같아야 생성되고, 토큰은 §2 에 있어야 합니다. "브라우저 대조 N건" 이 붙은 카드는 그 HTML + CSS 를 크로미엄으로 그려 실제 React 컴포넌트와 크기 · 여백 · 글자 · 색이 같은지 라이트 · 다크에서 비교합니다.
+- 순수 HTML 로 만든다면 §2-1 의 세 블록 다음에 아래 공통 CSS 를 한 번 붙이고, 각 카드의 CSS 를 붙입니다. 클래스 이름(`hct-…`)은 예시이므로 바꿔도 되지만 값은 바꾸지 않습니다.
+
+```css
+{{CARD_SHARED_CSS}}
+```
+
 ### 버튼
+
+{{CARD:button}}
+
+**세부 치수**
 
 | 크기 | 높이 | 좌우 여백 | 글자 | 모서리 | 아이콘 간격 |
 |---|---|---|---|---|---|
@@ -272,6 +286,10 @@ font-family: var(--font-mono);   /* 코드 · ID · 키 */
 
 ### 입력
 
+{{CARD:input}}
+
+**세부 치수**
+
 - 높이 32px (작게 28px · 글자 13px / 크게 36px), 좌우 여백 8px, 글자 14px, 모서리 6px.
 - 라벨: 입력 위 4px, 12px · 500 `text-secondary`.
 - 바탕 `bg-surface`, 테두리 `border-default`, 글자 `text-primary`, 안내문(placeholder) `text-tertiary`.
@@ -280,12 +298,20 @@ font-family: var(--font-mono);   /* 코드 · ID · 키 */
 
 ### 상태 배지
 
+{{CARD:badge}}
+
+**세부 치수**
+
 - 높이 20px, 좌우 여백 6px, 글자 12px · 굵기 500, 모서리 3px, 1px 테두리. 작은 크기: 높이 16px · 여백 4px · 글자 11px.
 - 색은 §2-3 색조의 `bg` · `text` · `border` 조합.
 - 표 안의 상태 배지는 글자 앞에 6px 원형 점(색조의 `solid`)을 붙이고, 촘촘한 표(행 32px)에서는 작은 배지(16px)를 씁니다. 점과 글자 사이 4px. **점만 단독으로 쓰지 않습니다.**
 - 상태가 아닌 분류(라벨 · 카테고리)는 **중립 태그**로 씁니다: 높이 20px · 좌우 6px · 12px `text-secondary` · 바탕 `bg-sunken` · 1px `border-subtle` · 모서리 3px. 분류에 상태 색을 쓰지 않습니다.
 
 ### 사이드바
+
+{{CARD:sidebar}}
+
+**세부 치수**
 
 - 구조: 머리 높이 48px — 상단바와 같은 높이, 아래 1px `sidebar-border`, 좌우 12px. 왼쪽에 로고(흰색판 22px), 오른쪽 끝에 현재 환경 표시(예: "프로덕션" — 11px · 500 `sidebar-fg-muted` · 1px `sidebar-border` · 모서리 3px · 좌우 6px · 위아래 2px). 목록 영역 좌우 8px · 위아래 12px, 항목 사이 1px. 바닥(현재 사용자)은 위 1px `sidebar-border`, 여백 8px.
 - 그룹 라벨: 11px · 굵기 600 · 대문자 · 자간 0.06em · `sidebar-fg-subtle`, 좌우 여백 8px · 아래 4px. 그룹 사이 16px.
@@ -312,6 +338,10 @@ font-family: var(--font-mono);   /* 코드 · ID · 키 */
 
 ### 표
 
+{{CARD:table}}
+
+**세부 치수**
+
 - 머리행: 높이 32px · 좌우 8px, 스크롤해도 위에 고정, 바탕 `bg-sunken`, 글자 12px · 굵기 600 · `text-secondary`, 아래 테두리 `border-default`.
 - 본문 셀: 글자 14px(본문과 같음) · 좌우 12px. 행 높이: 촘촘 32px · **기본 40px** · 여유 48px. 행 사이 `border-subtle`.
 
@@ -329,6 +359,10 @@ font-family: var(--font-mono);   /* 코드 · ID · 키 */
 
 ### 지표 타일 (대시보드 KPI)
 
+{{CARD:metric}}
+
+**세부 치수**
+
 - 모서리 8px, 1px 테두리, 바탕 `bg-surface`, 안쪽 여백 12px.
 - 라벨 12px · 굵기 500 · `text-tertiary` → 6px 아래 → 값 `metric`(28/34px) · 굵기 600 · 고정폭 숫자, 단위 13px `text-tertiary` → 증감 12px → 작은 추이선.
 - 상태별 테두리: 정상 `border-subtle` · 주의 `warning-border` · 위험 `danger-border` (위험이면 값 글자도 `danger-text`).
@@ -336,15 +370,27 @@ font-family: var(--font-mono);   /* 코드 · ID · 키 */
 
 ### 위젯 (카드)
 
+{{CARD:widget}}
+
+**세부 치수**
+
 - 모서리 8px, 테두리 `border-subtle`, 바탕 `bg-surface`.
 - 머리: 위 10px · 아래 8px · 좌우 12px 여백, 제목 + 오른쪽 행동.
 
 ### 페이지 머리
 
+{{CARD:page-header}}
+
+**세부 치수**
+
 - 제목 20/28px · 굵기 600 · `text-primary` (640px 이상에서 한 줄 말줄임), 설명 13px · `text-tertiary` · 제목 4px 아래.
 - 행동 버튼은 오른쪽, 좁은 화면에서는 제목 아래로 내려가며 간격 12px. 머리 아래 20px 뒤에 내용 시작.
 
 ### 빈 상태
+
+{{CARD:empty}}
+
+**세부 치수**
 
 - 가운데 정렬, 위아래 64px · 좌우 24px 여백 (작게: 32px · 16px). 아이콘 상자 40×40px · 모서리 8px · 바탕 `bg-sunken` · 아이콘 `text-tertiary`.
 - 아이콘 상자 → 12px → 제목 14px · 굵기 600 → 4px → 설명 13px `text-tertiary` · 최대 폭 380px → 16px 아래 행동 버튼.
@@ -353,6 +399,10 @@ font-family: var(--font-mono);   /* 코드 · ID · 키 */
 
 ### 필터 줄 · 세그먼트 전환
 
+{{CARD:filter}}
+
+**세부 치수**
+
 - 필터 줄: 요소 사이 8px, 넘치면 줄바꿈. 적용된 필터 줄은 8px 아래.
 - 필터 단추: 높이 32px · 좌우 8px · 14px · 모서리 6px · 1px 테두리, 라벨과 값 사이 6px(값은 500), 오른쪽 10px 화살표(불투명도 60%). 기본 = 바탕 `bg-surface` · 테두리 `border-default` · 글자 `text-secondary`(마우스를 올리면 `bg-hover`). 값이 걸리면 바탕 `accent-subtle` · 테두리 `accent-border` · 글자 `accent-text` · 500.
 - 적용된 필터 줄: "적용됨:" 12px `text-tertiary` → 중립 태그마다 이름 `text-tertiary` + 값 500 `text-primary` + 지움 단추, 태그 사이 6px → 끝에 "전체 초기화" 12px · 500 `text-link`(마우스를 올리면 밑줄).
@@ -360,17 +410,29 @@ font-family: var(--font-mono);   /* 코드 · ID · 키 */
 
 ### 드롭다운 · 선택 목록
 
+{{CARD:dropdown}}
+
+**세부 치수**
+
 - 목록 상자: 트리거 4px 아래 · 최대 높이 220px(넘치면 스크롤) · 위아래 여백 4px · 바탕 `bg-raised` · 1px `border-default` · 모서리 6px · `--shadow-lg`.
 - 항목: 좌우 8px · 위아래 4px · 14px `text-primary`, 아이콘 · 아바타와 글자 사이 8px, 오른쪽 보조 글자 12px `text-tertiary`. 키보드 · 마우스로 가리킨 항목은 바탕 `accent-subtle` + 글자 `accent-text`. 검색어와 맞는 부분은 600 `accent-text`.
 - 결과가 없으면 가운데 13px `text-tertiary` 안내 한 줄. `role="listbox"` · 항목마다 `role="option"`.
 
 ### 알림 띠 (페이지 위쪽 경고 · 안내)
 
+{{CARD:banner}}
+
+**세부 치수**
+
 - 모서리 6px · 1px 테두리 · 좌우 12px · 위아래 10px. 색은 §2-3 색조의 `bg` · `text` · `border`.
 - 왼쪽 아이콘(13px · 굵게) → 10px → 제목 14px · 600 / 본문 13px(제목 2px 아래) / 행동 단추는 8px 아래. 닫기 단추(이름 "닫기" · 12px 아이콘 · 불투명도 70% → 마우스를 올리면 100%)는 오른쪽 끝.
 - 위험 색조는 `role="alert"`, 나머지는 `role="status"`.
 
 ### 모달 · 확인 창
+
+{{CARD:modal}}
+
+**세부 치수**
 
 - 뒤를 `bg-overlay` 로 덮고, 창은 위쪽에 붙여 가운데 정렬(화면 가장자리 16px, 640px 이상 32px).
 - 창: 모서리 8px · 1px `border-subtle` · 바탕 `bg-raised` · `--shadow-overlay`. 폭: 작게 400 · 기본 560 · 크게 760 · 아주 크게 1000px.
@@ -380,12 +442,20 @@ font-family: var(--font-mono);   /* 코드 · ID · 키 */
 
 ### 서랍 (옆에서 열리는 상세 · 편집)
 
+{{CARD:drawer}}
+
+**세부 치수**
+
 - 오른쪽에서 열리고 뒤를 `bg-overlay` 로 덮습니다. 바탕 `bg-surface` · 왼쪽 1px `border-subtle` · `--shadow-overlay`.
 - 폭: 기본 360 · 넓게 480 · 아주 넓게 640px. 640px 미만 화면에서는 전체 폭.
 - 머리 48px(아래 1px `border-subtle`, 좌우 16px): 제목 13px · 600 + 보조 11px `text-tertiary` + 닫기 단추 28×28px. 본문 여백 16px, 바닥은 모달과 같음.
 - 포커스 이동 · Esc · 스크롤 잠금은 모달과 같습니다.
 
 ### 토스트
+
+{{CARD:toast}}
+
+**세부 치수**
 
 - 화면 아래 가운데(바닥에서 16px). 여러 개면 8px 간격으로 쌓습니다. 뒤를 덮지 않습니다.
 - 모서리 8px · 1px 테두리 · 좌우 12px · 위아래 8px · `--shadow-overlay`, 내용 사이 12px, 글자 14px.
@@ -395,6 +465,10 @@ font-family: var(--font-mono);   /* 코드 · ID · 키 */
 
 ### 스켈레톤 (로딩)
 
+{{CARD:skeleton}}
+
+**세부 치수**
+
 - 막대: 모서리 3px · 바탕 `bg-sunken` + 1.6초 반복 반짝임(투명 → `bg-hover` → 투명이 왼쪽에서 오른쪽으로 지나감). 라이트 테마에서는 `bg-hover` 와 `bg-sunken` 이 같은 색이라 반짝임이 보이지 않습니다 — 패키지도 같으며, 회색 막대만 보이는 것이 정상입니다.
 - 글 줄: 높이 12px · 줄 사이 6px · 마지막 줄 폭 2/3.
 - 표: 머리행 32px `bg-sunken` + 그 표의 행 높이로 6행, 행 아래 1px `border-subtle`, 좌우 12px · 칸 사이 16px, 첫 열을 1.6배 넓게. `role="status"` · 이름 "불러오는 중".
@@ -402,10 +476,14 @@ font-family: var(--font-mono);   /* 코드 · ID · 키 */
 
 ### 떠 있는 것 · 포커스
 
+{{CARD:floating}}
+
+**세부 치수**
+
 - 드롭다운 · 팝오버 · 차트 툴팁: 바탕 `bg-raised` · 1px `border-default` · 모서리 6px · `--shadow-lg`. 뒤를 덮지 않습니다.
 - 모달 · 명령 팔레트: 바탕 `bg-raised` + `--shadow-overlay`. 서랍: 바탕 `bg-surface` + `--shadow-overlay`.
 - **뒤를 `bg-overlay` 로 덮는 것은 모달 · 명령 팔레트 · 서랍 · 1024px 미만의 사이드바 서랍뿐**입니다. 토스트 · 하단 선택 바 · 저장 바는 `--shadow-overlay` 를 쓰지만 덮지 않습니다.
-- **포커스 링**: `outline: 2px solid var(--color-border-focus); outline-offset: 1px;` 모서리 3px(② 기본 레이어에 포함) — 절대 지우지 않습니다.
+- **포커스 링**: `outline: 2px solid var(--color-border-focus); outline-offset: 1px;` 모서리 3px(③ 기본 레이어에 포함) — 절대 지우지 않습니다.
 
 ---
 

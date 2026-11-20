@@ -1,0 +1,110 @@
+/* ============================================================================
+   HCT 접근성 적응 — 자동 생성 파일 (직접 수정하지 마세요)
+   ----------------------------------------------------------------------------
+   원본: tokens/palettes.json 의 hct.contrastMore · scripts/build-adaptive.mjs
+   생성: npm run tokens:build
+
+   사용자가 운영체제에서 켠 설정에만 반응합니다. 아무것도 켜지 않은 기본
+   화면(대비 보통 · 마우스 · 움직임 허용)에서는 한 값도 바꾸지 않습니다.
+
+     ① 대비 증가   prefers-contrast: more  글자 7:1 · 테두리 · 포커스 3:1 이상
+     ② 손가락 입력 pointer: coarse         누르는 칸 44px 이상 (Apple HIG 44×44pt)
+
+   움직임 줄이기는 base.css, 사용자 글자 크기는 rem 타입 스케일이 맡습니다.
+   <html data-contrast="normal"> 을 붙이면 ① 을 끕니다 (화면 비교 · 인쇄용).
+
+   반드시 tokens.css · palettes.css 다음에 불러옵니다 — 선택자 명시도가
+   팔레트 다크 블록과 같아서, 뒤에 와야 이깁니다.
+   ============================================================================ */
+
+/* ① 대비 증가 — 라이트 테마 */
+@media (prefers-contrast: more) {
+  :root:not([data-theme="dark"]):not([data-contrast="normal"]) {
+    --color-text-secondary: #2E3847;
+    --color-text-tertiary: #445062;
+    --color-text-disabled: #616D7E;
+    --color-text-link: #263C80;
+    --color-border-subtle: #A7B3C4;
+    --color-border-default: #616D7E;
+    --color-border-strong: #445062;
+    --color-border-focus: #1F3166;
+    --color-accent-solid: #263C80;
+    --color-accent-solid-hover: #1F3166;
+    --color-accent-text: #1F3166;
+    --color-accent-border: #5D79BE;
+    --color-success-text: #14532D;
+    --color-warning-text: #78350F;
+    --color-danger-text: #7F1D1D;
+    --color-info-text: #1E3A8A;
+    --color-review-text: #4C1D95;
+    --color-neutral-text: #2E3847;
+    --color-sidebar-fg-muted: #D3DBEC;
+    --color-sidebar-fg-subtle: #AAB7D2;
+  }
+}
+
+/* ① 대비 증가 — 운영체제 다크 (data-theme="light" 로 고정한 경우 제외) */
+@media (prefers-contrast: more) and (prefers-color-scheme: dark) {
+  :root:not([data-theme="light"]):not([data-contrast="normal"]) {
+    --color-text-primary: #F5F7FA;
+    --color-text-secondary: #C9D1DC;
+    --color-text-tertiary: #A5B0BF;
+    --color-text-disabled: #7D8896;
+    --color-text-link: #BAC8E8;
+    --color-border-subtle: #45505F;
+    --color-border-default: #6B7685;
+    --color-border-strong: #8A95A4;
+    --color-border-focus: #BAC8E8;
+    --color-accent-solid: #8EA4D5;
+    --color-accent-solid-hover: #BAC8E8;
+    --color-accent-text: #BAC8E8;
+    --color-accent-border: #5D79BE;
+    --color-success-text: #86EFAC;
+    --color-warning-text: #FDE68A;
+    --color-danger-text: #FCA5A5;
+    --color-info-text: #BFD4FF;
+    --color-review-text: #DDD0FE;
+    --color-neutral-text: #C9D1DC;
+    --color-sidebar-fg-muted: #C9D1DC;
+    --color-sidebar-fg-subtle: #A5B0BF;
+  }
+}
+
+/* ① 대비 증가 — <html data-theme="dark"> 로 강제한 다크 */
+@media (prefers-contrast: more) {
+  :root[data-theme="dark"]:not([data-contrast="normal"]) {
+    --color-text-primary: #F5F7FA;
+    --color-text-secondary: #C9D1DC;
+    --color-text-tertiary: #A5B0BF;
+    --color-text-disabled: #7D8896;
+    --color-text-link: #BAC8E8;
+    --color-border-subtle: #45505F;
+    --color-border-default: #6B7685;
+    --color-border-strong: #8A95A4;
+    --color-border-focus: #BAC8E8;
+    --color-accent-solid: #8EA4D5;
+    --color-accent-solid-hover: #BAC8E8;
+    --color-accent-text: #BAC8E8;
+    --color-accent-border: #5D79BE;
+    --color-success-text: #86EFAC;
+    --color-warning-text: #FDE68A;
+    --color-danger-text: #FCA5A5;
+    --color-info-text: #BFD4FF;
+    --color-review-text: #DDD0FE;
+    --color-neutral-text: #C9D1DC;
+    --color-sidebar-fg-muted: #C9D1DC;
+    --color-sidebar-fg-subtle: #A5B0BF;
+  }
+}
+
+/* ② 손가락 입력 — 주 입력 장치가 거친 포인터(터치)일 때 */
+@media (pointer: coarse) {
+  :root {
+    --control-height-xs: 44px;
+    --control-height-sm: 44px;
+    --control-height-md: 44px;
+    --control-height-lg: 44px;
+    --row-height-compact: 44px;
+    --row-height-default: 44px;
+  }
+}

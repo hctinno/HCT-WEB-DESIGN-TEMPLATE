@@ -44,7 +44,7 @@ const FOCUS_RING = '③ 기본 레이어의 `:focus-visible` 링 — `2px solid 
 export const SHARED_CSS = `/* 부품 카드 공통 — 프레임워크 초기화 CSS 가 없어도 같은 모양이 되게 */
 .hct-btn, .hct-input, .hct-filter-btn, .hct-segmented__tab, .hct-nav-item,
 .hct-badge, .hct-tag, .hct-banner, .hct-metric, .hct-widget, .hct-modal, .hct-drawer,
-.hct-toast, .hct-listbox, .hct-skeleton, .hct-empty__icon, .hct-segmented {
+.hct-toast, .hct-listbox, .hct-skeleton, .hct-empty__icon, .hct-segmented, .hct-logo-mark {
   box-sizing: border-box;
 }
 .hct-btn, .hct-input, .hct-filter-btn, .hct-segmented__tab, .hct-nav-item, button.hct-metric {
@@ -58,6 +58,70 @@ export const SHARED_CSS = `/* 부품 카드 공통 — 프레임워크 초기화
 @keyframes hct-shimmer { 100% { transform: translateX(100%); } }`
 
 export const CARDS = [
+  /* ───────────────────────────── 로고 ───────────────────────────── */
+  {
+    id: 'logo',
+    heading: '로고 (회사 로고 · 마크)',
+    source: 'src/components/shell/Logo.jsx',
+    exports: ['Logo', 'LogoMark'],
+    props: [
+      {
+        name: 'on', keys: ['light', 'dark', 'auto'], default: 'auto',
+        notes: {
+          light: '밝은 바탕 — 컬러판 `hct-logo-color.png`',
+          dark: '어두운 바탕(사이드바 · 강조 타일) — 흰색판 `hct-logo-white.png`',
+          auto: '현재 테마를 보고 고름. 테마와 무관하게 어두운 사이드바에는 쓰지 않음',
+        },
+      },
+    ],
+    anatomy: '`Logo` — 가로 로고 이미지(높이만 지정, 폭은 비율) [+ 회사명 글자] · `LogoMark` — 정사각 타일 안에 로고에서 오려낸 "H" (`on` 기본 `dark`, `size` 기본 32px · 안쪽 여백 16%)',
+    states: {
+      default: '높이: 사이드바 머리 22px · 로그인 40px · 셸 밖 오류 화면 24px(기본값)',
+      hover: NA + ' — 로고는 누르는 요소가 아닙니다. 링크로 감싸면 그 링크의 hover 를 씁니다',
+      focus: NA + ' — 링크로 감쌌다면 ' + FOCUS_RING,
+      active: NA,
+      disabled: NA,
+      loading: NA + ' — 이미지가 번들에 data URI 로 들어 있어 따로 불러오지 않습니다',
+      error: '이미지를 못 불러오면 대체 글자 `HCT`(alt)가 보입니다 — 외부 주소에 기대지 말고 앱 자산으로 넣습니다',
+    },
+    tokens: ['--color-accent-solid', '--color-accent-subtle', '--color-sidebar-bg'],
+    a11y: [
+      '`Logo` 의 이미지는 `alt="HCT"`',
+      '`LogoMark` 는 `role="img"` + `aria-label="HCT"`, 안쪽 이미지는 `alt=""`',
+      '흰색판은 어두운 바탕에서만 — 원색 로고는 어두운 바탕에서 대비 약 2:1',
+    ],
+    do: ['바탕의 밝기로 컬러판 · 흰색판을 고르기', '높이만 지정', '좁은 자리에는 `LogoMark`'],
+    dont: ['타이핑한 "HCT" · "H" 글자로 대신하기', '폭을 정해 비율 바꾸기', '가로 로고를 접힌 사이드바 폭으로 줄이기', 'CSS 필터로 색 바꾸기'],
+    react: `import { Logo, LogoMark } from 'hct-web-design-template'
+
+<Logo on="dark" height={22} />          {/* 사이드바 머리 */}
+<Logo on="light" height={40} />         {/* 로그인 화면 */}
+<LogoMark on="dark" size={32} />        {/* 접힌 사이드바 · 좁은 자리 */}`,
+    html: `<!-- 이미지는 §3 의 URL 에서 내려받아 앱 자산으로 넣습니다 -->
+<img class="hct-logo hct-logo--sidebar" src="/brand/hct-logo-white.png" alt="HCT">
+<img class="hct-logo hct-logo--login" src="/brand/hct-logo-color.png" alt="HCT">
+<span class="hct-logo-mark hct-logo-mark--dark" role="img" aria-label="HCT">
+  <img src="/brand/hct-mark-white.png" alt="">
+</span>`,
+    css: `.hct-logo { display: block; flex-shrink: 0; height: 24px; width: auto; max-width: 100%; }
+.hct-logo--sidebar { height: 22px; }
+.hct-logo--login { height: 40px; }
+.hct-logo-mark {
+  display: inline-flex; flex-shrink: 0; align-items: center; justify-content: center;
+  width: 32px; height: 32px; padding: 5px; border-radius: 8px; background-color: var(--color-accent-subtle);
+}
+.hct-logo-mark--dark { background-color: var(--color-accent-solid); }
+.hct-logo-mark img { display: block; width: 100%; height: 100%; max-width: 100%; object-fit: contain; }`,
+    probes: [
+      { label: '밝은 면 · 기본 24px', react: ['Logo', { on: 'light' }], html: '<img class="hct-logo" src="brand/hct-logo-color.png" alt="HCT">', select: 'img' },
+      { label: '사이드바 · 흰색판 22px', react: ['Logo', { on: 'dark', height: 22 }], html: '<img class="hct-logo hct-logo--sidebar" src="brand/hct-logo-white.png" alt="HCT">', select: 'img' },
+      { label: '로그인 · 40px', react: ['Logo', { on: 'light', height: 40 }], html: '<img class="hct-logo hct-logo--login" src="brand/hct-logo-color.png" alt="HCT">', select: 'img' },
+      { label: '마크 · 어두운 면', react: ['LogoMark', { on: 'dark' }], html: '<span class="hct-logo-mark hct-logo-mark--dark" role="img" aria-label="HCT"><img src="brand/hct-mark-white.png" alt=""></span>', select: '[role=img]' },
+      { label: '마크 · 밝은 면', react: ['LogoMark', { on: 'light' }], html: '<span class="hct-logo-mark" role="img" aria-label="HCT"><img src="brand/hct-mark-color.png" alt=""></span>', select: '[role=img]' },
+      { label: '마크 이미지', react: ['LogoMark', { on: 'dark' }], html: '<span class="hct-logo-mark hct-logo-mark--dark" role="img" aria-label="HCT"><img src="brand/hct-mark-white.png" alt=""></span>', select: '[role=img] img' },
+    ],
+  },
+
   /* ───────────────────────────── 버튼 ───────────────────────────── */
   {
     id: 'button',

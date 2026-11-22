@@ -905,7 +905,7 @@ font-family: var(--font-mono);   /* 코드 · ID · 키 */
 /* 부품 카드 공통 — 프레임워크 초기화 CSS 가 없어도 같은 모양이 되게 */
 .hct-btn, .hct-input, .hct-filter-btn, .hct-segmented__tab, .hct-nav-item,
 .hct-badge, .hct-tag, .hct-banner, .hct-metric, .hct-widget, .hct-modal, .hct-drawer,
-.hct-toast, .hct-listbox, .hct-skeleton, .hct-empty__icon, .hct-segmented {
+.hct-toast, .hct-listbox, .hct-skeleton, .hct-empty__icon, .hct-segmented, .hct-logo-mark {
   box-sizing: border-box;
 }
 .hct-btn, .hct-input, .hct-filter-btn, .hct-segmented__tab, .hct-nav-item, button.hct-metric {
@@ -918,6 +918,66 @@ font-family: var(--font-mono);   /* 코드 · ID · 키 */
 @keyframes hct-spin { to { transform: rotate(360deg); } }
 @keyframes hct-shimmer { 100% { transform: translateX(100%); } }
 ```
+
+### 로고 (회사 로고 · 마크)
+
+> **부품 카드** — `src/components/shell/Logo.jsx` · `Logo` · `LogoMark` · 브라우저 대조 6건
+
+| 항목 | 내용 |
+|---|---|
+| 구조 | `Logo` — 가로 로고 이미지(높이만 지정, 폭은 비율) [+ 회사명 글자] · `LogoMark` — 정사각 타일 안에 로고에서 오려낸 "H" (`on` 기본 `dark`, `size` 기본 32px · 안쪽 여백 16%) |
+| `on` | `light` 밝은 바탕 — 컬러판 `hct-logo-color.png` · `dark` 어두운 바탕(사이드바 · 강조 타일) — 흰색판 `hct-logo-white.png` · `auto` **(기본)** 현재 테마를 보고 고름. 테마와 무관하게 어두운 사이드바에는 쓰지 않음 |
+| 기본 | 높이: 사이드바 머리 22px · 로그인 40px · 셸 밖 오류 화면 24px(기본값) |
+| hover (마우스를 올림) | 해당 없음 — 로고는 누르는 요소가 아닙니다. 링크로 감싸면 그 링크의 hover 를 씁니다 |
+| focus (키보드 포커스) | 해당 없음 — 링크로 감쌌다면 ③ 기본 레이어의 `:focus-visible` 링 — `2px solid var(--color-border-focus)` · 간격 1px |
+| active (누르는 중 · 선택됨) | 해당 없음 |
+| disabled | 해당 없음 |
+| loading | 해당 없음 — 이미지가 번들에 data URI 로 들어 있어 따로 불러오지 않습니다 |
+| error | 이미지를 못 불러오면 대체 글자 `HCT`(alt)가 보입니다 — 외부 주소에 기대지 말고 앱 자산으로 넣습니다 |
+| 토큰 | `--color-accent-solid` `--color-accent-subtle` `--color-sidebar-bg` |
+| 접근성 | `Logo` 의 이미지는 `alt="HCT"` · `LogoMark` 는 `role="img"` + `aria-label="HCT"`, 안쪽 이미지는 `alt=""` · 흰색판은 어두운 바탕에서만 — 원색 로고는 어두운 바탕에서 대비 약 2:1 |
+| 할 것 | 바탕의 밝기로 컬러판 · 흰색판을 고르기 · 높이만 지정 · 좁은 자리에는 `LogoMark` |
+| 하지 말 것 | 타이핑한 "HCT" · "H" 글자로 대신하기 · 폭을 정해 비율 바꾸기 · 가로 로고를 접힌 사이드바 폭으로 줄이기 · CSS 필터로 색 바꾸기 |
+
+React (패키지):
+
+```jsx
+import { Logo, LogoMark } from 'hct-web-design-template'
+
+<Logo on="dark" height={22} />          {/* 사이드바 머리 */}
+<Logo on="light" height={40} />         {/* 로그인 화면 */}
+<LogoMark on="dark" size={32} />        {/* 접힌 사이드바 · 좁은 자리 */}
+```
+
+순수 HTML + CSS (패키지 없이 — §2-1 의 세 블록과 §7 첫머리의 공통 CSS 를 붙인 뒤):
+
+```html
+<!-- 이미지는 §3 의 URL 에서 내려받아 앱 자산으로 넣습니다 -->
+<img class="hct-logo hct-logo--sidebar" src="/brand/hct-logo-white.png" alt="HCT">
+<img class="hct-logo hct-logo--login" src="/brand/hct-logo-color.png" alt="HCT">
+<span class="hct-logo-mark hct-logo-mark--dark" role="img" aria-label="HCT">
+  <img src="/brand/hct-mark-white.png" alt="">
+</span>
+```
+
+```css
+.hct-logo { display: block; flex-shrink: 0; height: 24px; width: auto; max-width: 100%; }
+.hct-logo--sidebar { height: 22px; }
+.hct-logo--login { height: 40px; }
+.hct-logo-mark {
+  display: inline-flex; flex-shrink: 0; align-items: center; justify-content: center;
+  width: 32px; height: 32px; padding: 5px; border-radius: 8px; background-color: var(--color-accent-subtle);
+}
+.hct-logo-mark--dark { background-color: var(--color-accent-solid); }
+.hct-logo-mark img { display: block; width: 100%; height: 100%; max-width: 100%; object-fit: contain; }
+```
+
+**세부 치수**
+
+- 파일 · URL · 고르는 규칙은 §3 이 원본입니다. 이 카드는 그 규칙을 부품 형식으로 옮긴 것입니다.
+- 가로 로고 원본 264×86 → 높이 22px 이면 폭 약 68px, 24px 이면 약 74px, 40px 이면 약 123px.
+- 마크 타일: 한 변 32px(기본) · 모서리 8px · 안쪽 여백 한 변의 16%(32px 이면 5px) — 어두운 면 `accent-solid` + 흰색 마크, 밝은 면 `accent-subtle` + 컬러 마크.
+- 로고 높이는 px 로 둡니다. 글자 크기 설정(rem)을 따라 커지지 않는 것이 정상입니다 — 로고는 글이 아니라 표지입니다.
 
 ### 버튼
 

@@ -50,6 +50,21 @@ for (const card of CARDS) {
 }
 await vite.close()
 
+/*
+ * 로고 이미지 — 양쪽 마크업의 src 가 가리키는 브랜드 파일 이름을 먼저 비교하고
+ * (밝은 면에 흰색판이 들어가면 여기서 걸립니다), 같은 실제 파일(data URI)로 바꿔 끼워
+ * 크기를 잽니다. 저장소 쪽은 Vite 경로, md 쪽은 앱 자산 경로라 그대로는 못 불러옵니다.
+ */
+const BRAND = /src="[^"]*?(hct-(?:logo|mark)-(?:color|white)\.png)"/g
+const brandFiles = (h) => [...h.matchAll(BRAND)].map((m) => m[1])
+const inlineBrand = (h) => h.replace(BRAND, (_, f) => `src="data:image/png;base64,${readFileSync('src/assets/brand/' + f).toString('base64')}"`)
+for (const p of probes) {
+  const [a, b] = [brandFiles(p.repoHtml), brandFiles(p.html)]
+  if (a.join() !== b.join()) failures.push(`${p.card} · ${p.label}: 로고 파일 — 저장소 ${a.join(', ') || '없음'} / md ${b.join(', ') || '없음'}`)
+  p.repoHtml = inlineBrand(p.repoHtml)
+  p.html = inlineBrand(p.html)
+}
+
 /* ── 2. 저장소 쪽 CSS: 소비 앱과 같은 순서로 Tailwind 를 돌립니다 ───────── */
 
 const preset = (await import('../tailwind-preset.js')).default
@@ -120,6 +135,8 @@ async function openSide(css, mode) {
 
 async function measure(page, html, select, set) {
   await page.evaluate((h) => { document.getElementById('probe').innerHTML = h }, html)
+  /* 이미지는 디코딩이 끝나야 크기가 정해집니다 */
+  await page.evaluate(() => Promise.all([...document.images].map((i) => i.decode().catch(() => {}))))
   /* 등장 애니메이션(동작 줄이기에서 0.01ms)이 끝난 뒤의 값을 읽습니다 */
   await page.evaluate(() => new Promise((r) => requestAnimationFrame(() => requestAnimationFrame(r))))
   await page.evaluate(() => Promise.all(document.getAnimations().map((a) => a.finished.catch(() => {}))))

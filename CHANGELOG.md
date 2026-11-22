@@ -42,15 +42,16 @@
 
 ### 고친 것
 
+- `LogoMark` 에 `role="img"` 를 붙였습니다. 역할 없는 `<span>` 의 `aria-label` 은 스크린리더가 읽지 않습니다.
 - `DataGrid` 가상 스크롤이 행 높이를 32 · 40 · 48 숫자로 계산해, 행 높이 토큰이 바뀌면
   스크롤할수록 행이 밀릴 수 있었습니다. 이제 토큰에서 읽습니다(`useRowHeightPx`).
 
 ### 늘어난 것
 
-- **DESIGN.md §7 부품 카드 17장** — 구조 · 종류 · 상태 7가지(기본 · hover · focus · active ·
+- **DESIGN.md §7 부품 카드 18장**(회사 로고 · 마크 포함) — 구조 · 종류 · 상태 7가지(기본 · hover · focus · active ·
   disabled · loading · error) · 토큰 · 접근성 · 할 것 / 하지 말 것 · React 예 · 순수 HTML+CSS 예.
   종류 · 크기 목록과 기본값은 컴포넌트 소스와 같아야 생성되고(`scripts/component-cards.mjs`),
-  13장은 HTML+CSS 를 실제 React 컴포넌트와 브라우저에서 대조합니다(라이트 · 다크 · 대비 증가 · 터치).
+  14장은 HTML+CSS 를 실제 React 컴포넌트와 브라우저에서 대조합니다(라이트 · 다크 · 대비 증가 · 터치).
 - 검사: `npm run audit:cards` · `npm run audit:hig` · `test/hig.test.mjs` ·
   `test/component-cards.test.mjs` · 린트 규칙 `no-px-font-size` · `no-smooth-scroll`. CI 의 a11y 잡에서 돕니다.
 - `src/lib/motion.js`(`prefersReducedMotion` · `scrollBehavior`) · `src/lib/useRowHeight.js`.

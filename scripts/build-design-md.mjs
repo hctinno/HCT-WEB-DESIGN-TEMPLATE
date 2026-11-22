@@ -16,10 +16,12 @@
  *
  *   색 · 치수 값 ..... src/styles/tokens.css + palettes.css (css-vars.mjs 로 계산)
  *   기본 레이어 ...... src/styles/base.css 원문
+ *   접근성 적응 ...... src/styles/adaptive.css 원문 (build-adaptive.mjs 가 생성)
  *   상태 → 색조 ...... src/components/feedback/StatusBadge.jsx 의 WORKFLOW_STATUS
  *   팔레트 표 ........ tokens/palettes.json
  *   로고 크기 ........ src/assets/brand/*.png 의 헤더
  *   설치 명령 · 주소 . package.json 의 version · repository
+ *   부품 카드 ........ scripts/component-cards.mjs (소스와 대조 — checkCards)
  *   문장 ............. scripts/design-md.template.md  ← 설명을 고치려면 여기
  *
  * 실행: npm run tokens:build
@@ -29,6 +31,8 @@
 import { readFileSync, writeFileSync, openSync, readSync, closeSync } from 'node:fs'
 import { fileURLToPath } from 'node:url'
 import { parseCss, computeRootVars, declaredNames } from './css-vars.mjs'
+import { CARDS, SHARED_CSS, checkCards, renderCard } from './component-cards.mjs'
+import { existsSync } from 'node:fs'
 
 const ROOT = fileURLToPath(new URL('..', import.meta.url))
 const read = (path) => readFileSync(ROOT + path, 'utf8')
@@ -333,15 +337,54 @@ function shellDiagram() {
   return out.join('\n')
 }
 
+/* ── 타입 스케일: tailwind-preset.js 의 fontSize 를 그대로 읽습니다 ─────────── */
+
+const preset = (await import(ROOT + 'tailwind-preset.js')).default
+const TYPE_USE = {
+  micro: '타임스탬프 · 사이드바 그룹 라벨 · 작은 배지',
+  xs: '배지 · 캡션 · 입력 라벨 · 표 머리행',
+  sm: '사이드바 항목 · 설명문 · 경로 · 교차표 셀',
+  base: '**기본 본문** · 버튼 · 입력 · 표 본문 셀',
+  md: '섹션 제목',
+  lg: '페이지 제목',
+  xl: '화면 제목',
+  metric: 'KPI 수치',
+  'metric-lg': '강조 KPI 수치',
+}
+const remPx = (v) => {
+  const m = /^([\d.]+)rem$/.exec(v)
+  if (!m) throw new Error(`타입 스케일은 rem 이어야 합니다: ${v} — tailwind-preset.js 의 fontSize`)
+  return Number(m[1]) * 16
+}
+const typeScale = ['| 이름 | 크기 / 행간 (rem) | 기본 16px 에서 | 용도 |', '|---|---|---|---|',
+  ...Object.entries(preset.theme.fontSize).map(([k, [size, opts]]) => {
+    if (!TYPE_USE[k]) throw new Error(`타입 스케일 ${k} 의 용도가 없습니다 — build-design-md.mjs 의 TYPE_USE`)
+    const ls = opts.letterSpacing ? ` · 자간 ${opts.letterSpacing}` : ''
+    return `| ${k} | ${code(size)} / ${code(opts.lineHeight)}${ls} | ${remPx(size)} / ${remPx(opts.lineHeight)}px | ${TYPE_USE[k]} |`
+  })].join('\n')
+
+/* ── 부품 카드: scripts/component-cards.mjs 를 소스와 대조한 뒤 그립니다 ─────── */
+
+const cardProblems = checkCards({
+  read,
+  exists: (p) => existsSync(ROOT + p),
+  tokens: new Set(declaredNames(rules)),
+  entry: read('src/components/index.js'),
+})
+if (cardProblems.length) throw new Error('부품 카드가 소스와 어긋납니다\n  - ' + cardProblems.join('\n  - '))
+
 /* ── 채우기 ──────────────────────────────────────────────────── */
 
 const FILL = {
   CSS: tokenCss,
   BASE_CSS: read('src/styles/base.css').trimEnd(),
+  ADAPTIVE_CSS: read('src/styles/adaptive.css').trimEnd(),
   STATUS_MAP: statusMap,
   STATUS_TONES: statusTones,
   LOGO_ROWS: logoRows,
   SHELL_DIAGRAM: shellDiagram(),
+  TYPE_SCALE: typeScale,
+  CARD_SHARED_CSS: SHARED_CSS,
   PALETTES: paletteTable,
   PALETTE_COUNT: String(palettes.length),
   OTHER_PALETTES: palettes.map(([id]) => id).filter((id) => id !== DEFAULT).join(' · '),
@@ -355,7 +398,15 @@ const FILL = {
 }
 
 /* 치환 문자열은 함수로 넘깁니다 — 문자열로 넘기면 값 속의 $& · $1 이 특수 문자로 읽힙니다 */
+const usedCards = new Set()
 let md = read('scripts/design-md.template.md')
+  .replace(/\{\{CARD:([a-z-]+)\}\}/g, (_, id) => {
+    const card = CARDS.find((c) => c.id === id)
+    if (!card) throw new Error(`템플릿의 {{CARD:${id}}} — 없는 카드입니다`)
+    if (usedCards.has(id)) throw new Error(`카드 ${id} 를 두 번 넣었습니다`)
+    usedCards.add(id)
+    return renderCard(card)
+  })
   .replace(/\{\{TABLE:(\w+)\}\}/g, (_, key) => table(key))
   .replace(/\{\{L:(--[a-z0-9-]+)\}\}/g, (_, n) => {
     if (!(n in L)) throw new Error(`템플릿이 없는 토큰을 가리킵니다: ${n}`)
@@ -365,6 +416,8 @@ let md = read('scripts/design-md.template.md')
     if (!(key in FILL)) throw new Error(`템플릿의 ${whole} — 채울 값이 없습니다`)
     return FILL[key]
   })
+const unusedCards = CARDS.filter((c) => !usedCards.has(c.id)).map((c) => c.id)
+if (unusedCards.length) throw new Error(`템플릿에 넣지 않은 카드: ${unusedCards.join(', ')}`)
 const left = md.match(/\{\{[^}]*\}\}/g)
 if (left) throw new Error(`채우지 못한 자리: ${left.join(', ')}`)
 if (!md.endsWith('\n')) md += '\n'

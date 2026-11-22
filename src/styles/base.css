@@ -21,8 +21,9 @@
   body {
     margin: 0;
     font-family: var(--font-sans);
-    font-size: 14px;
-    line-height: 20px;
+    /* rem — 사용자가 키운 글자 크기를 따릅니다 (기본 16px 에서 14 / 20px) */
+    font-size: 0.875rem;
+    line-height: 1.25rem;
     background-color: var(--color-bg-canvas);
     color: var(--color-text-primary);
     font-feature-settings: 'tnum' 0;
@@ -80,6 +81,7 @@
       animation-duration: 0.01ms !important;
       animation-iteration-count: 1 !important;
       transition-duration: 0.01ms !important;
+      scroll-behavior: auto !important;
     }
   }
 }

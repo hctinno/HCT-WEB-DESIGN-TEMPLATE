@@ -23,14 +23,14 @@ const repoCss = readFileSync('src/styles/tokens.css', 'utf8') + '\n' + readFileS
 const failures = []
 const fail = (msg) => failures.push(msg)
 
-/* §2-1 안의 css 블록: [0] 토큰 · [1] 기본 레이어 */
+/* §2-1 안의 css 블록: [0] 토큰 · [1] 접근성 적응 · [2] 기본 레이어 */
 const section = md.slice(md.indexOf('### 2-1'), md.indexOf('### 2-2'))
 const fences = [...section.matchAll(/```css\n([\s\S]*?)\n```/g)].map((m) => m[1])
-if (fences.length !== 2) {
-  console.log(`✗ §2-1 의 CSS 블록이 2개가 아닙니다 (${fences.length}개)`)
+if (fences.length !== 3) {
+  console.log(`✗ §2-1 의 CSS 블록이 3개가 아닙니다 (${fences.length}개)`)
   process.exit(1)
 }
-const [mdCss, mdBase] = fences
+const [mdCss, mdAdaptive, mdBase] = fences
 
 /* 저장소 CSS 에 선언된 시맨틱 변수 — 원시 팔레트(--hct-*)는 md 에 싣지 않습니다 */
 const declared = (css) => [...new Set([...css.replace(/\/\*[\s\S]*?\*\//g, '').matchAll(/(--[a-z0-9-]+)\s*:/g)].map((m) => m[1]))]
@@ -81,6 +81,7 @@ for (const mode of MODES) {
 await browser.close()
 
 if (mdBase !== readFileSync('src/styles/base.css', 'utf8').trimEnd()) fail('기본 레이어 블록이 src/styles/base.css 원문과 다릅니다')
+if (mdAdaptive !== readFileSync('src/styles/adaptive.css', 'utf8').trimEnd()) fail('접근성 적응 블록이 src/styles/adaptive.css 원문과 다릅니다')
 
 const placeholders = md.match(/\{\{[^}]*\}\}/g)
 if (placeholders) fail(`채우지 못한 자리표시: ${placeholders.join(' ')}`)

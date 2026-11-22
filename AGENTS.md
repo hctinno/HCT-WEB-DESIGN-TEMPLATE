@@ -894,6 +894,34 @@ const dashes = assignSeriesDash(keys)   // 색과 짝을 이룹니다
 
 ---
 
+## 9-2. 운영체제 설정을 따릅니다 (Apple HIG 에서 옮긴 기준)
+
+Apple HIG 의 **측정 가능한 기준**만 웹으로 옮겼습니다. SF 서체 · 반투명 재질 같은
+Apple 고유의 겉모습은 가져오지 않습니다. 네 가지 모두 **사용자가 설정을 켰을 때만**
+반응하고, 아무것도 켜지 않은 기본 화면은 그대로입니다.
+
+| 설정 | 무엇이 바뀌나 | 어디서 | 검사 |
+|---|---|---|---|
+| 대비 증가 (`prefers-contrast: more`) | 보조 글자 · 테두리 · 강조색이 진해짐 — 글자 7:1, 테두리 · 포커스 3:1 이상 | `src/styles/adaptive.css` (원본 `tokens/palettes.json` 의 `contrastMore`) | 생성기 · `test/hig.test.mjs` · `audit:hig` |
+| 손가락 입력 (`pointer: coarse`) | 컨트롤 높이 · 촘촘/기본 표 행이 44px | `src/styles/adaptive.css` | `test/hig.test.mjs` · `audit:hig` |
+| 글자 크기 (브라우저 · OS 의 글꼴 크기) | 타입 스케일이 rem 이라 함께 커짐 | `tailwind-preset.js` 의 `fontSize` | `test/hig.test.mjs` · `audit:hig` |
+| 움직임 줄이기 (`prefers-reduced-motion`) | 애니메이션 · 전환 · JS 스크롤이 즉시 | `src/styles/base.css` · `src/lib/motion.js` | `lint:design` · `audit:hig` |
+
+화면을 만들 때 지킬 것:
+
+- **높이는 `h-control-*` · `h-row-*` 로.** `h-8` 처럼 숫자로 정한 단추는 터치 기기에서
+  44px 로 커지지 않습니다.
+- **글자 크기는 `text-*` 로만.** `style={{ fontSize: 12 }}` 은 `lint:design` 이 막습니다
+  (`no-px-font-size`).
+- **JS 스크롤에 `behavior: 'smooth'` 를 쓰지 마세요.** CSS 의 움직임 줄이기 규칙이 닿지
+  않습니다. `scrollBehavior()`(`src/lib/motion.js`)를 쓰세요 (`no-smooth-scroll`).
+- **행 높이를 숫자로 계산하지 마세요.** 가상 스크롤처럼 px 가 필요하면
+  `useRowHeightPx(density)`(`src/lib/useRowHeight.js`)로 토큰에서 읽습니다 — 터치 기기에서는 44px 입니다.
+- 대비 증가 값을 고치려면 `tokens/palettes.json` 의 `contrastMore` 를 고치고
+  `npm run tokens:build` — 기준 미달이면 생성이 멈춥니다.
+
+---
+
 ## 10. 새 컴포넌트가 필요할 때
 
 1. **먼저 `src/components/index.js` 를 확인하세요.** 이미 있는 것을 다시 만들지 마세요.
@@ -946,6 +974,8 @@ npm run lint:design    # 디자인 규칙 (반드시 통과)
 
 ```bash
 npm run audit:a11y     # 전 화면 × 2폭 × 2테마 를 axe-core 로 검사 (WCAG 2.1 A/AA)
+npm run audit:hig      # 대비 증가 · 터치 44px · 글자 크기 · 움직임 줄이기 실측 (§9-2)
+npm run audit:cards    # DESIGN.md §7 부품 카드 HTML+CSS ↔ React 컴포넌트 대조
 npm run audit:charts   # 차트 색 대비 (axe 도 팔레트 검사도 못 보는 사각지대)
 npm run audit:docs     # 이 문서가 가리키는 이름이 실제로 있는지
 npm run audit:exports  # 아무도 안 쓰는 공개 컴포넌트 찾기

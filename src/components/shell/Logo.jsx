@@ -102,6 +102,7 @@ export function LogoMark({ on = 'dark', size = 32, className }) {
   const padding = Math.round(size * 0.16)
   return (
     <span
+      role="img"
       aria-label="HCT"
       style={{ width: size, height: size, padding }}
       className={cn(

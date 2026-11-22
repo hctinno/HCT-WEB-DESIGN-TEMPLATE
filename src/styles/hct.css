@@ -12,4 +12,5 @@
  */
 @import './tokens.css';
 @import './palettes.css';
+@import './adaptive.css'; /* 대비 증가 · 손가락 입력 — palettes.css 뒤에 와야 합니다 */
 @import './base.css';

@@ -5,7 +5,8 @@
 
 > **에이전트라면 [AGENTS.md](./AGENTS.md) 를 먼저 읽으세요.** 이 README 는 사람용 개요입니다.
 > React 가 아닌 환경이나 다른 에이전트에게 디자인을 **파일 하나로** 넘길 때는 **[DESIGN.md](./DESIGN.md)** 를 주세요.
-> 토큰 값(라이트·다크) · 앱 셸 · 부품 규격이 모두 들어 있고, 토큰에서 자동 생성됩니다.
+> 토큰 값(라이트·다크 · 대비 증가) · 앱 셸 · 부품 카드 18장(회사 로고 포함)(React 예 + 순수 HTML·CSS 예)이 모두 들어 있고,
+> 토큰과 컴포넌트 코드에서 자동 생성 · 브라우저 대조됩니다.
 
 ---
 
@@ -139,7 +140,7 @@ node scripts/build-standalone.mjs        # dist-standalone/hct-console.html
 ### 1. 설치
 
 ```bash
-npm i github:hctinno/HCT-WEB-DESIGN-TEMPLATE#release/v1.4.0
+npm i github:hctinno/HCT-WEB-DESIGN-TEMPLATE#release/v2.0.0
 ```
 
 **판을 반드시 고정하세요.** `#` 뒤를 빼면 기본 브랜치의 최신 커밋을
@@ -282,6 +283,8 @@ npm run tokens:build      # 팔레트 CSS + v4 @theme 재생성 (원본을 고�
 npm run lint:design       # 디자인 규칙
 npm run audit:exports     # 아무도 안 쓰는 공개 컴포넌트
 npm run audit:a11y        # 전 화면 접근성 (WCAG 2.1 A/AA)
+npm run audit:hig         # HIG 기준 실측 — 대비 증가 · 터치 44px · 글자 크기 · 움직임 줄이기
+npm run audit:cards       # DESIGN.md 부품 카드 ↔ React 컴포넌트 브라우저 대조
 npm run verify:consumer   # v3·v4 로 진짜 설치해서 빌드
 
 # package.json 의 version 을 올리고 CHANGELOG.md 에 항목을 추가한 뒤

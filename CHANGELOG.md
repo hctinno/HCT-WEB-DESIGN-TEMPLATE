@@ -16,6 +16,50 @@
 
 ---
 
+## v2.1.0
+
+**운영체제의 접근성 설정을 따르고, DESIGN.md 의 부품 규격을 코드와 대조되는 카드로
+바꿨습니다.** 지워진 prop · 토큰이 없고 기본 화면(설정을 켜지 않은 화면)의 값이 같으므로
+**minor** 입니다. 설정을 켠 사용자에게는 화면이 달라지므로 한 번 보세요.
+
+### 깨지는 것
+
+- 없음. 기본 16px 글자 크기 · 마우스 · 보통 대비 · 움직임 허용에서 모든 값이 v2.0.0 과 같습니다
+  (전 화면 스크린샷 비교로 확인).
+
+### 달라지는 것 — 설정을 켠 사용자에게만 (Apple HIG 에서 옮긴 기준)
+
+- **대비 증가**(`prefers-contrast: more`): 보조 글자 · 테두리 · 강조 · 상태 글자 · 사이드바
+  보조 글자가 진해집니다. 글자 7:1 · 테두리 · 포커스 3:1 이상, 생성기가 검사합니다.
+  `<html data-contrast="normal">` 로 끌 수 있습니다. 새 파일 `src/styles/adaptive.css` —
+  `hct.css` · `hct.v4.css` 가 불러오므로 소비 쪽은 할 일이 없습니다.
+- **손가락 입력**(`pointer: coarse`): `--control-height-*` · `--row-height-compact` ·
+  `--row-height-default` 가 44px 가 됩니다. 휴대폰 · 태블릿에서 버튼 · 입력 · 표 행이 커집니다.
+- **글자 크기**: 타입 스케일 · 본문 글자가 px → rem. 브라우저 · OS 에서 글자를 키우면 함께 커집니다.
+  Tailwind v4 의 `--text-*` 변수도 rem 입니다.
+- **움직임 줄이기**: 기존 규칙에 `scroll-behavior` 를 더했고, 설정 화면의 JS 스크롤이
+  설정을 따릅니다(`scrollBehavior()`).
+
+### 고친 것
+
+- `LogoMark` 에 `role="img"` 를 붙였습니다. 역할 없는 `<span>` 의 `aria-label` 은 스크린리더가 읽지 않습니다.
+- `DataGrid` 가상 스크롤이 행 높이를 32 · 40 · 48 숫자로 계산해, 행 높이 토큰이 바뀌면
+  스크롤할수록 행이 밀릴 수 있었습니다. 이제 토큰에서 읽습니다(`useRowHeightPx`).
+
+### 늘어난 것
+
+- **DESIGN.md §7 부품 카드 18장**(회사 로고 · 마크 포함) — 구조 · 종류 · 상태 7가지(기본 · hover · focus · active ·
+  disabled · loading · error) · 토큰 · 접근성 · 할 것 / 하지 말 것 · React 예 · 순수 HTML+CSS 예.
+  종류 · 크기 목록과 기본값은 컴포넌트 소스와 같아야 생성되고(`scripts/component-cards.mjs`),
+  14장은 HTML+CSS 를 실제 React 컴포넌트와 브라우저에서 대조합니다(라이트 · 다크 · 대비 증가 · 터치).
+- 검사: `npm run audit:cards` · `npm run audit:hig` · `test/hig.test.mjs` ·
+  `test/component-cards.test.mjs` · 린트 규칙 `no-px-font-size` · `no-smooth-scroll`. CI 의 a11y 잡에서 돕니다.
+- `src/lib/motion.js`(`prefersReducedMotion` · `scrollBehavior`) · `src/lib/useRowHeight.js`.
+
+설치: `npm i github:hctinno/HCT-WEB-DESIGN-TEMPLATE#release/v2.1.0`
+
+---
+
 ## v2.0.0
 
 **팔레트를 `hct` 하나로 줄였습니다.** 팔레트 값이 지워졌으므로 **major** 입니다.
@@ -45,7 +89,7 @@
   이름("HCT 스테이징")이 어긋난다고 30개 화면에서 실패시키던 것을 고친 것입니다(`main` 에서도
   같은 실패). 모양은 같습니다.
 
-설치(릴리스 브랜치를 만든 뒤):
+설치:
 
 ```bash
 npm i github:hctinno/HCT-WEB-DESIGN-TEMPLATE#release/v2.0.0

@@ -77,6 +77,18 @@ const RULES = [
     test: (line) => /\btext-\[\d+(?:px|rem)\]/.test(line),
   },
   {
+    id: 'no-px-font-size',
+    severity: 'error',
+    message: '글자 크기를 px 로 고정하지 마세요. 사용자가 키운 글자 크기(HIG Dynamic Type · WCAG 1.4.4)를 무시합니다. text-* 타입 스케일(rem)을 쓰세요.',
+    test: (line) => /\bfontSize\s*[:=]\s*\{?\s*['"`]?\d+(?:\.\d+)?(?:px)?['"`]?\s*[,}\s]/.test(line) || /font-size:\s*\d+(?:\.\d+)?px/.test(line),
+  },
+  {
+    id: 'no-smooth-scroll',
+    severity: 'error',
+    message: "behavior: 'smooth' 는 움직임 줄이기 설정을 무시합니다(CSS 의 prefers-reduced-motion 이 JS 스크롤에는 안 걸림). behavior 를 지정하지 마세요.",
+    test: (line) => /behavior\s*:\s*['"`]smooth['"`]/.test(line),
+  },
+  {
     id: 'no-large-radius',
     severity: 'warn',
     message: '이 시스템은 지라형 고밀도입니다. rounded-2xl/3xl 은 쓰지 않습니다(최대 xl=12px).',

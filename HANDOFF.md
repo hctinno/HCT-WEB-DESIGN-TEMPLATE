@@ -14,8 +14,8 @@
 |---|---|
 | 저장소 | `hctinno/HCT-WEB-DESIGN-TEMPLATE` (public) |
 | 기본 브랜치 | `main` |
-| 현재 판 | **v1.4.0** — `release/v1.4.0` |
-| 설치 | `npm i github:hctinno/HCT-WEB-DESIGN-TEMPLATE#release/v1.4.0` |
+| 현재 판 | **v2.0.0** — `release/v2.0.0` |
+| 설치 | `npm i github:hctinno/HCT-WEB-DESIGN-TEMPLATE#release/v2.0.0` |
 | 파일 하나짜리 명세 | `DESIGN.md` (생성 파일) — https://raw.githubusercontent.com/hctinno/HCT-WEB-DESIGN-TEMPLATE/main/DESIGN.md |
 | CI | PR 과 `main` 푸시 양쪽에서 동작 (verify · a11y · consume) |
 

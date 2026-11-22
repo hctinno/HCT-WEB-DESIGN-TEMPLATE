@@ -7,6 +7,7 @@ import { NoResults, ErrorState } from '../state/EmptyState'
 import { useGridKeyboard } from '../../lib/useGridKeyboard'
 import { useVirtualRows } from '../../lib/useVirtualRows'
 import { useBottomBar } from '../../lib/useBottomBar'
+import { useRowHeightPx } from '../../lib/useRowHeight'
 
 /**
  * DataGrid — 관리도구의 중심 컴포넌트.
@@ -140,7 +141,8 @@ export function DataGrid({
   }, [selected, allKeys, setSelected])
 
   /* 그룹핑이 켜지면 행 높이가 균일하지 않으므로 가상화를 끕니다 */
-  const rowPx = { compact: 32, default: 40, relaxed: 48 }[density]
+  /* 토큰에서 읽습니다 — 손가락 입력 기기에서는 행이 44px 로 커집니다 (useRowHeight.js) */
+  const rowPx = useRowHeightPx(density)
   const canVirtualize = virtualize && !groupField
   const virt = useVirtualRows({
     count: records.length,
